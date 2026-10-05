@@ -1,81 +1,1062 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light">
-<title>retentions-aid | Branch Overview</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retentions-Aid — Migration Plan</title>
 <style>
-:root{color-scheme:dark;--bg:#101719;--panel:#1a2427;--panel2:#233034;--ink:#eff5f0;--muted:#a6b4af;--line:#354449;--accent:#7bdfbd;--gold:#edbd68;--red:#f18e86;--green:#80d4a6;--code:#0b1113;--stripe:#202b2f;--focus:#e1afff;--shadow:0 12px 32px #0004} :root[data-theme=light]{color-scheme:light;--bg:#f1f5f2;--panel:#fff;--panel2:#e8efeb;--ink:#182326;--muted:#5b6965;--line:#ced9d3;--accent:#08765b;--gold:#875800;--red:#a73f3c;--green:#16774b;--code:#172226;--stripe:#edf2ef;--focus:#71419a;--shadow:0 12px 32px #20382b15}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:82px}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background-image:radial-gradient(ellipse at 10% 0%,#28503e50,transparent 35rem),linear-gradient(130deg,transparent 70%,#9c752012)}button,input{font:inherit;color:inherit}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
-.top{height:66px;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:color-mix(in srgb,var(--bg) 91%,transparent);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:11px;font-weight:760}.mark{width:31px;height:31px;border-radius:8px;background:var(--accent);color:#10241d;display:grid;place-items:center;font-weight:900}.actions{display:flex;align-items:center;gap:14px}.now{font-size:12px;color:var(--muted)}.theme{height:36px;min-width:39px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer}
-.layout{display:grid;grid-template-columns:245px minmax(0,1fr);max-width:1580px;margin:auto}.side{height:calc(100vh - 66px);position:sticky;top:66px;padding:24px 16px 24px 23px;border-right:1px solid var(--line);overflow:auto}.side label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.search{width:100%;margin:9px 0 20px;padding:10px 11px;background:var(--panel);border:1px solid var(--line);border-radius:8px}.nav{display:grid;gap:4px}.nav a{padding:8px 10px;border-radius:7px;color:var(--muted);font-size:13px}.nav a.active,.nav a:hover{background:var(--panel2);color:var(--ink);text-decoration:none}.nav a.active{box-shadow:inset 2px 0 var(--accent)}.side-note{margin-top:24px;padding:12px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:12px}.side-note b{color:var(--ink)}main{min-width:0;padding:27px clamp(15px,3vw,48px) 65px}.hero{padding:15px 0 27px;border-bottom:1px solid var(--line);margin-bottom:26px}.eyebrow,.num{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:750}.hero h1{font-size:clamp(28px,3vw,40px);line-height:1.1;margin:8px 0}.hero p{color:var(--muted);max-width:800px;margin:0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px}.chip,.badge{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:4px 9px;font-size:11px;color:var(--muted)}.chip b{color:var(--ink)}
-section{margin:0 0 43px;scroll-margin-top:85px}.heading{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:15px}.heading h2{font-size:22px;line-height:1.2;margin:4px 0}.heading p{font-size:13px;color:var(--muted);margin:4px 0 0}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.card,.box,.ref{border:1px solid var(--line);border-radius:9px;background:var(--panel);box-shadow:var(--shadow)}.card{padding:15px}.card span{font-size:11px;color:var(--muted);text-transform:uppercase}.card strong{display:block;margin-top:8px;font-size:17px}.card small{display:block;margin-top:4px;color:var(--muted)}.callout{margin-top:13px;padding:13px 15px;border-left:3px solid var(--gold);border-radius:0 8px 8px 0;background:var(--panel);color:var(--muted)}.callout b{color:var(--ink)}
-.tabs{display:flex;gap:5px;border-bottom:1px solid var(--line);overflow:auto}.tab{white-space:nowrap;padding:10px 14px;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer}.tab[aria-selected=true]{color:var(--ink);border-color:var(--accent)}.panel{display:none}.panel.active{display:block}.intro{display:flex;justify-content:space-between;gap:14px;padding:16px;border:1px solid var(--line);border-radius:9px;background:var(--panel);margin:14px 0 10px}.intro h3{margin:0 0 5px;font-size:18px}.intro p{margin:0;color:var(--muted)}.refhash{white-space:nowrap;font:11px ui-monospace,Consolas,monospace;color:var(--accent)}.badges{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.badge{color:var(--ink);background:var(--panel2)}.grid{display:grid;grid-template-columns:minmax(230px,.85fr) minmax(0,1.4fr);gap:13px}.box{padding:15px;min-width:0}.box h4{margin:0 0 11px;font-size:14px}.tree{max-height:400px;overflow:auto;font:11px/1.6 ui-monospace,Consolas,monospace}.tree details{padding-left:10px;border-left:1px solid var(--line)}.tree summary{cursor:pointer;list-style:none;color:var(--ink);padding:2px}.tree summary::-webkit-details-marker{display:none}.tree summary:before{content:"▸";display:inline-block;width:15px;color:var(--gold)}.tree details[open]>summary:before{content:"▾"}.tree ul{list-style:none;margin:0;padding-left:14px;border-left:1px solid var(--line)}.tree li{padding:2px 0;color:var(--muted);overflow-wrap:anywhere}.tree .file:before{content:"· ";color:var(--accent)}.tree-note,.muted{font-size:12px;color:var(--muted)}.tree-note{padding-top:9px;margin-top:8px;border-top:1px solid var(--line)}.tablewrap{border:1px solid var(--line);border-radius:7px;overflow:auto}.table{border-collapse:collapse;width:100%;min-width:480px;font-size:12px}.table th,.table td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}.table th{position:sticky;top:0;z-index:1;background:var(--panel2);font-size:11px}.table tbody tr:nth-child(even){background:var(--stripe)}.table td{color:var(--muted)}.table td:first-child{color:var(--ink);font:11px ui-monospace,Consolas,monospace}.code{position:relative;margin:9px 0 0;border:1px solid var(--line);border-radius:7px;background:var(--code);overflow:hidden}.code pre{margin:0;padding:15px 78px 15px 13px;overflow:auto;color:#deeee7;font:11px/1.65 ui-monospace,Consolas,monospace;white-space:pre}.copy{position:absolute;right:8px;top:8px;border:1px solid #526267;border-radius:6px;background:#26343a;color:#edf5ef;padding:4px 8px;font-size:10px;cursor:pointer}.compare{max-height:590px;overflow:auto;border:1px solid var(--line);border-radius:8px}.compare .table{min-width:790px}.compare th{position:sticky;top:0}.added{background:color-mix(in srgb,var(--green) 14%,transparent);color:var(--green)!important}.removed{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)!important}.unchanged{background:color-mix(in srgb,var(--muted) 8%,transparent)}.groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.group{padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.group h4{margin:0 0 7px;font-size:12px}.group summary{cursor:pointer;color:var(--accent);font-size:11px}.group ul{max-height:230px;overflow:auto;padding-left:18px;font:10px/1.6 ui-monospace,Consolas,monospace;color:var(--muted)}
-.accordion{border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:8px 0;overflow:hidden}.accordion>button{display:flex;width:100%;justify-content:space-between;text-align:left;padding:13px 15px;border:0;background:none;font-weight:700;cursor:pointer}.accordion>button:after{content:"+";color:var(--accent);font-size:18px}.accordion.open>button:after{content:"−"}.accbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease}.accordion.open .accbody{grid-template-rows:1fr}.accinner{overflow:hidden}.acccontent{padding:0 15px 15px;color:var(--muted);font-size:13px}.acccontent p{margin:5px 0 10px}.acccontent strong{color:var(--ink)}.tag{font-size:10px;border-radius:99px;padding:2px 7px;color:var(--red);background:#803d3633}.tag.med{color:var(--gold);background:#9a741f33}.refs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.ref{padding:14px}.ref h3{font-size:14px;margin:0 0 8px}.ref p{font-size:12px;color:var(--muted);margin:4px 0}.footer{margin-top:22px;padding-top:17px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
-@media(max-width:940px){.layout{grid-template-columns:1fr}.side{height:auto;position:sticky;top:66px;z-index:12;display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--bg);border:0;border-bottom:1px solid var(--line);overflow:visible}.side label,.side-note{display:none}.search{width:min(210px,34vw);margin:0;flex:0 0 auto}.nav{display:flex;gap:2px;overflow:auto;white-space:nowrap}.nav a{font-size:11px;padding:7px}.grid{grid-template-columns:1fr}}
-@media(max-width:620px){.top{height:56px;padding:0 12px}.side{top:56px;padding:7px}.search{width:112px;padding:8px;font-size:11px}.nav a{font-size:10px;padding:6px}.now{display:none}.brand{font-size:12px}.mark{width:27px;height:27px}main{padding:18px 12px 40px}.hero{padding-top:5px}.hero h1{font-size:29px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.card{padding:12px}.card strong{font-size:14px}.intro{display:block}.refhash{display:block;margin-top:9px}.groups,.refs{grid-template-columns:1fr}.heading h2{font-size:20px}.compare .table{min-width:700px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+:root{--bg:#0e1116;--panel:#161b22;--panel2:#1c232c;--line:#2a3340;--tx:#e6edf3;--mut:#8b98a8;--acc:#4cc2ff;--acc2:#7ee787;--warn:#f0b429;--bad:#ff6b6b;--code:#0a0d12;--shadow:0 6px 24px rgba(0,0,0,.35)}
+[data-theme=light]{--bg:#f6f8fa;--panel:#fff;--panel2:#f0f3f6;--line:#d8dee4;--tx:#1f2328;--mut:#59636e;--acc:#0969da;--acc2:#1a7f37;--warn:#9a6700;--bad:#cf222e;--code:#f6f8fa;--shadow:0 6px 24px rgba(31,35,40,.10)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--acc)}
+#side{position:fixed;inset:0 auto 0 0;width:270px;background:var(--panel);border-right:1px solid var(--line);padding:16px;overflow:auto;z-index:20}
+#side h1{font-size:15px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+#q{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--tx);margin-bottom:10px}
+#side nav a{display:block;padding:7px 10px;border-radius:8px;color:var(--mut);text-decoration:none;font-size:14px}
+#side nav a:hover{background:var(--panel2);color:var(--tx)}
+#side nav a.on{background:var(--panel2);color:var(--acc);font-weight:600}
+#side nav a.nomatch{display:none}
+button.t{background:var(--panel2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:4px 9px;cursor:pointer}
+main{margin-left:270px;padding:0 40px 80px;max-width:1180px}
+section{padding-top:36px}
+h2{font-size:26px;margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h3{font-size:18px;margin:26px 0 8px}
+.hero{margin:0 -40px;padding:48px 40px 28px;background:linear-gradient(135deg,var(--panel2),var(--bg));border-bottom:1px solid var(--line)}
+.hero h1{font-size:34px;line-height:1.2;margin:0 0 8px}
+.sub{color:var(--mut)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:18px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.card b{display:block;color:var(--acc);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.card .big{font-size:18px;font-weight:650}
+.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;border:1px solid var(--line);background:var(--panel2);color:var(--mut)}
+.low{color:var(--acc2);border-color:var(--acc2)}.med{color:var(--warn);border-color:var(--warn)}
+.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid;border-left-width:5px}
+.callout.warn{background:rgba(240,180,41,.09);border-color:var(--warn)}
+.callout.info{background:rgba(76,194,255,.08);border-color:var(--acc)}
+.callout.ok{background:rgba(126,231,135,.08);border-color:var(--acc2)}
+.callout.bad{background:rgba(255,107,107,.09);border-color:var(--bad)}
+.callout p{margin:4px 0}
+table{border-collapse:separate;border-spacing:0;width:100%;margin:12px 0;font-size:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.tw{overflow:auto;max-height:520px;border-radius:10px}
+th{position:sticky;top:0;background:var(--panel2);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);z-index:1}
+td{padding:8px 12px;vertical-align:top;border-bottom:1px solid var(--line)}
+tbody tr:nth-child(even){background:var(--panel2)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+p code,td code,li code{background:var(--panel2);padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
+.cb{background:var(--code);border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}
+.cb header{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;background:var(--panel2);border-bottom:1px solid var(--line);font-size:12px;color:var(--mut)}
+.cb pre{margin:0;padding:12px 14px;overflow:auto;max-height:560px}
+.cb button{background:transparent;border:1px solid var(--line);color:var(--tx);border-radius:6px;padding:2px 10px;cursor:pointer;font-size:12px}
+.cb button.done{color:var(--acc2);border-color:var(--acc2)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden}
+summary{cursor:pointer;padding:12px 16px;font-weight:600;display:flex;gap:10px;align-items:center;list-style:none}
+summary::before{content:"▸";color:var(--acc);transition:transform .15s}
+details[open]>summary::before{transform:rotate(90deg)}
+summary .pill{margin-left:auto}
+.ab{padding:0 16px 14px}
+dl.k{display:grid;grid-template-columns:70px 1fr;gap:4px 12px;margin:6px 0}
+dl.k dt{color:var(--mut);font-weight:600}dl.k dd{margin:0}
+.diagram{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;margin:14px 0;overflow:auto}
+.diagram svg{width:100%;height:auto;min-width:560px}
+svg text{fill:var(--tx);font:13px system-ui,sans-serif}svg .m{fill:var(--mut)}svg .box{fill:var(--panel2);stroke:var(--line)}
+svg .hl{fill:rgba(76,194,255,.14);stroke:var(--acc)}svg .del{fill:rgba(255,107,107,.12);stroke:var(--bad);stroke-dasharray:5 3}
+svg .ok{fill:rgba(126,231,135,.12);stroke:var(--acc2)}svg .ln{stroke:var(--mut);fill:none;stroke-width:1.6}
+.tree{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px 14px;white-space:pre;overflow:auto;font:13px/1.55 ui-monospace,Consolas,monospace}
+.tree b{color:var(--acc);background:rgba(76,194,255,.14);padding:0 4px;border-radius:4px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+ul.chk{list-style:none;padding:0}ul.chk li{padding:5px 0}ul.chk input{margin-right:8px;transform:scale(1.15)}
+#top{position:fixed;right:22px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--tx);cursor:pointer;box-shadow:var(--shadow);display:none;font-size:18px}
+.hide{display:none!important}
+#burger{display:none}
+@media(max-width:900px){
+ #side{position:sticky;top:0;width:auto;inset:auto;border-right:0;border-bottom:1px solid var(--line);padding:10px 14px;max-height:none}
+ #side nav{display:none;max-height:50vh;overflow:auto}#side.open nav{display:block}
+ #burger{display:inline-block}main{margin-left:0;padding:0 16px 80px}.hero{margin:0 -16px;padding:28px 16px 20px}.hero h1{font-size:26px}
+}
+@media print{#side,#top{display:none}main{margin:0}}
 </style>
 </head>
 <body>
-<header class="top"><div class="brand"><span class="mark">R</span>RETENTIONS AID <span style="color:var(--muted);font-weight:500">/ branch brief</span></div><div class="actions"><span class="now" id="now">Viewing Overview</span><button class="theme" id="theme" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">☼</button></div></header>
-<div class="layout"><aside class="side" aria-label="Dashboard navigation"><label for="search">Search file tree</label><input class="search" id="search" type="search" placeholder="Filter files…"><nav class="nav"><a class="active" href="#overview">Overview</a><a href="#branches">Branches</a><a href="#comparison">Comparison</a><a href="#guide">Change guide</a><a href="#quick">Quick reference</a></nav><div class="side-note"><b>Snapshot</b><br>Fetched refs · clean worktree</div></aside>
-<main><div class="hero"><div class="eyebrow">Repository operations dashboard</div><h1>retentions-aid</h1><p>Branch architecture, runtime, deployment, and maintenance overview for the Flask + React retention-management application.</p><div class="chips"><span class="chip">Generated <b>2026-09-29 15:55 +05:30</b></span><span class="chip"><b>3</b> branches</span><span class="chip"><b>940</b> branch-file entries</span><span class="chip"><b>340</b> unique tracked paths</span></div></div>
-<section id="overview"><div class="heading"><div><span class="num">01 / Snapshot</span><h2>Overview</h2><p>Stack, baseline branch, and project posture.</p></div></div><div class="cards"><article class="card"><span>Application stack</span><strong>Flask · React 17</strong><small>Python API + Create React App</small></article><article class="card"><span>Default branch</span><strong>main</strong><small>Baseline commit 0342ee3</small></article><article class="card"><span>Latest main commit</span><strong>2025-01-08</strong><small>“fixed code in update_alerts.py”</small></article><article class="card"><span>License</span><strong>Not declared</strong><small>No LICENSE file tracked</small></article></div><div class="callout"><b>At a glance:</b> contabo and update_JAN_2025 have different commit IDs but identical tracked trees. Both share a 94-record Git diff from main; no Python manifest, container setup, or tracked tests were found.</div></section>
-<section id="branches"><div class="heading"><div><span class="num">02 / Branch profiles</span><h2>Branches</h2><p>Purpose, tracked source tree, key files, runtime, dependencies, and deployment.</p></div></div><div class="tabs" role="tablist" aria-label="Branch profiles"><button class="tab" role="tab" aria-selected="true" aria-controls="p-main" data-name="main">main</button><button class="tab" role="tab" aria-selected="false" aria-controls="p-contabo" data-name="contabo">contabo</button><button class="tab" role="tab" aria-selected="false" aria-controls="p-update" data-name="update_JAN_2025">update_JAN_2025</button></div><div class="panel active" id="p-main" role="tabpanel"></div><div class="panel" id="p-contabo" role="tabpanel"></div><div class="panel" id="p-update" role="tabpanel"></div></section>
-<section id="comparison"><div class="heading"><div><span class="num">03 / Tree delta</span><h2>Branch Comparison</h2><p>Green = added/changed, red = removed, gray = unchanged. Expand exact path lists below.</p></div></div><div class="compare"><table class="table"><thead><tr><th>File / Area</th><th>main</th><th>contabo</th><th>update_JAN_2025</th><th>Notes</th></tr></thead><tbody><tr><td>flask_app/reports.py</td><td class="unchanged">Baseline</td><td class="added">Modified</td><td class="added">Modified</td><td>Substantial reporting expansion.</td></tr><tr><td>flask_app/monthly_reports.py</td><td class="removed">Absent</td><td class="added">Added</td><td class="added">Added</td><td>Monthly reports.</td></tr><tr><td>flask_app/weekly_report.py</td><td class="removed">Absent</td><td class="added">Added</td><td class="added">Added</td><td>Weekly reports.</td></tr><tr><td>flask_app/weekly_status.sql</td><td class="removed">Absent</td><td class="added">Added</td><td class="added">Added</td><td>Weekly status SQL.</td></tr><tr><td>react_app/src/pages/admin/WeeklyStatus.js</td><td class="removed">Absent</td><td class="added">Added</td><td class="added">Added</td><td>New weekly status admin UI.</td></tr><tr><td>.github/workflows/main.yml</td><td class="unchanged">Baseline</td><td class="added">Modified</td><td class="added">Modified</td><td>Contabo VPS deployment workflow.</td></tr><tr><td>react_app/package.json</td><td class="unchanged">npm lockfile</td><td class="added">Modified</td><td class="added">Modified</td><td>pnpm metadata conflicts with package-lock.</td></tr><tr><td>database_dumps/clone_collections_db.py</td><td class="unchanged">Present</td><td class="removed">Deleted</td><td class="removed">Deleted</td><td>Dump helper removed.</td></tr><tr><td>Tracked files</td><td class="unchanged">282</td><td class="added">329</td><td class="added">329</td><td>Non-default trees are identical.</td></tr></tbody></table></div><div class="groups" id="groups"></div></section>
-<section id="guide"><div class="heading"><div><span class="num">04 / Remediation</span><h2>Optimization &amp; Change Guide</h2><p>Concrete findings and next steps. Secret values are never included.</p></div></div><div id="accordions"></div></section>
-<section id="quick"><div class="heading"><div><span class="num">05 / Daily use</span><h2>Quick Reference</h2><p>Common branch, local run, and edit locations.</p></div></div><div class="refs"><article class="ref"><h3>Switch and compare</h3><div class="code"><button class="copy">Copy</button><pre><code>git fetch --all
-git switch main
-git diff --stat main..contabo
-git diff --stat contabo..update_JAN_2025</code></pre></div></article><article class="ref"><h3>Run frontend locally</h3><div class="code"><button class="copy">Copy</button><pre><code>cd react_app
-npm ci
-npm start
-# CRA: http://localhost:3000</code></pre></div></article><article class="ref"><h3>Run API locally</h3><div class="code"><button class="copy">Copy</button><pre><code># Requires private flask_app/config.py and Python deps
-cd flask_app
-conda activate retentions-aid
-python app.py
-# Debug server: 127.0.0.1:8000</code></pre></div></article><article class="ref"><h3>Where to edit</h3><p>Routes: flask_app/app.py</p><p>DB: flask_app/app_db.py + ignored config.py</p><p>UI: react_app/src/pages and components</p><p>Deploy: .github/workflows/main.yml and flask_app/restart.sh</p></article></div><div class="footer">Built from local Git branch inventories after fetch. No source files were changed. Secret values are intentionally omitted or shown as ***REDACTED***.</div></section>
-</main></div>
+<aside id="side">
+ <h1><span>🧭 Migration Plan</span><span><button class="t" id="burger" aria-label="Menu">☰</button> <button class="t" id="theme" aria-label="Toggle theme">☀︎/☾</button></span></h1>
+ <input id="q" type="search" placeholder="Search headings &amp; code…" aria-label="Search">
+ <nav id="nav">
+  <a href="#s1">§1 Overview</a><a href="#s2">§2 Branch rename</a><a href="#s3">§3 GitHub Actions</a>
+  <a href="#s4">§4 Config module</a><a href="#s5">§5 Loaders</a><a href="#s6">§6 Backend optimization</a>
+  <a href="#s7">§7 Local DB (Docker)</a><a href="#s8">§8 requirements + README</a><a href="#s9">§9 Cheat sheet</a>
+ </nav>
+</aside>
+<main>
+
+<!-- ═══════════ §1 ═══════════ -->
+<section id="s1" class="first">
+<div class="hero">
+ <span class="pill">Generated 2026-10-05 · read-only analysis · no source files changed</span>
+ <h1>Retentions-Aid — Migration, Optimization &amp; Local Setup Plan</h1>
+ <p class="sub">Flask + React retention-management app · origin <code>flodata-analytics/retentions-aid</code> · facts gathered via <code>git show &lt;branch&gt;:&lt;path&gt;</code> (no checkout needed, working tree untouched).</p>
+</div>
+<div class="grid">
+ <div class="card"><b>Branch target state</b><div class="big">prod (default) · dev</div><span class="sub">contabo → prod, update_JAN_2025 → dev</span></div>
+ <div class="card"><b>Deleted</b><div class="big">main</div><span class="sub">68 commits behind; nothing unique to keep</span></div>
+ <div class="card"><b>New</b><div class="big">5 additions</div><span class="sub">Dockerized local DB, config module, loaders, requirements.txt, README</span></div>
+ <div class="card"><b>Backend</b><div class="big">Queries preserved</div><span class="sub">Structure optimized; SQL byte-identical</span></div>
+</div>
+
+<h3>Branch stats (as found)</h3>
+<div class="tw"><table><thead><tr><th>Branch</th><th>HEAD</th><th>Files</th><th>Notes</th></tr></thead><tbody>
+<tr><td><code>main</code> (origin/HEAD)</td><td><code>0342ee3</code></td><td>282</td><td>Stale. <code>main..contabo</code> = 94 files, +7,878 / −677. Missing monthly_reports.py, weekly_report.py, weekly_status.sql, root .gitignore.</td></tr>
+<tr><td><code>contabo</code></td><td><code>d749a5d</code></td><td>329</td><td>Merge of PR #2 from update_JAN_2025. Deploy trigger of current workflow.</td></tr>
+<tr><td><code>update_JAN_2025</code></td><td><code>55b1f06</code></td><td>329</td><td>Ancestor of contabo; <code>git diff contabo update_JAN_2025</code> is empty → <b>trees are identical today</b>.</td></tr>
+</tbody></table></div>
+
+<div class="callout info"><p><b>ℹ️ Findings that change the plan vs. the original brief</b></p>
+<ul>
+<li><b>Existing <code>config.py</code> is a flat module</b> (gitignored), not a class: code does <code>from config import database_uri, databases</code> and <code>config.postgres_server/_port/_username/_password</code>. The new template (§4) keeps those names so nothing else changes.</li>
+<li><b>One Postgres database per clinic</b> (<code>config.databases</code>, <code>create_engine(database_uri + db)</code>). The local Docker DB (§7) must restore several databases, not one.</li>
+<li><b>Schema SQL says <code>OWNER TO collections_app</code></b> → the local container needs that role (§7).</li>
+<li><b>React dev points at production</b>: <code>ApiContext.js</code> sets the API domain to <code>https://retentionsaid.com</code> in <i>both</i> NODE_ENV branches. Local UI work would hit prod until fixed (§5/§7).</li>
+<li><code>app.py</code> already calls <code>load_dotenv()</code>, uses Flask-Caching (SimpleCache) and orjson; <code>email_util.py</code> already reads env vars. Those parts are "done"; plan items below only cover the gaps.</li>
+<li>There is no <code>react_app/src/App.js</code> or <code>components/LoadingPage.js</code>; the real files are <code>src/index.js</code> and <code>src/pages/LoadingPage.js</code>.</li></ul></div>
+</section>
+
+<!-- ═══════════ §2 ═══════════ -->
+<section id="s2">
+<h2>§2 · Branch rename plan</h2>
+<p class="sub"><code>contabo → prod</code>, <code>update_JAN_2025 → dev</code>, delete <code>main</code>.</p>
+<div class="tw"><table><thead><tr><th>Reason</th><th>Detail</th></tr></thead><tbody>
+<tr><td>Naming convention</td><td>"contabo" is a hosting vendor and "update_JAN_2025" a dated task; <code>prod</code>/<code>dev</code> describe role.</td></tr>
+<tr><td>Clarity</td><td>Three trees, one stale: <code>main</code> is the GitHub default yet nobody deploys it.</td></tr>
+<tr><td>Less confusion</td><td>contabo and update_JAN_2025 are identical today; two names for one tree invites pushing to the wrong one.</td></tr>
+<tr><td>Safe to delete main</td><td><code>main</code> is a strict ancestor of contabo: <code>git log contabo..main</code> should print nothing (verify first).</td></tr>
+</tbody></table></div>
+
+<div class="diagram"><svg viewBox="0 0 760 250" role="img" aria-label="Branch before and after">
+<text x="70" y="22" class="m">BEFORE</text><text x="470" y="22" class="m">AFTER</text>
+<rect class="box" x="30" y="35" width="250" height="44" rx="10"/><text x="46" y="62">main  (default · stale)</text>
+<rect class="box" x="30" y="100" width="250" height="44" rx="10"/><text x="46" y="127">contabo  (deploy trigger)</text>
+<rect class="box" x="30" y="165" width="250" height="44" rx="10"/><text x="46" y="192">update_JAN_2025  (work)</text>
+<rect class="del" x="430" y="35" width="250" height="44" rx="10"/><text x="446" y="62">main  — deleted</text>
+<rect class="ok" x="430" y="100" width="250" height="44" rx="10"/><text x="446" y="127">prod  (default · deploy)</text>
+<rect class="hl" x="430" y="165" width="250" height="44" rx="10"/><text x="446" y="192">dev  (integration)</text>
+<path class="ln" d="M285 57 L425 57" stroke-dasharray="4 4"/><path class="ln" d="M285 122 L425 122"/><path class="ln" d="M285 187 L425 187"/>
+<text x="330" y="52" class="m">delete</text><text x="330" y="117" class="m">rename</text><text x="330" y="182" class="m">rename</text>
+</svg></div>
+
+<h3>Rename commands</h3>
+<script type="text/plain" class="code" data-lang="bash"># 0. Safety: prove main holds nothing unique (expect empty output)
+git fetch --all --prune
+git log --oneline contabo..origin/main
+
+# Local rename
+git branch -m contabo prod
+git branch -m update_JAN_2025 dev
+
+# Push new names + set upstreams
+git push -u origin prod
+git push -u origin dev
+
+# Change default branch on GitHub: Settings → Branches → default = prod
+# Then delete old remote branches
+git push origin --delete contabo
+git push origin --delete update_JAN_2025
+
+# Delete main locally + remotely
+git branch -D main
+git push origin --delete main
+git remote set-head origin -a</script>
+<div class="callout warn"><p><b>⚠️ Order matters.</b> GitHub requires you to change the default branch to <code>prod</code> BEFORE deleting <code>main</code>. Do this in Settings → Branches. Also update the GitHub Actions workflow (§3) <i>before</i> the first push to <code>prod</code>, or the deploy will not trigger.</p></div>
+<div class="callout info"><p><b>ℹ️ Alternative:</b> Settings → Branches → ✏️ rename on GitHub does the push/delete/default-switch in one step, retargets open PRs and branch protection, and leaves redirects. Then on each clone: <code>git branch -m contabo prod &amp;&amp; git fetch origin &amp;&amp; git branch -u origin/prod prod</code>.</p></div>
+<h3>Post-rename checklist</h3>
+<ul class="chk">
+<li><label><input type="checkbox"> Verified <code>git log contabo..origin/main</code> is empty</label></li>
+<li><label><input type="checkbox"> Default branch = <code>prod</code> on GitHub</label></li>
+<li><label><input type="checkbox"> Workflow trigger updated to <code>prod</code> (§3) and merged</label></li>
+<li><label><input type="checkbox"> Old remote branches deleted</label></li>
+<li><label><input type="checkbox"> Branch protection on <code>prod</code> (PR + passing checks)</label></li>
+<li><label><input type="checkbox"> Teammates ran the local rename / re-clone</label></li>
+<li><label><input type="checkbox"> VPS checkout (if git-based) switched to <code>prod</code></label></li>
+<li><label><input type="checkbox"> Open PRs retargeted; bookmarks/docs referencing <code>contabo</code> updated</label></li></ul>
+</section>
+
+<!-- ═══════════ §3 ═══════════ -->
+<section id="s3">
+<h2>§3 · GitHub Actions update</h2>
+<h3>Current workflow (paraphrased, secrets not shown)</h3>
+<ul><li>Name <code>CI</code>; trigger <code>push</code> on <code>contabo</code>.</li>
+<li>Step 1: <code>actions/checkout@master</code> (unpinned).</li>
+<li>Step 2: <code>appleboy/scp-action@master</code> copies the whole repo (minus node_modules, __pycache__) to the VPS using an SSH <b>password</b> secret.</li>
+<li>Step 3: <code>appleboy/ssh-action@v1.0.3</code>, password auth, runs <code>cd $PROJECT_FOLDER/flask_app; sudo bash restart.sh &gt; restart.log 2&gt;&amp;1 &amp;</code>.</li>
+<li>Secrets referenced: <code>SSH_HOST, SSH_USER, SSH_PORT, SSH_PASSWORD(***REDACTED***), PROJECT_FOLDER</code>. No tests; the React <code>build/</code> folder is committed and served by Flask.</li></ul>
+<div class="callout bad"><p><b>What breaks after rename:</b> <code>branches: [contabo]</code> never matches again → pushes to <code>prod</code> silently stop deploying.</p></div>
+<div class="tw"><table><thead><tr><th>Old</th><th>New</th></tr></thead><tbody>
+<tr><td><code>push: [contabo]</code></td><td><code>push: [prod]</code></td></tr>
+<tr><td>(none)</td><td><code>pull_request: [prod, dev]</code> → tests on PRs</td></tr>
+<tr><td>scp + ssh, password</td><td>ssh-action, SSH key</td></tr>
+<tr><td><code>@master</code> actions</td><td>pinned <code>@v4</code>, <code>@v5</code>, <code>@v1.0.3</code></td></tr>
+<tr><td>implicit write token</td><td><code>permissions: contents: read</code></td></tr>
+<tr><td>deploy always</td><td><code>needs: test</code> and only on <code>refs/heads/prod</code></td></tr>
+</tbody></table></div>
+<h3>New workflow <code>.github/workflows/main.yml</code></h3>
+<script type="text/plain" class="code" data-lang="yaml">name: deploy-prod
+
+on:
+  push:
+    branches: [prod]
+  pull_request:
+    branches: [prod, dev]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install -r flask_app/requirements.txt
+      - run: python -m compileall flask_app
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/prod' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key:      ${{ secrets.SSH_KEY }}      # prefer SSH key over password
+          port:     ${{ secrets.SSH_PORT }}
+          script: |
+            cd ${{ secrets.PROJECT_FOLDER }}
+            git pull origin prod
+            sudo bash flask_app/restart.sh > flask_app/restart.log 2>&1 &</script>
+<div class="callout warn"><p><b>⚠️ Prerequisites before this deploy works</b></p>
+<ul><li>Today the VPS folder is populated by <b>scp</b>; it may not be a git checkout. Either clone the repo there once (read-only deploy key), or keep an scp step but with <code>key:</code> instead of <code>password:</code>.</li>
+<li>Add secret <code>SSH_KEY</code> (private key; public half in the VPS <code>authorized_keys</code>), then delete the old password secret.</li>
+<li>I kept <code>sudo</code> and the <code>&amp;</code> background from the current script (<code>restart.sh</code> daemonizes gunicorn and <code>pkill</code>s the old one). Your brief omitted <code>sudo</code>; drop it only if the VPS user can pkill/run gunicorn unprivileged.</li>
+<li><code>flask_app/requirements.txt</code> must exist on the branch (§8) or the <code>test</code> job fails.</li>
+<li><code>restart.sh</code> hardcodes <code>/home/ubuntu/retentions_aid</code>; <code>PROJECT_FOLDER</code> must match it.</li></ul></div>
+</section>
+
+<!-- ═══════════ §4 ═══════════ -->
+<section id="s4">
+<h2>§4 · Config module — why and how</h2>
+<p><b>Why:</b> <code>flask_app/config.py</code> is gitignored (<code>flask_app/.gitignore</code>), so a fresh clone fails at <code>from config import database_uri</code> in 6 files. App-level secrets are scattered: <code>SECRET_KEY</code> is a literal inside <code>app.py</code>'s inline <code>Config</code> class, credentials come from env in some modules and from <code>config.py</code> in others.</p>
+<p><b>How:</b> commit a template <code>config.example.py</code> + <code>.env.example</code>; each developer/server copies the template to the gitignored <code>config.py</code>. The template keeps the <b>existing module-level names</b> so nothing else changes, and adds a <code>Config</code> class for Flask.</p>
+<script type="text/plain" class="code" data-lang="python"># flask_app/config.example.py  (COMMIT THIS — copy to config.py)
+import os
+from urllib.parse import quote_plus
+
+
+def _req(name):
+    try:
+        return os.environ[name]
+    except KeyError:
+        raise RuntimeError(f"Missing required env var {name} (see .env.example)")
+
+
+# --- names imported by existing modules (do not rename) -------------------
+postgres_server = os.environ.get("POSTGRES_HOST", "localhost")
+postgres_port = int(os.environ.get("POSTGRES_PORT", "5432"))
+postgres_username = _req("POSTGRES_USER")
+postgres_password = _req("POSTGRES_PASSWORD")
+
+# app_db.py does: create_engine(database_uri + db_name)  -> keep trailing "/"
+# (inferred from usage — compare with your current config.py)
+database_uri = (
+    f"postgresql://{quote_plus(postgres_username)}:{quote_plus(postgres_password)}"
+    f"@{postgres_server}:{postgres_port}/"
+)
+
+# one Postgres database per clinic, comma separated
+databases = [d.strip() for d in _req("CLINIC_DATABASES").split(",") if d.strip()]
+
+
+# --- Flask settings (replaces the inline Config class in app.py) ----------
+class Config:
+    DEBUG = False
+    TESTING = False
+    CSRF_ENABLED = True
+    JSON_SORT_KEYS = False
+    MAX_CONTENT_LENGTH = 1.25e8
+    SECRET_KEY = _req("FLASK_SECRET_KEY")
+    CACHE_TYPE = "SimpleCache"
+    CACHE_DEFAULT_TIMEOUT = 60 * 5
+    UI_ORIGIN = os.environ.get("UI_ORIGIN", "http://localhost:3000")
+    FIREBASE_CREDS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    SIB_API_KEY = os.environ.get("SIB_API_KEY")</script>
+<script type="text/plain" class="code" data-lang="dotenv"># .env.example  (COMMIT THIS — copy to .env, never commit .env)
+FLASK_SECRET_KEY=change-me
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=user
+POSTGRES_PASSWORD=pass
+CLINIC_DATABASES=retentions        # comma-separated clinic DB names
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/firebase.json
+SIB_API_KEY=xxxx
+SIB_SENDER_EMAIL=noreply@example.com
+SIB_SENDER_NAME=Retentions Aid
+ZEPTO_PASS=xxxx
+RETENTIONS_ADMIN_EMAIL=admin@example.com
+RETENTIONS_ADMIN_PASSWORD=change-me
+RETENTIONS_ADMIN_ORG=example
+UI_ORIGIN=http://localhost:3000</script>
+<div class="callout info"><p><b>Deviation from the brief:</b> instead of a single <code>DATABASE_URL</code>, the template builds <code>database_uri</code> from <code>POSTGRES_*</code> because the app appends a per-clinic database name and <code>create_tables_and_triggers.py</code> needs host/port/user/password separately. Also add <code>.env.example</code> / <code>config.example.py</code> to git; keep <code>config.py</code> and <code>.env</code> ignored (already are).</p></div>
+<h3>Where it loads</h3>
+<div class="diagram"><svg viewBox="0 0 760 210" role="img" aria-label="Config load flow">
+<rect class="box" x="10" y="70" width="110" height="50" rx="10"/><text x="30" y="100">.env / OS env</text>
+<rect class="hl" x="170" y="70" width="150" height="50" rx="10"/><text x="182" y="92">load_dotenv()</text><text x="182" y="110" class="m">app.py line ~14</text>
+<rect class="hl" x="370" y="70" width="150" height="50" rx="10"/><text x="388" y="92">config.py</text><text x="388" y="110" class="m">Config + names</text>
+<rect class="box" x="580" y="10" width="170" height="40" rx="10"/><text x="595" y="35">app.py (from_object)</text>
+<rect class="box" x="580" y="62" width="170" height="40" rx="10"/><text x="595" y="87">app_db.py (database_uri)</text>
+<rect class="box" x="580" y="114" width="170" height="40" rx="10"/><text x="595" y="139">clinic_manager.py</text>
+<rect class="box" x="580" y="166" width="170" height="40" rx="10"/><text x="595" y="191">cron scripts / schema</text>
+<path class="ln" d="M120 95H168M320 95H368M520 95L578 30M520 95L578 82M520 95L578 134M520 95L578 186"/>
+</svg></div>
+<p>In <code>app.py</code>: delete the inline <code>class Config</code> and use <code>import config</code> … <code>app.config.from_object(config.Config)</code>. <code>load_dotenv()</code> already runs before the local imports there — but <code>update_alerts.py</code>, <code>update_user_alerts.py</code> and the schema script import <code>config</code> without it; add <code>load_dotenv()</code> there too (§5b).</p>
+</section>
+
+<!-- ═══════════ §5 ═══════════ -->
+<section id="s5">
+<h2>§5 · Loaders — where and how</h2>
+<p>"Loaders" here means three things: React spinners for slow API calls, Python env loading at startup, and an optional DB schema loader.</p>
+<h3>(a) React loading indicator</h3>
+<p><b>Where:</b> new hook in <code>react_app/src/hooks/useLoading.js</code>; component already exists at <code>react_app/src/pages/LoadingPage.js</code> (also <code>components/LoadingWidget.js</code>, <code>LoaderSVG</code>). Pages that fetch via <code>useApi()</code> wrap their calls.</p>
+<script type="text/plain" class="code" data-lang="javascript">// react_app/src/hooks/useLoading.js
+import { useState, useCallback } from 'react';
+export function useLoading() {
+  const [loading, setLoading] = useState(false);
+  const wrap = useCallback(async (fn) => {
+    setLoading(true);
+    try { return await fn(); } finally { setLoading(false); }
+  }, []);
+  return { loading, wrap };
+}</script>
+<script type="text/plain" class="code" data-lang="javascript">// usage in a page
+import LoadingPage from "../pages/LoadingPage";
+import { useLoading } from "../hooks/useLoading";
+
+const { loading, wrap } = useLoading();
+useEffect(() => { wrap(fetchMonthlyReports); }, []);   // fetchMonthlyReports = your existing call
+if (loading) return <LoadingPage />;</script>
+<div class="callout warn"><p><b>Also required for local work (source change, not done here):</b> in <code>react_app/src/contexts/ApiContext.js</code> replace the hardcoded production domain with
+<code>const domain = process.env.REACT_APP_API_URL || "http://localhost:8000"</code> and put <code>REACT_APP_API_URL=http://localhost:8000</code> in <code>react_app/.env.development</code>. Production builds set <code>https://retentionsaid.com</code>.</p></div>
+<h3>(b) Python env loading</h3>
+<p><b>Where:</b> top of <code>flask_app/app.py</code>. It already has this (lines 14–16), after the third-party imports. Make it explicit that it precedes any <code>config</code> import:</p>
+<script type="text/plain" class="code" data-lang="diff"> from flask_caching import Cache
+ from dotenv import load_dotenv
+
+ load_dotenv()                      # BEFORE anything that imports config
+
+-from firebase_user import FirebaseUser, AccountTypes
++import config
++from firebase_user import FirebaseUser, AccountTypes
+ ...
+-class Config:                       # inline class, SECRET_KEY literal
+-    ...
+-app.config.from_object(Config)
++app.config.from_object(config.Config)</script>
+<h3>(c) DB schema loader</h3>
+<p><b>Where:</b> new <code>flask_app/load_schema.py</code>. It reuses the existing <code>create_tables_and_triggers(databases)</code> function — the SQL strings are not touched. (The existing script's <code>__main__</code> passes an empty list, so it does nothing as written.)</p>
+<script type="text/plain" class="code" data-lang="python"># flask_app/load_schema.py
+from dotenv import load_dotenv
+load_dotenv()
+
+import config
+from create_tables_and_triggers import create_tables_and_triggers
+
+if __name__ == "__main__":
+    # NOTE: the SQL uses CREATE FUNCTION/TABLE without IF NOT EXISTS.
+    # Run it on empty databases only (or databases lacking these objects),
+    # not on a restored prod dump (which already contains them).
+    create_tables_and_triggers(config.databases)
+    print(f"Schema loaded into: {', '.join(config.databases)}")</script>
+<h3>Where things live</h3>
+<div class="two">
+<div class="tree">flask_app/
+├─ <b>config.example.py</b>   (new, committed)
+├─ config.py           (local, gitignored)
+├─ app.py              (load_dotenv + Config)
+├─ app_db.py           (pool tuning)
+├─ <b>load_schema.py</b>      (new)
+└─ <b>requirements.txt</b>    (new)</div>
+<div class="tree">react_app/src/
+├─ <b>hooks/useLoading.js</b>   (new)
+├─ pages/LoadingPage.js
+├─ components/LoadingWidget.js
+└─ contexts/ApiContext.js   (API URL via env)
+<b>.env.example</b> · <b>docker-compose.db.yml</b>  (repo root)</div></div>
+</section>
+
+<!-- ═══════════ §6 ═══════════ -->
+<section id="s6">
+<h2>§6 · Backend optimization — without changing queries</h2>
+<div class="callout ok"><p><b>✅ Rule:</b> SQL strings stay byte-for-byte identical. Every item changes plumbing around the queries only; verify with <code>git diff -U0 | grep -iE "select|insert|update|delete"</code> showing no SQL lines.</p></div>
+<div class="callout bad"><p><b>🚫 MUST NOT TOUCH</b> (SQL lives here):</p>
+<ul><li><code>flask_app/app_db.py</code> SQL blocks (cpt column / fee lookups)</li><li><code>flask_app/reports.py</code> (~48 SQL statements: weekly status, patient data, retention report)</li><li><code>flask_app/create_tables_and_triggers.py</code> (DDL + plpgsql triggers)</li><li><code>flask_app/weekly_status.sql</code></li><li>Inline queries in <code>app.py</code> (get_alerts etc.), <code>clinic_manager.py</code>, <code>firebase_user.py</code>, <code>update_alerts.py</code>, <code>update_user_alerts.py</code>, <code>monthly_reports.py</code></li></ul></div>
+<p><button class="t" id="expAll">Expand all</button> <button class="t" id="colAll">Collapse all</button></p>
+
+<details class="blk"><summary>1 · Env-backed config <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Move secrets/URIs to env via <code>config.py</code>.</dd><dt>Where</dt><dd><code>app.py</code> Config class (~line 31); <code>flask_app/config.py</code>.</dd>
+<dt>Why</dt><dd>Fresh clones work; secrets leave source; literal <code>SECRET_KEY</code> removed.</dd><dt>Risk</dt><dd>Low — see §4 for code. Rotate the old key (sessions invalidate).</dd></dl></div></details>
+
+<details class="blk"><summary>2 · Flask-Caching on read routes <span class="pill med">Risk: Low–Med</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Add <code>@cache.cached</code> to read-only GET/POST report routes.</dd><dt>Where</dt><dd><code>app.py</code>: <code>get_clinics</code>, <code>get_clinics_all</code>, <code>get_weekly_stats</code>, <code>get_patients_data</code>, <code>retention_report</code> (currently commented out).</dd>
+<dt>Why</dt><dd>Repeated report loads skip the multi-database SQL fan-out.</dd><dt>Risk</dt><dd>Low for the query; <b>Med for correctness</b>: the existing <code>make_cache_key</code> keys on path + body only. <code>get_alerts</code> (cached 5 s) and any role-filtered report would then be served across users. Include the user's uid in the key.</dd></dl>
+<script type="text/plain" class="code" data-lang="python">def make_cache_key():
+    uid = request.headers.get("Authorization", "")[-24:]      # or firebase uid
+    body = json.dumps(request.get_json(force=True, silent=True) or {}, sort_keys=True)
+    return f"{request.path}|{uid}|{body}"
+
+@app.route("/api/get_weekly_stats", methods=["POST"])
+@cross_origin()
+@response_wrapper(error_message="Failed to get weekly stats.")
+@FirebaseUser.authenticated_user()
+@cache.cached(timeout=600, make_cache_key=make_cache_key)   # key built per request
+def get_weekly_stats(**kwargs): ...
+
+# bust after writes:  cache.clear()   (SimpleCache is per-process; with gunicorn -w >1 use Redis/FileSystem)</script></div></details>
+
+<details class="blk"><summary>3 · Tune the connection pool in app_db.py <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Configure the SQLAlchemy engine pool (warm connections, stale-connection check).</dd><dt>Where</dt><dd><code>DB_Connection.start_engine</code>, the <code>create_engine(...)</code> call only.</dd>
+<dt>Why</dt><dd>SQLAlchemy engines already pool, so a separate psycopg2 <code>SimpleConnectionPool</code> would duplicate it and complicate pandas <code>read_sql</code>. Tuning the existing pool gives the "warm connections" benefit with no query path change. Worker threads (<code>ThreadPoolExecutor</code> per clinic) need <code>pool_size</code> ≥ concurrency.</dd><dt>Risk</dt><dd>Low.</dd></dl>
+<script type="text/plain" class="code" data-lang="python">self.engine = create_engine(
+    database_uri + self.db,
+    pool_size=5, max_overflow=10,
+    pool_pre_ping=True,      # drop dead connections transparently
+    pool_recycle=1800,
+)</script></div></details>
+
+<details class="blk"><summary>4 · Timing decorator for slow-query logging <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Log duration of query-executing functions.</dd><dt>Where</dt><dd>new decorator in <code>helper_classes.py</code>; apply to <code>AppDBInstance.execute_using_pandas/execute_query</code> (decorator line only).</dd>
+<dt>Why</dt><dd>Find which clinic DB / report is slow before optimizing anything.</dd><dt>Risk</dt><dd>Low.</dd></dl>
+<script type="text/plain" class="code" data-lang="python">import time, logging
+from functools import wraps
+log = logging.getLogger("slowquery")
+
+def timed(threshold=1.0):
+    def deco(f):
+        @wraps(f)
+        def inner(*a, **kw):
+            t = time.perf_counter()
+            try:
+                return f(*a, **kw)
+            finally:
+                dt = time.perf_counter() - t
+                if dt >= threshold:
+                    log.warning("slow %s %.2fs db=%s", f.__name__, dt, a[1] if len(a) > 1 else "?")
+        return inner
+    return deco</script></div></details>
+
+<details class="blk"><summary>5 · Blueprints to split app.py <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Move routes into modules; register blueprints with the same URL paths.</dd><dt>Where</dt><dd><code>app.py</code> (763 lines, ~30 routes) → <code>routes/reports.py, routes/users.py, routes/clinics.py, routes/alerts.py</code>.</dd>
+<dt>Why</dt><dd>Maintainability; handler bodies (and their SQL strings) move verbatim.</dd><dt>Risk</dt><dd>Low — keep full <code>/api/...</code> rules; the catch-all <code>/&lt;path&gt;</code> must be registered last. Do it as a pure cut/paste commit.</dd></dl>
+<script type="text/plain" class="code" data-lang="python"># routes/alerts.py
+from flask import Blueprint
+bp = Blueprint("alerts", __name__)          # no url_prefix: paths stay "/api/get_alerts"
+
+@bp.route("/api/get_alerts", methods=["GET"])
+def get_alerts(**kwargs): ...               # body unchanged
+
+# app.py
+from routes.alerts import bp as alerts_bp
+app.register_blueprint(alerts_bp)</script></div></details>
+
+<details class="blk"><summary>6 · Remove password from verification email <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd><code>html_from_verification_link</code> emails the user's login password in clear text.</dd><dt>Where</dt><dd><code>email_util.py</code> lines 10–21 and its caller in <code>firebase_user.py</code>/<code>add_user</code>.</dd>
+<dt>Why</dt><dd>Security: no credentials over email. Send the verification link plus a password-reset link (Firebase <code>generate_password_reset_link</code>).</dd><dt>Risk</dt><dd>Low; coordinate with whoever onboards users (UX change).</dd></dl>
+<script type="text/plain" class="code" data-lang="python">def html_from_verification_link(verification_link, reset_link):
+    return f"""
+    <html><body>
+      <h1>Verify your email address</h1>
+      <p><a href="{verification_link}">Verify Email</a></p>
+      <p>Then <a href="{reset_link}">set your password</a>.</p>
+    </body></html>"""</script></div></details>
+
+<details class="blk"><summary>7 · Restrict CORS to UI_ORIGIN <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd><code>CORS(app, resources={r"*": {"origins": "*"}})</code> → allow only the UI origin.</dd><dt>Where</dt><dd><code>app.py</code> line ~48 (and per-route <code>@cross_origin()</code>).</dd>
+<dt>Why</dt><dd>Blocks other sites from calling the API with a user's bearer token in-browser. The UI is served from the same Flask origin in prod, so CORS only matters for <code>localhost:3000</code> dev.</dd><dt>Risk</dt><dd>Low (add every legitimate origin).</dd></dl>
+<script type="text/plain" class="code" data-lang="python">CORS(app, resources={r"/api/*": {"origins": [config.Config.UI_ORIGIN, "https://retentionsaid.com"]}})
+# bare @cross_origin() on routes defaults to "*": change to @cross_origin(origins=[...]) or remove</script></div></details>
+
+<details class="blk"><summary>8 · Enable gzip response compression (flask-compress) <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Compress JSON responses at the Flask layer. A 10k-row payload that is 5–10&nbsp;MB uncompressed drops to roughly 500&nbsp;KB–1&nbsp;MB on the wire.</dd>
+<dt>Where</dt><dd><code>app.py</code>, immediately after <code>app = Flask(__name__)</code>; add <code>Flask-Compress</code> to <code>requirements.txt</code>.</dd>
+<dt>Why</dt><dd>The report routes return the <b>full</b> result set by design (no pagination). Compression is the single biggest speed-up for large responses and requires no change to routes, query strings, or DataFrame code.</dd>
+<dt>Risk</dt><dd>Low. Transparent to clients — browsers and <code>axios</code> decompress automatically. Skip if a downstream proxy already gzips, to avoid double work.</dd></dl>
+<script type="text/plain" class="code" data-lang="python"># app.py
+from flask_compress import Compress
+Compress(app)                    # gzip anything larger than ~500 bytes
+
+# requirements.txt
+# Flask-Compress==1.15</script></div></details>
+
+<details class="blk"><summary>8b · Trim unused columns before serialisation <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Return only the columns the UI and exports actually use, instead of every field the query produced.</dd>
+<dt>Where</dt><dd>Route handlers in <code>app.py</code> that call <code>.to_dict(orient="records")</code> — <code>get_patients_data</code>, <code>retention_report</code>, <code>get_clinics_all</code>. Select the columns <b>after</b> the DataFrame is returned.</dd>
+<dt>Why</dt><dd>10k rows × 20 fields ≈ 5&nbsp;MB JSON; 10k rows × 6 fields ≈ 1.5&nbsp;MB. Same data, smaller payload, faster JSON encoding with <code>orjson</code> (already in the stack).</dd>
+<dt>Risk</dt><dd>Low, but check export/CSV code first — anything that expects a column you drop will break. Keep the full DataFrame available internally; trim only the outgoing records.</dd></dl>
+<script type="text/plain" class="code" data-lang="python"># trim AFTER the query/DataFrame — SQL is untouched
+FIELDS = ["patient_id", "name", "clinic", "status", "last_visit", "notes"]
+
+def only_fields(records, fields=FIELDS):
+    return [{k: r.get(k) for k in fields} for r in records]
+
+# usage inside a route handler
+data = df.to_dict(orient="records")     # existing line, unchanged
+return jsonify(only_fields(data))       # send fewer keys</script></div></details>
+
+<details class="blk"><summary>8c · Frontend virtualisation — render only visible rows <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>Keep the full 10k-row array in React state, but render only the ~20 rows on screen. Scrolling swaps rows in and out instead of holding 200k DOM nodes.</dd>
+<dt>Where</dt><dd>Table renderers in <code>react_app/src/pages/patients/PatientsTableComponentRenderer.js</code> and <code>react_app/src/pages/homepage/VirtualTable.js</code>. Libraries <code>react-window</code> / <code>react-virtualized</code> are already declared in <code>package.json</code>.</dd>
+<dt>Why</dt><dd>The bottleneck for 10k rows is the browser drawing them, not the data size. Virtualisation keeps memory flat and scroll smooth. Exports, sorting, and totals still see the full array — nothing downstream breaks.</dd>
+<dt>Risk</dt><dd>Low. UI-only change; API and SQL untouched. Verify sticky headers and row heights still line up — virtual lists need a fixed <code>itemSize</code>.</dd></dl>
+<script type="text/plain" class="code" data-lang="javascript">// react_app/src/components/VirtualTable.js
+import { FixedSizeList as List } from "react-window";
+
+function VirtualTable({ rows }) {
+  const Row = ({ index, style }) => (
+    <div style={style} className="tr">
+      <span>{rows[index].patient_id}</span>
+      <span>{rows[index].name}</span>
+      <span>{rows[index].clinic}</span>
+      <span>{rows[index].status}</span>
+    </div>
+  );
+  return (
+    <List height={600} itemCount={rows.length} itemSize={36} width="100%">
+      {Row}
+    </List>
+  );
+}
+// Existing .map() render is replaced by <VirtualTable rows={data} />.
+// data still contains all 10,000 rows; only ~20 are in the DOM at any time.</script></div></details>
+
+<details class="blk"><summary>9 · Structured JSON logging with request IDs <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
+<dt>What</dt><dd>JSON log lines carrying a per-request id.</dd><dt>Where</dt><dd>new <code>logging_setup.py</code>; <code>app.py</code> before/after-request hooks. Replaces the <code>print(e)</code> in <code>retry_wrapper</code>.</dd>
+<dt>Why</dt><dd>Searchable gunicorn logs (<code>gunicorn_log.txt</code>); trace a failing report to one request.</dd><dt>Risk</dt><dd>Low.</dd></dl>
+<script type="text/plain" class="code" data-lang="python">import logging, uuid, orjson
+from flask import g, request
+
+class JsonFmt(logging.Formatter):
+    def format(self, r):
+        return orjson.dumps({"t": self.formatTime(r), "lvl": r.levelname, "msg": r.getMessage(),
+                             "rid": getattr(g, "rid", None)}).decode()
+
+h = logging.StreamHandler(); h.setFormatter(JsonFmt())
+logging.getLogger().addHandler(h); logging.getLogger().setLevel(logging.INFO)
+
+@app.before_request
+def _rid(): g.rid = request.headers.get("X-Request-ID", uuid.uuid4().hex[:12])
+@app.after_request
+def _hdr(resp): resp.headers["X-Request-ID"] = g.rid; return resp</script></div></details>
+</section>
+
+<!-- ═══════════ §7 ═══════════
+<section id="s7">
+<h2>§7 · Local DB with Docker + real-data dump</h2>
+<div class="callout bad"><p><b>🚫 Patient data.</b> The schema holds patients, appointments and insurance fields — treat any prod dump as protected health information. Mask names/DOB/phones/notes before it leaves the server, never commit it, never put it on shared drives.</p></div>
+<h3>Step 1 · <code>docker-compose.db.yml</code> (Postgres only)</h3>
+<script type="text/plain" class="code" data-lang="yaml">services:
+  db:
+    image: postgres:15-alpine
+    ports: ["5432:5432"]
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: retentions
+    volumes:
+      - ./docker/db_data:/var/lib/postgresql/data
+      - ./docker/dumps:/docker-entrypoint-initdb.d   # auto-load on FIRST start only</script>
+<h3>Step 2 · Dump prod (read-only)</h3>
+<p>The app uses a database per clinic, so dump each one. <code>-C</code> embeds <code>CREATE DATABASE</code> so the init loader recreates them all. Init scripts run alphabetically, so the role file goes first.</p>
+<script type="text/plain" class="code" data-lang="bash">mkdir -p docker/dumps
+# 00: the schema SQL does "OWNER TO collections_app" — role must exist locally
+echo "CREATE ROLE collections_app LOGIN PASSWORD 'local';" > docker/dumps/00-roles.sql
+
+i=1
+for DB in clinic_a clinic_b clinic_c; do          # = CLINIC_DATABASES
+  pg_dump "postgresql://$PROD_USER:$PROD_PASS@$PROD_HOST:5432/$DB" \
+    -C --no-owner --no-privileges --schema=public \
+    > "docker/dumps/0$((i++))-$DB.sql"
+done
+# ⚠ mask PII (see warning above) BEFORE moving files off the server
+printf 'docker/dumps/\ndocker/db_data/\nconfig.py\n.env\n' >> .gitignore</script>
+<h3>Steps 3–6 · Run, verify, connect, tear down</h3>
+<script type="text/plain" class="code" data-lang="bash"># 3. start
+docker compose -f docker-compose.db.yml up -d
+docker compose -f docker-compose.db.yml logs -f db      # wait for "ready to accept connections"
+
+# 4. verify (repeat per DB)
+psql postgresql://user:pass@localhost:5432/clinic_a -c '\dt'
+
+# 5. point backend at it — in .env
+#    POSTGRES_HOST=localhost  POSTGRES_USER=user  POSTGRES_PASSWORD=pass
+#    CLINIC_DATABASES=clinic_a,clinic_b,clinic_c
+
+# 6. teardown (-v + deleting ./docker/db_data wipes data; re-run step 3 to reload dumps)
+docker compose -f docker-compose.db.yml down -v
+rm -rf docker/db_data</script>
+<div class="callout info"><p>Init scripts execute only when the data directory is empty. Changing a dump later requires step 6 first. Firebase auth still needs real credentials (<code>GOOGLE_APPLICATION_CREDENTIALS</code>) — use a dev Firebase project, not prod.</p></div>
+
+<h3>Flow diagrams</h3>
+<div class="diagram"><svg viewBox="0 0 760 330" role="img" aria-label="Docker flows">
+<text x="10" y="18" class="m">SETUP</text>
+<rect class="box" x="10" y="30" width="120" height="50" rx="10"/><text x="24" y="60">Dev machine</text>
+<rect class="hl" x="165" y="30" width="130" height="50" rx="10"/><text x="177" y="60">docker compose</text>
+<rect class="hl" x="330" y="30" width="140" height="50" rx="10"/><text x="342" y="52">Postgres 15</text><text x="342" y="69" class="m">container :5432</text>
+<rect class="box" x="505" y="30" width="110" height="50" rx="10"/><text x="513" y="52">./docker/</text><text x="513" y="69" class="m">db_data (volume)</text>
+<rect class="ok" x="640" y="30" width="110" height="50" rx="10"/><text x="648" y="52">initdb.d</text><text x="648" y="69" class="m">dump auto-load</text>
+<path class="ln" d="M130 55H163M295 55H328M470 55H503M615 55H638"/>
+<text x="10" y="140" class="m">RUNTIME</text>
+<rect class="box" x="10" y="152" width="150" height="56" rx="10"/><text x="24" y="176">React (browser)</text><text x="24" y="194" class="m">:3000 npm start</text>
+<rect class="hl" x="220" y="152" width="190" height="56" rx="10"/><text x="234" y="176">Flask (gunicorn)</text><text x="234" y="194" class="m">:8000 /api/*</text>
+<rect class="hl" x="470" y="152" width="180" height="56" rx="10"/><text x="484" y="176">Postgres container</text><text x="484" y="194" class="m">1 DB per clinic</text>
+<path class="ln" d="M160 180H218M410 180H468"/><text x="168" y="172" class="m">REACT_APP_API_URL</text><text x="418" y="172" class="m">database_uri</text>
+<rect class="box" x="220" y="250" width="190" height="44" rx="10"/><text x="234" y="277">Firebase (dev project)</text><path class="ln" d="M315 208V248"/>
+</svg></div>
+<script type="text/plain" class="code" data-lang="text">ASCII
+Dev Machine ──▶ docker compose ──▶ [Postgres 15 container :5432]
+                                      ├─ volume ./docker/db_data   (persistent)
+                                      └─ ./docker/dumps → /docker-entrypoint-initdb.d
+                                           00-roles.sql, 01-clinic_a.sql … (first start only)
+
+Browser (React :3000) ──▶ Flask/gunicorn (:8000 /api/*) ──▶ Postgres container :5432</script>
+<script type="text/plain" class="code" data-lang="mermaid">flowchart LR
+  Dev[Dev machine] --> DC[docker compose]
+  DC --> PG[(Postgres 15 :5432)]
+  PG --- VOL[(./docker/db_data volume)]
+  DUMP[docker/dumps/*.sql] -- first start --> PG
+  UI[React :3000] --> API[Flask gunicorn :8000] --> PG
+  API --> FB[Firebase dev project]</script>
+</section> -->
+<!-- ═══════════ §7 ═══════════ -->
+<section id="s7">
+<h2>§7 · Local DB with Docker + daily server sync</h2>
+<p class="sub">Production DBs change daily. This section shows how to keep a local Docker Postgres in sync — with 4 different strategies, their trade-offs, and the recommended one.</p>
+
+<div class="callout bad"><p><b>🚫 Patient data.</b> The schema holds patients, appointments, and insurance fields. Treat every prod dump as protected health information. Mask PII columns <b>on the server</b> before the file ever leaves it, never commit dumps, never place them on shared drives.</p></div>
+
+<!-- ─── 7.1 Why sync daily ────────────────────────────────────── -->
+<h3>7.1 · Why a daily sync is needed</h3>
+<p>The app stores <b>one PostgreSQL database per clinic</b>. Local development against a stale snapshot breaks as soon as reports, cron jobs, or alerts reference rows that don't exist locally yet. A daily pull keeps developers working against near-live data without touching production.</p>
+
+<div class="callout info"><p><b>ℹ️ Two sync surfaces exist.</b> (a) <b>Data</b> — the clinic DBs, pulled daily by dump + restore. (b) <b>Schema</b> — the tables/triggers, loaded once from <code>create_tables_and_triggers.py</code> on an empty DB. Data restore handles schema too, so the schema loader (§5c) is only needed when a developer starts from a truly empty local DB.</p></div>
+
+<!-- ─── 7.2 Four setup options ────────────────────────────────── -->
+<h3>7.2 · Four ways to set up the local DB</h3>
+<p>Pick one. All four end with a working local Postgres on <code>localhost:5432</code>; they differ in effort, freshness, and how much patient data moves.</p>
+
+<details class="blk" open><summary>Option A · Manual one-shot dump + restore <span class="pill low">Effort: Low · Freshness: stale</span></summary><div class="ab">
+<dl class="k">
+<dt>Setup</dt><dd>Developer SSHes to the VPS, runs <code>pg_dump</code>, copies the file down with <code>scp</code>, and restores it into the local container once.</dd>
+<dt>Best for</dt><dd>Onboarding a new developer, or one-off debugging against a specific snapshot.</dd>
+<dt>Impact</dt><dd>Zero automation. Data goes stale the moment the server runs its next write. Every refresh is a manual 5-minute dance.</dd>
+<dt>Risk</dt><dd>Low — no automation, no secrets stored, no cron.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="bash"># On the VPS (read-only)
+pg_dump "postgresql://$PROD_USER:$PROD_PASS@localhost:5432/clinic_a" \
+  -C --no-owner --no-privileges --schema=public \
+  > clinic_a_$(date +%F).sql
+
+# On the developer machine
+scp ubuntu@vps:/home/ubuntu/clinic_a_$(date +%F).sql ./docker/dumps/
+docker compose -f docker-compose.db.yml up -d
+docker exec -i retentions_db psql -U user -d postgres < ./docker/dumps/clinic_a_$(date +%F).sql</script>
+</div></details>
+
+<details class="blk"><summary>Option B · Cron on VPS + scheduled pull on laptop <span class="pill med">Effort: Medium · Freshness: 24 h</span></summary><div class="ab">
+<dl class="k">
+<dt>Setup</dt><dd>Server runs <code>pg_dump</code> every night at 02:00 via cron. Each developer machine runs a scheduled task at 03:00 that pulls the newest dump with <code>scp</code> (or <code>rsync</code>) and restores it into the local container.</dd>
+<dt>Best for</dt><dd>Small teams; developers work at their desk with predictable morning-fresh data.</dd>
+<dt>Impact</dt><dd>Data at most 24 h old. Requires SSH access from each laptop to the VPS. Works offline once pulled.</dd>
+<dt>Risk</dt><dd>Medium — SSH key on each laptop, credentials scoped to a read-only DB user, dump file sits on disk until the next pull overwrites it.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="bash"># ── On the VPS: /etc/cron.d/backup_clinics ────────────────────
+0 2 * * * ubuntu /home/ubuntu/scripts/backup_clinics.sh >> /var/log/db_backup.log 2>&1
+
+# /home/ubuntu/scripts/backup_clinics.sh
+#!/bin/bash
+set -e
+DIR=/home/ubuntu/db_backups;  DATE=$(date +%F)
+mkdir -p "$DIR"
+for DB in clinic_a clinic_b clinic_c; do
+  pg_dump "postgresql://$BACKUP_USER:$BACKUP_PASS@localhost:5432/$DB" \
+    -C --no-owner --no-privileges --schema=public \
+    > "$DIR/${DB}_${DATE}.sql"
+done
+find "$DIR" -name '*.sql' -mtime +7 -delete</script>
+<script type="text/plain" class="code" data-lang="powershell"># ── On Windows: Task Scheduler → Daily 03:00 → powershell -File sync.ps1 ─
+# sync.ps1
+$vps = "ubuntu@your-vps-ip"
+$remote = "/home/ubuntu/db_backups"
+$local  = "D:\retentions-aid\docker\dumps"
+scp "${vps}:${remote}/*.sql" $local
+
+# restore into the running container
+Get-ChildItem "$local\*.sql" | Sort-Object Name | ForEach-Object {
+  docker exec -i retentions_db psql -U user -d postgres -f - < $_.FullName
+}
+Write-Host "Local DB synced at $(Get-Date)"</script>
+</div></details>
+
+<details class="blk"><summary>Option C · Cloud bucket relay (S3 / Backblaze / Drive) <span class="pill med">Effort: Medium · Freshness: 24 h</span></summary><div class="ab">
+<dl class="k">
+<dt>Setup</dt><dd>Server cron dumps and uploads to a private bucket with <code>aws s3 cp</code> (or <code>rclone</code>). Developers pull with <code>aws s3 sync</code> from their laptop — no direct SSH needed.</dd>
+<dt>Best for</dt><dd>Teams that want to avoid granting each laptop SSH access to the production VPS, or developers on networks that block port 22.</dd>
+<dt>Impact</dt><dd>Same 24 h freshness as Option B, plus versioning/retention on the bucket and audit logs of who downloaded what.</dd>
+<dt>Risk</dt><dd>Medium — bucket must be private, encrypted at rest, lifecycle-expire after 7 days. Each developer gets a scoped read-only key, not the server's write key.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="bash"># Server side (after the dump loop)
+aws s3 cp "$DIR/" "s3://clinic-db-backups/$(date +%F)/" \
+  --recursive --exclude "*" --include "*.sql" \
+  --sse AES256
+
+# Developer side
+aws s3 sync s3://clinic-db-backups/$(date +%F)/ ./docker/dumps/
+docker compose -f docker-compose.db.yml up -d
+for f in ./docker/dumps/*.sql; do
+  docker exec -i retentions_db psql -U user -d postgres < "$f"
+done</script>
+<div class="callout warn"><p><b>⚠️ Encryption &amp; retention.</b> Enable SSE on the bucket, restrict with an IAM policy limited to <code>s3:GetObject</code> on that prefix, and set a lifecycle rule deleting objects after 7 days. Log bucket access.</p></div>
+</div></details>
+
+<details class="blk"><summary>Option D · Direct tunnel — developer queries the live DB <span class="pill" style="color:var(--bad);border-color:var(--bad)">Effort: Low · Freshness: live</span></summary><div class="ab">
+<dl class="k">
+<dt>Setup</dt><dd>An SSH tunnel forwards <code>localhost:5433 → vps:5432</code>. Backend <code>.env</code> points at <code>localhost:5433</code>. No dump, no container.</dd>
+<dt>Best for</dt><dd>Read-only exploration, debugging a specific production row.</dd>
+<dt>Impact</dt><dd>Always fresh — but every query hits production. A developer running an expensive report slows the production server for real users.</dd>
+<dt>Risk</dt><dd><b>High — do not use for day-to-day development.</b> Accidental writes go straight to prod; connection storms from local testing can exhaust the server's pool; no PII masking between dev and prod.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="bash"># Read-only tunnel — use only for short, targeted lookups
+ssh -L 5433:localhost:5432 ubuntu@vps -N
+# then: POSTGRES_HOST=localhost POSTGRES_PORT=5433 in .env
+# ⚠️ Create a read-only role on the VPS and connect with it:
+#    CREATE ROLE dev_readonly LOGIN PASSWORD '...';
+#    GRANT CONNECT ON DATABASE clinic_a TO dev_readonly;
+#    GRANT USAGE ON SCHEMA public TO dev_readonly;
+#    GRANT SELECT ON ALL TABLES IN SCHEMA public TO dev_readonly;</script>
+<div class="callout bad"><p><b>🚫 Never use Option D with the production credentials.</b> If you must tunnel, tunnel as <code>dev_readonly</code>, never as the app user. Prefer Option B or C for anything longer than a single debugging session.</p></div>
+</div></details>
+
+<!-- ─── 7.3 Comparison table ──────────────────────────────────── -->
+<h3>7.3 · Option comparison</h3>
+<div class="tw"><table><thead><tr>
+<th>Option</th><th>Freshness</th><th>Setup effort</th><th>Automation</th><th>Impact on prod</th><th>Data on laptop</th><th>Recommended</th>
+</tr></thead><tbody>
+<tr><td><b>A</b> · Manual dump</td><td>Stale</td><td>Low</td><td>None</td><td>None</td><td>Yes (when pulled)</td><td>Only for onboarding</td></tr>
+<tr><td><b>B</b> · Cron + scp</td><td>24 h</td><td>Medium</td><td>Cron + Task Scheduler</td><td>None (dump is read-only)</td><td>Yes (masked)</td><td><b>✅ Recommended</b></td></tr>
+<tr><td><b>C</b> · Cloud bucket relay</td><td>24 h</td><td>Medium</td><td>Cron + S3 sync</td><td>None</td><td>Yes (masked)</td><td>✅ If SSH is restricted</td></tr>
+<tr><td><b>D</b> · Direct tunnel</td><td>Live</td><td>Low</td><td>None</td><td><b>High risk</b></td><td>No (remote)</td><td>🚫 Only for lookups</td></tr>
+</tbody></table></div>
+
+<!-- ─── 7.4 Flow diagrams ─────────────────────────────────────── -->
+<h3>7.4 · Flow diagrams</h3>
+
+<h4 style="color:var(--mut);margin:14px 0 6px">Option B — cron + pull (recommended)</h4>
+<div class="diagram"><svg viewBox="0 0 820 300" role="img" aria-label="Daily sync flow">
+  <text x="10" y="18" class="m">PRODUCTION VPS</text>
+  <rect class="hl" x="10" y="30" width="180" height="60" rx="10"/>
+    <text x="26" y="54">cron 02:00</text><text x="26" y="72" class="m">backup_clinics.sh</text>
+  <rect class="box" x="220" y="30" width="180" height="60" rx="10"/>
+    <text x="236" y="54">pg_dump per clinic</text><text x="236" y="72" class="m">--no-owner --clean</text>
+  <rect class="ok" x="430" y="30" width="180" height="60" rx="10"/>
+    <text x="446" y="54">/home/ubuntu/</text><text x="446" y="72" class="m">db_backups/*.sql</text>
+  <rect class="box" x="640" y="30" width="170" height="60" rx="10"/>
+    <text x="654" y="54">retain 7 days</text><text x="654" y="72" class="m">find -mtime +7 -delete</text>
+  <path class="ln" d="M190 60H218M400 60H428M610 60H638"/>
+
+  <text x="10" y="150" class="m">DEVELOPER LAPTOP</text>
+  <rect class="hl" x="10" y="162" width="180" height="60" rx="10"/>
+    <text x="26" y="186">Task Scheduler</text><text x="26" y="204" class="m">daily 03:00</text>
+  <rect class="box" x="220" y="162" width="180" height="60" rx="10"/>
+    <text x="236" y="186">scp / rsync</text><text x="236" y="204" class="m">*.sql → ./docker/dumps</text>
+  <rect class="ok" x="430" y="162" width="180" height="60" rx="10"/>
+    <text x="446" y="186">restore into</text><text x="446" y="204" class="m">Postgres container</text>
+  <rect class="box" x="640" y="162" width="170" height="60" rx="10"/>
+    <text x="654" y="186">local dev ready</text><text x="654" y="204" class="m">localhost:5432</text>
+  <path class="ln" d="M190 192H218M400 192H428M610 192H638"/>
+
+  <path class="ln" d="M520 90 Q 520 130 520 160" stroke-dasharray="5 4"/>
+  <text x="528" y="128" class="m">nightly pull</text>
+</svg></div>
+
+<h4 style="color:var(--mut);margin:14px 0 6px">Option C — cloud bucket relay</h4>
+<div class="diagram"><svg viewBox="0 0 820 220" role="img" aria-label="Cloud relay">
+  <rect class="hl" x="10" y="30" width="150" height="60" rx="10"/>
+    <text x="26" y="54">VPS cron</text><text x="26" y="72" class="m">pg_dump</text>
+  <rect class="ok" x="200" y="30" width="180" height="60" rx="10"/>
+    <text x="216" y="54">S3 bucket</text><text x="216" y="72" class="m">private · AES256 · 7 d TTL</text>
+  <rect class="hl" x="420" y="30" width="150" height="60" rx="10"/>
+    <text x="436" y="54">laptop pull</text><text x="436" y="72" class="m">aws s3 sync</text>
+  <rect class="box" x="610" y="30" width="180" height="60" rx="10"/>
+    <text x="626" y="54">docker restore</text><text x="626" y="72" class="m">psql &lt; dump.sql</text>
+  <path class="ln" d="M160 60H198M380 60H418M570 60H608"/>
+  <text x="10" y="150" class="m">Trade-off: no SSH from laptops → cleaner security, at the cost of a cloud account + scoped IAM keys.</text>
+  <text x="10" y="176" class="m">Masking must run on the VPS before upload, or at upload time (pg_dump piped through a masker).</text>
+  <text x="10" y="202" class="m">Never store the server's write key on a laptop. Give each developer a read-only key on that prefix only.</text>
+</svg></div>
+
+<h4 style="color:var(--mut);margin:14px 0 6px">Option D — direct tunnel (🚫 avoid for daily dev)</h4>
+<div class="diagram"><svg viewBox="0 0 820 200" role="img" aria-label="SSH tunnel">
+  <rect class="box" x="10" y="40" width="180" height="60" rx="10"/>
+    <text x="26" y="64">local backend</text><text x="26" y="82" class="m">localhost:5433</text>
+  <rect class="del" x="230" y="40" width="200" height="60" rx="10"/>
+    <text x="246" y="64">SSH tunnel</text><text x="246" y="82" class="m">ssh -L 5433:vps:5432</text>
+  <rect class="del" x="470" y="40" width="180" height="60" rx="10"/>
+    <text x="486" y="64">production DB</text><text x="486" y="82" class="m">live, shared, hot</text>
+  <rect class="bad" x="690" y="40" width="120" height="60" rx="10" style="fill:rgba(255,107,107,.12);stroke:var(--bad)"/>
+    <text x="704" y="64">prod impact</text><text x="704" y="82" class="m">HIGH</text>
+  <path class="ln" d="M190 70H228M430 70H468M650 70H688"/>
+  <text x="10" y="150" class="m">Use only with a read-only role (dev_readonly), only for short lookups, never for reports or cron.</text>
+  <text x="10" y="176" class="m">Common failure: local report loops exhaust the VPS connection pool → production users see timeouts.</text>
+</svg></div>
+
+<!-- ─── 7.5 Recommended: Option B walkthrough ────────────────── -->
+<h3>7.5 · Recommended setup — Option B in 6 steps</h3>
+
+<h4>Step 1 · Docker compose for Postgres only</h4>
+<script type="text/plain" class="code" data-lang="yaml"># docker-compose.db.yml
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: retentions_db
+    ports: ["5432:5432"]
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
+    volumes:
+      - ./docker/db_data:/var/lib/postgresql/data
+      - ./docker/dumps:/docker-entrypoint-initdb.d   # first start only</script>
+
+<h4>Step 2 · Create a read-only backup role on the VPS</h4>
+<script type="text/plain" class="code" data-lang="sql">-- Run once on the VPS as a superuser
+CREATE ROLE backup_ro LOGIN PASSWORD '***REDACTED***';
+GRANT CONNECT ON DATABASE clinic_a TO backup_ro;
+GRANT USAGE   ON SCHEMA public      TO backup_ro;
+GRANT SELECT  ON ALL TABLES IN SCHEMA public TO backup_ro;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO backup_ro;
+-- Repeat GRANTs for clinic_b, clinic_c</script>
+
+<h4>Step 3 · Server cron (see Option B code above)</h4>
+<p>Install the backup script at <code>/home/ubuntu/scripts/backup_clinics.sh</code> and schedule it with <code>/etc/cron.d/backup_clinics</code> to run daily at 02:00.</p>
+
+<h4>Step 4 · Add PII masking on the server before the file is written</h4>
+<script type="text/plain" class="code" data-lang="bash"># mask.sql — applied to the dump as it is written
+UPDATE patients SET name = 'MASKED', phone = '0000000000',
+                    dob = '1900-01-01', notes = NULL;
+-- Repeat per sensitive table/column discovered in the schema
+
+# in backup_clinics.sh
+pg_dump ... | psql --set ON_ERROR_STOP=1 -f mask.sql > "${DB}_${DATE}.sql"
+# (simplest safe version: dump → restore into a scratch DB on the VPS → run mask.sql → dump the scratch DB)</script>
+
+<h4>Step 5 · Laptop pull + restore (Windows Task Scheduler → sync.ps1)</h4>
+<p>See the <code>sync.ps1</code> block under Option B above. Schedule it 03:00 daily, after the server backup finishes.</p>
+
+<h4>Step 6 · Point the backend at the local DB</h4>
+<script type="text/plain" class="code" data-lang="dotenv"># .env  (local)
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=user
+POSTGRES_PASSWORD=pass
+CLINIC_DATABASES=clinic_a,clinic_b,clinic_c
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/firebase-dev.json   # DEV project, not prod</script>
+
+<div class="callout ok"><p><b>✅ End state:</b> every morning, without human action, the local Docker Postgres contains yesterday's masked production data. Run <code>docker compose -f docker-compose.db.yml up -d</code>, then <code>python app.py</code>, and the backend is working against near-live data.</p></div>
+
+<!-- ─── 7.6 Safety ───────────────────────────────────────────── -->
+<h3>7.6 · Safety rules (all options)</h3>
+<ul>
+  <li><b>Mask PII on the VPS</b>, before the file leaves it. Never rely on the laptop to mask.</li>
+  <li><b>Read-only DB role</b> for all backups. <code>backup_ro</code> has <code>SELECT</code> only.</li>
+  <li><b>Dumps never enter git.</b> Add <code>docker/dumps/</code>, <code>docker/db_data/</code>, <code>*.sql</code> at the repo root level to <code>.gitignore</code>.</li>
+  <li><b>Retention:</b> delete dumps older than 7 days on both the server and the laptop.</li>
+  <li><b>Dev Firebase only.</b> <code>GOOGLE_APPLICATION_CREDENTIALS</code> must point at a dev project. Never copy production Firebase credentials to a laptop.</li>
+  <li><b>Bucket hygiene (Option C):</b> private bucket, SSE enabled, IAM limited to <code>s3:GetObject</code> on the dump prefix, lifecycle rule 7 days.</li>
+  <li><b>Never use Option D</b> with the app's production credentials — only <code>dev_readonly</code>, and only for short lookups.</li>
+</ul>
+
+</section>
+
+<!-- ═══════════ §8 ═══════════ -->
+<section id="s8">
+<h2>§8 · requirements.txt + README.md</h2>
+<h3>(a) <code>flask_app/requirements.txt</code></h3>
+<p>Derived from imports found in <code>flask_app/*.py</code> and <code>database_dumps/</code> (pandas, sib_api_v3_sdk, openpyxl, tqdm, sqlalchemy, numpy, firebase_admin, flask_cors, flask_caching, orjson, sklearn, psycopg2, pytz, dotenv). Code uses SQLAlchemy 2.x style (<code>connection.commit()</code>, <code>text()</code>), so pins are 2.x/pandas 2.x.</p>
+<script type="text/plain" class="code" data-lang="text">Flask==3.0.3
+Flask-Cors==4.0.1
+Flask-Caching==2.3.0
+gunicorn==22.0.0
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.31
+pandas==2.2.2
+numpy==1.26.4
+python-dotenv==1.0.1
+firebase-admin==6.5.0
+orjson==3.10.6
+openpyxl==3.1.5
+tqdm==4.66.4
+scikit-learn==1.5.1
+sib-api-v3-sdk==7.6.0
+pytz==2024.1</script>
+<div class="callout info"><p>These versions are reasonable defaults, not verified against your server. Run <code>pip freeze</code> inside the working conda env (<code>retentions-aid</code> on the VPS) to lock exact versions, then diff against this list. Also check <code>patient_released</code> and <code>retentions_input</code>, imported once each — they weren't found as files on this branch.</p></div>
+
+<h3>(b) <code>README.md</code> (repo root)</h3>
+<script type="text/plain" class="code" data-lang="markdown"># Retentions-Aid
+
+## Overview
+Patient-retention management for clinics: weekly/monthly reports, alerts, notes and user/clinic administration. Flask API + React UI, one PostgreSQL database per clinic, Firebase authentication.
+
+## Architecture
+```
+React (react_app/build, served by Flask)  ->  Flask + gunicorn (:8000)  ->  PostgreSQL (one DB / clinic)
+                                                    |-> Firebase Auth     |-> Sendinblue / ZeptoMail
+```
+(diagram placeholder: docs/architecture.png)
+
+## Branches
+| Branch | Purpose |
+|---|---|
+| `prod` | Deployed to the Contabo VPS by GitHub Actions (default branch) |
+| `dev` | Integration branch; feature PRs target it |
+| `main` | **Removed** |
+
+## Prerequisites
+Python 3.11 (conda), Node 16+ and npm, Docker + Docker Compose, a Firebase **dev** project and service-account JSON.
+
+## Local Setup
+1. **Clone** — `git clone https://github.com/flodata-analytics/retentions-aid.git && cd retentions-aid && git checkout dev`
+2. **Backend**
+   ```bash
+   conda create -n retentions-aid python=3.11 -y && conda activate retentions-aid
+   pip install -r flask_app/requirements.txt
+   cp .env.example .env                              # fill in values
+   cp flask_app/config.example.py flask_app/config.py
+   ```
+3. **Frontend** — `cd react_app && npm ci && npm start`
+4. **Database** — `docker compose -f docker-compose.db.yml up -d` (restore dumps as described in docs/LOCAL_DB.md; dumps are never committed)
+
+## Running
+```bash
+cd flask_app && python app.py                         # dev API on :8000
+gunicorn --chdir flask_app -w 1 app:app --timeout 100000   # prod-like
+```
+
+## Deploying
+Merge `dev` into `prod`. GitHub Actions (`.github/workflows/main.yml`) runs tests, then SSHes to the Contabo VPS, pulls `prod` and runs `flask_app/restart.sh`. Secrets: `SSH_HOST, SSH_USER, SSH_KEY, SSH_PORT, PROJECT_FOLDER`.
+
+## Project Structure
+```
+.github/workflows/   CI/CD
+flask_app/           API, reports, cron scripts, config.example.py, requirements.txt
+react_app/           UI (src/), committed production build/
+database_dumps/      helper scripts (dump files are gitignored)
+docker-compose.db.yml  local PostgreSQL
+```
+
+## Environment Variables
+| Name | Purpose | Value |
+|---|---|---|
+| FLASK_SECRET_KEY | Flask secret | ***REDACTED*** |
+| POSTGRES_HOST/PORT/USER/PASSWORD | DB connection | ***REDACTED*** |
+| CLINIC_DATABASES | comma-separated clinic DB names | ***REDACTED*** |
+| GOOGLE_APPLICATION_CREDENTIALS | Firebase service-account path | ***REDACTED*** |
+| SIB_API_KEY / SIB_SENDER_EMAIL / SIB_SENDER_NAME | Sendinblue email | ***REDACTED*** |
+| ZEPTO_PASS | ZeptoMail SMTP (reports) | ***REDACTED*** |
+| RETENTIONS_ADMIN_EMAIL / _PASSWORD / _ORG | bootstrap admin | ***REDACTED*** |
+| UI_ORIGIN | allowed CORS origin | http://localhost:3000 |
+| REACT_APP_API_URL | UI -> API base URL | http://localhost:8000 |
+
+## Contributing
+Branch `feature/<name>` off `dev` -> PR into `dev` -> after review merge `dev` into `prod`. Never commit `.env`, `config.py`, Firebase JSON or DB dumps. Do not modify SQL without a reviewer who owns the reports.
+
+## Troubleshooting
+- `ModuleNotFoundError: config` — copy `config.example.py` to `config.py`.
+- `Missing required env var` — compare `.env` with `.env.example`.
+- Dump not loaded — init scripts run only on an empty data dir: `docker compose -f docker-compose.db.yml down -v && rm -rf docker/db_data`.
+- UI calls production — set `REACT_APP_API_URL`.
+- Cached stale data — restart gunicorn or call `cache.clear()`.</script>
+</section>
+
+<!-- ═══════════ §9 ═══════════ -->
+<section id="s9">
+<h2>§9 · Quick reference / cheat sheet</h2>
+<h3>Rename branches</h3>
+<script type="text/plain" class="code" data-lang="bash">git branch -m contabo prod && git branch -m update_JAN_2025 dev
+git push -u origin prod dev   # then default=prod on GitHub, then:
+git push origin --delete contabo update_JAN_2025 main</script>
+<h3>Switch + reset</h3>
+<script type="text/plain" class="code" data-lang="bash">git fetch --prune && git checkout dev && git reset --hard origin/dev   # discards local changes!</script>
+<h3>Start local DB · Run API · Run UI</h3>
+<script type="text/plain" class="code" data-lang="bash">docker compose -f docker-compose.db.yml up -d
+cd flask_app && python app.py                    # :8000
+cd react_app && npm start                        # :3000</script>
+<h3>Deploy · Cache bust</h3>
+<script type="text/plain" class="code" data-lang="bash">git checkout prod && git merge --no-ff dev && git push origin prod    # Actions deploys
+# on VPS, if needed:  sudo bash flask_app/restart.sh     (restarting gunicorn clears SimpleCache)</script>
+<h3>Where to edit what</h3>
+<div class="tw"><table><thead><tr><th>Task</th><th>File</th></tr></thead><tbody>
+<tr><td>API routes</td><td><code>flask_app/app.py</code></td></tr>
+<tr><td>Reports / SQL (don't touch)</td><td><code>flask_app/reports.py</code>, <code>weekly_status.sql</code></td></tr>
+<tr><td>DB connections</td><td><code>flask_app/app_db.py</code>, <code>config.py</code></td></tr>
+<tr><td>Email</td><td><code>email_util.py</code>, <code>monthly_reports.py</code>, <code>weekly_report.py</code></td></tr>
+<tr><td>Cron jobs</td><td><code>flask_app/*_cron.sh</code>, <code>auto_alerts.sh</code></td></tr>
+<tr><td>Deploy</td><td><code>.github/workflows/main.yml</code>, <code>flask_app/restart.sh</code></td></tr>
+<tr><td>UI API base URL</td><td><code>react_app/src/contexts/ApiContext.js</code></td></tr>
+<tr><td>Spinner</td><td><code>react_app/src/pages/LoadingPage.js</code></td></tr>
+</tbody></table></div>
+</section>
+</main>
+<button id="top" aria-label="Back to top">↑</button>
+
 <script>
-const src=`README.md|.github/workflows/main.yml|flask_app/.gitignore|flask_app/app.py|flask_app/app_db.py|flask_app/auto_alerts.sh|flask_app/clinic_active_inactive_cron.sh|flask_app/clinic_manager.py|flask_app/create_tables_and_triggers.py|flask_app/custom_json_provider.py|flask_app/email_util.py|flask_app/enable_disable_clinic_cron.py|flask_app/firebase_user.py|flask_app/helper_classes.py|flask_app/printers.py|flask_app/reports.py|flask_app/response_wrapper.py|flask_app/restart.sh|flask_app/update_alerts.py|flask_app/update_user_alerts.py|flask_app/user_alerts_cron.sh|react_app/.gitignore|react_app/.prettierrc|react_app/package.json|react_app/package-lock.json|react_app/src/index.js|react_app/src/index.scss|react_app/src/firebase.js|react_app/src/components/AlertPopup.js|react_app/src/components/App.js|react_app/src/components/Dashboard.js|react_app/src/components/Dashboard.scss|react_app/src/components/ExportPopup.js|react_app/src/components/ForgotPassword.js|react_app/src/components/Login.js|react_app/src/components/Navbar.js|react_app/src/components/SidebarDropdownComponent.js|react_app/src/components/super-user/SuperUserDashboard.js|react_app/src/contexts/ApiContext.js|react_app/src/contexts/AuthContext.js|react_app/src/contexts/DownloadContext.js|react_app/src/pages/LoadingPage.js|react_app/src/pages/admin/ActiveInactiveClinics.js|react_app/src/pages/admin/AddUser.js|react_app/src/pages/admin/AssignClinics.js|react_app/src/pages/admin/UsersArchive.js|react_app/src/pages/homepage/HomePage.js|react_app/src/pages/homepage/VirtualTable.js|react_app/src/pages/notification/Alerts.js|react_app/src/pages/notification/Notification.js|react_app/src/pages/notification/Updates.js|react_app/src/pages/patients/Patients.js|react_app/src/pages/user-profile/Profile.js|react_app/src/pages/user-profile/UpdateProfile.js|react_app/src/utils/ImageUtils.js|react_app/src/utils/fetchProgress.js|react_app/src/utils/numberUtils.js|react_app/src/utils/reportUtils.js|react_app/src/utils/sidebarUtils.js`.split("|");
-const additions=`.gitignore|Retentionsaid_Clinic_Addition_Procedure.pdf|flask_app/monthly_reports.py|flask_app/weekly_report.py|flask_app/weekly_status.sql|react_app/build/static/css/302.dbf05cca.chunk.css|react_app/build/static/css/381.56798e8.chunk.css|react_app/build/static/css/main.527c45f2.css|react_app/build/static/js/167.21de425b.chunk.js|react_app/build/static/js/26.f4b746dc.chunk.js|react_app/build/static/js/495.a2c7e7fa.chunk.js|react_app/build/static/js/713.fc132253.chunk.js|react_app/build/static/js/main.f23ce1c0.js|react_app/src/pages/admin/WeeklyStatus.js|react_app/src/pages/patients/PatientsTableComponentRenderer.js|react_app/src/pages/patients/SortableSmallTable.js`;
-const modified=`.github/workflows/main.yml|flask_app/app.py|flask_app/app_db.py|flask_app/create_tables_and_triggers.py|flask_app/custom_json_provider.py|flask_app/reports.py|react_app/build/asset-manifest.json|react_app/build/index.html|react_app/package.json|react_app/src/components/AlertPopup.js|react_app/src/components/Dashboard.js|react_app/src/components/ExportPopup.js|react_app/src/components/Navbar.js|react_app/src/components/SidebarDropdownComponent.js|react_app/src/components/date-range-popups/date-range-popups.js|react_app/src/components/super-user/SuperUserDashboard.js|react_app/src/contexts/ApiContext.js|react_app/src/index.scss|react_app/src/pages/admin/ActiveInactiveClinics.js|react_app/src/pages/admin/AssignClinics.js|react_app/src/pages/admin/UsersArchive.js|react_app/src/pages/homepage/HomePage.js|react_app/src/pages/homepage/VirtualTable.js|react_app/src/pages/notification/Alerts.js|react_app/src/pages/notification/Updates.js|react_app/src/pages/patients/Patients.js|react_app/src/pages/user-profile/UpdateProfile.js|react_app/src/utils/reportUtils.js`;
-const removed=`database_dumps/.gitignore|database_dumps/clone_collections_db.py|flask_app/create_retentions_alerts_table.py|react_app/build/static/css/713.dbf05cca.chunk.css|react_app/build/static/css/main.1d8f32f5.css|react_app/build/static/js/167.4d3da468.chunk.js|react_app/build/static/js/26.f4b746dc.chunk.js|react_app/build/static/js/495.a2c7e7fa.chunk.js|react_app/build/static/js/713.fc132253.chunk.js|react_app/build/static/js/main.f23ce1c0.js|react_app/build/static/js/main.f23ce1c0.js.LICENSE.txt`;
-const featureOnly=`flask_app/monthly_reports.py|flask_app/weekly_report.py|flask_app/weekly_status.sql|react_app/src/pages/admin/WeeklyStatus.js|react_app/src/pages/patients/PatientsTableComponentRenderer.js|react_app/src/pages/patients/SortableSmallTable.js`;
-src.push(...featureOnly.split("|"));
-const info={main:{commit:"0342ee3",date:"2025-01-08",purpose:"Baseline release line: Flask serves the React application and exposes authenticated retention, clinic, patient, and alert APIs. Older reporting implementation and fewer admin/reporting screens.",message:"fixed code in update_alerts.py"},contabo:{commit:"d749a5d",date:"2026-05-11",purpose:"Deployment-oriented line with expanded reporting, weekly-status administration, refreshed React sources/build, and a Contabo Ubuntu VPS workflow. Its tracked tree matches update_JAN_2025.",message:"Merge pull request #2 from flodata-analytics/update_JAN_2025"},update_JAN_2025:{commit:"55b1f06",date:"2026-05-11",purpose:"Feature/update line carrying the same reporting and UI additions as contabo. Different commit history, but no tracked-tree difference at current tips.",message:"Update email recipients and report subject"}};
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
-function tree(paths,q=""){const root={};paths.filter(p=>p.toLowerCase().includes(q.toLowerCase())).forEach(p=>{let n=root;const a=p.split("/");a.forEach((part,i)=>{n[part]??={};if(i<a.length-1)n=n[part];});});function walk(n,d=0){return Object.entries(n).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>Object.keys(v).length?`<details ${d===0?"open":""}><summary>${esc(k)}/</summary><ul><li>${walk(v,d+1)}</li></ul></details>`:`<span class="file">${esc(k)}</span>`).join("");}return walk(root)||"<span class='muted'>No matching paths.</span>";}
-const keyRows=[["flask_app/app.py","Flask config, routes, React static serving"],["flask_app/app_db.py","SQLAlchemy/PostgreSQL query helpers"],["flask_app/firebase_user.py","Firebase Admin auth, accounts, roles"],["flask_app/reports.py","Retention/clinic reporting"],["flask_app/monthly_reports.py","Monthly reporting; non-default branches"],["flask_app/weekly_report.py","Weekly reporting; non-default branches"],["flask_app/restart.sh","Conda and Gunicorn VPS restart"],["react_app/src/index.js","React app bootstrap"],["react_app/src/contexts/ApiContext.js","Frontend API host/request helpers"],["react_app/package.json","Frontend dependencies/scripts"],[".github/workflows/main.yml","Contabo-only Actions deployment"]];
-function panel(name){let files=src.slice();if(name==="main")files=files.filter(p=>!featureOnly.split("|").includes(p)).concat(["database_dumps/.gitignore","database_dumps/clone_collections_db.py","flask_app/create_retentions_alerts_table.py"]);const d=info[name],env=[["Private config","flask_app/config.py: database_uri, databases","***REDACTED***","Required, ignored and absent in this checkout"],["Flask","SECRET_KEY","***REDACTED***","Currently hardcoded; move to runtime secret"],["Firebase Admin","Application default credentials","***REDACTED***","Provide through host credentials"],["Email","SIB_API_KEY","***REDACTED***","Sendinblue/Brevo API"],["Email sender","SIB_SENDER_EMAIL, SIB_SENDER_NAME","***REDACTED***","Transactional sender identity"],["Admin bootstrap","RETENTIONS_ADMIN_EMAIL, RETENTIONS_ADMIN_PASSWORD, RETENTIONS_ADMIN_ORG","***REDACTED***","Used to create admin account"]];return `<div class="intro"><div><h3>${esc(name)} <span class="badge">${name==="main"?"default":"feature / deploy"}</span></h3><p>${esc(d.purpose)}</p></div><span class="refhash">${d.commit} · ${d.date}</span></div><p class="muted">Latest commit: ${esc(d.message)}</p><div class="badges">${["Python","Flask","React 17","Node.js","PostgreSQL","Firebase","Gunicorn","GitHub Actions"].map(x=>`<span class="badge">${x}</span>`).join("")}</div><div class="grid"><div class="box"><h4>Tracked source/config tree</h4><div class="tree" data-tree="${name}">${tree(files)}</div><div class="tree-note">${name==="main"?282:329} tracked files. Public/build media and hashed bundles are summarized; source/config paths expand here.</div></div><div><div class="box"><h4>Key Files &amp; Role</h4><div class="tablewrap"><table class="table"><thead><tr><th>Path</th><th>Role</th></tr></thead><tbody>${keyRows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")}</tbody></table></div></div><div class="box" style="margin-top:12px"><h4>Entry points / how to run</h4><p class="muted">API: <code>flask_app/app.py</code>, local debug binds 127.0.0.1:8000. UI: <code>react_app/src/index.js</code>, CRA serves on 3000. Gunicorn production command leaves bind unspecified (default port 8000).</p><div class="code"><button class="copy">Copy</button><pre><code>cd react_app
-npm ci
-npm start
-
-# API needs private flask_app/config.py and Python deps
-cd ../flask_app
-conda activate retentions-aid
-python app.py
-
-# Production: flask_app/restart.sh (Conda + Gunicorn)</code></pre></div></div></div></div><div class="box" style="margin-top:12px"><h4>Dependencies</h4><p class="muted"><b>Frontend:</b> React 17, react-scripts 5, axios, Firebase 9, Leaflet, React Bootstrap, Moment Timezone, node-sass 7, chart/table tools. Scripts: start, build, test, analyze. Metadata says pnpm 10, but package-lock.json is tracked.</p><p class="muted"><b>Python imports:</b> Flask, Flask-CORS, Flask-Caching, pandas, NumPy, SQLAlchemy, psycopg2, firebase-admin, python-dotenv, orjson, scikit-learn, openpyxl, tqdm, sib-api-v3-sdk. Versions are not declared.</p></div><div class="box" style="margin-top:12px"><h4>Environment variables &amp; secret inputs</h4><div class="tablewrap"><table class="table"><thead><tr><th>Area</th><th>Names</th><th>Values</th><th>Notes</th></tr></thead><tbody>${env.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div><div class="box" style="margin-top:12px"><h4>CI/CD &amp; deployment</h4><p class="muted">Only pushes to <code>contabo</code> trigger <code>.github/workflows/main.yml</code>. Actions SCP the checkout to a Contabo/Ubuntu VPS and SSH-run <code>flask_app/restart.sh</code>. CI secret names: SSH_HOST, SSH_USER, SSH_PORT, SSH_PASSWORD, PROJECT_FOLDER; values not shown. Script assumes fixed Ubuntu/Conda paths and an existing <code>retentions-aid</code> environment. No Docker or deploy health check.</p><p class="muted">External services: PostgreSQL, Firebase Auth/Admin, Sendinblue/Brevo mail, and the React-configured production API host. No explicit workflow port configuration.</p></div>`;}
-document.getElementById("p-main").innerHTML=panel("main");document.getElementById("p-contabo").innerHTML=panel("contabo");document.getElementById("p-update").innerHTML=panel("update_JAN_2025");
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",String(x===b)));document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===b.getAttribute("aria-controls")));});
-const changes=[["Added paths (55)",additions.split("|")],["Modified (28)",modified.split("|")],["Removed paths (11, including rename sources)",removed.split("|")],["Detected renames (3)",["react_app/build/static/css/713.dbf05cca.chunk.css → 302.dbf05cca.chunk.css","react_app/build/static/js/167.4d3da468.chunk.js → 167.21de425b.chunk.js","react_app/build/static/js/main.f23ce1c0.js.LICENSE.txt → main.e86cfe6b.js.LICENSE.txt"]]];
-changes[0][0]="Added paths (58, including rename targets)";
-changes[0][1]=[".gitignore","Retentionsaid_Clinic_Addition_Procedure.pdf","flask_app/monthly_reports.py","flask_app/weekly_report.py","flask_app/weekly_status.sql","react_app/build/static/css/302.dbf05cca.chunk.css","react_app/build/static/css/381.56798a5c56.chunk.css","react_app/build/static/css/main.527c45f2.css","react_app/build/static/js/167.21de425b.chunk.js","react_app/build/static/js/26.317e8881.chunk.js","react_app/build/static/js/302.bb7c7882.chunk.js","react_app/build/static/js/381.91e075c0.chunk.js","react_app/build/static/js/381.91e075c0.chunk.js.LICENSE.txt","react_app/build/static/js/495.1cb348c1.chunk.js","react_app/build/static/js/main.e86cfe6b.js","react_app/build/static/js/main.e86cfe6b.js.LICENSE.txt","react_app/src/components/Dashboard.css","react_app/src/components/Dashboard.css.map","react_app/src/components/ForgotPassword.css","react_app/src/components/ForgotPassword.css.map","react_app/src/components/Login.css","react_app/src/components/Login.css.map","react_app/src/components/UserHomePage.css","react_app/src/components/UserHomePage.css.map","react_app/src/components/reset-password/ResetPassword.css","react_app/src/components/reset-password/ResetPassword.css.map","react_app/src/components/super-user/SuperUserDashboard.css","react_app/src/components/super-user/SuperUserDashboard.css.map","react_app/src/index.css","react_app/src/index.css.map","react_app/src/pages/admin/ActiveInactiveClinics.css","react_app/src/pages/admin/ActiveInactiveClinics.css.map","react_app/src/pages/admin/AddUser.css","react_app/src/pages/admin/AddUser.css.map","react_app/src/pages/admin/AssignClinics.css","react_app/src/pages/admin/AssignClinics.css.map","react_app/src/pages/admin/UserArchive.css","react_app/src/pages/admin/UserArchive.css.map","react_app/src/pages/admin/WeeklyStatus.css","react_app/src/pages/admin/WeeklyStatus.css.map","react_app/src/pages/admin/WeeklyStatus.js","react_app/src/pages/admin/WeeklyStatus.scss","react_app/src/pages/first-login-page/FirstLogin.css","react_app/src/pages/first-login-page/FirstLogin.css.map","react_app/src/pages/homepage/HomePage.css","react_app/src/pages/homepage/HomePage.css.map","react_app/src/pages/notification/Alerts.css","react_app/src/pages/notification/Alerts.css.map","react_app/src/pages/notification/Updates.css","react_app/src/pages/notification/Updates.css.map","react_app/src/pages/patients/Patients.css","react_app/src/pages/patients/Patients.css.map","react_app/src/pages/patients/PatientsTableComponentRenderer.js","react_app/src/pages/patients/SortableSmallTable.js","react_app/src/pages/user-profile/Profile.css","react_app/src/pages/user-profile/Profile.css.map","react_app/src/pages/user-profile/UpdateProfile.css","react_app/src/pages/user-profile/UpdateProfile.css.map"];
-document.getElementById("groups").innerHTML=changes.map(([h,list])=>`<div class="group"><h4>${h} · same versus main for both branches</h4><details><summary>Expand paths (${list.length} shown)</summary><ul>${list.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details></div>`).join("");
-const issues=[
-["Security issues",`<p><span class="tag">HIGH</span> <b>Hardcoded Flask signing secret:</b> <code>flask_app/app.py</code> embeds a literal. Value intentionally suppressed. Replace and rotate it:<div class="code"><button class="copy">Copy</button><pre><code>import os&#10;&#10;class Config:&#10;    SECRET_KEY = os.environ[&quot;FLASK_SECRET_KEY&quot;]&#10;&#10;# Set the value in the runtime secret manager.</code></pre></div></p><p><span class="tag">HIGH</span> <b>Password included in verification email:</b> <code>flask_app/email_util.py</code> inserts a password into HTML. Remove that content and use a one-time setup/reset link.</p><p><span class="tag med">MEDIUM</span> <b>Wildcard CORS:</b> <code>flask_app/app.py</code> allows all origins; configure the UI origin allowlist.</p><p><span class="tag med">MEDIUM</span> <b>SQL interpolation:</b> bind the Firebase UID as <code>:user_id</code> and pass <code>{user_id: firebase_user.uid}</code> using the existing DB <code>params</code> argument.</p><p>Run a history-aware secret scan before publishing. This report prints no candidate credential values.</p>`],
-["Dependency issues",`<p><b>Aging frontend tooling:</b> React 17, Create React App 5, and node-sass 7 merit an audit and tested migration; replace node-sass with sass as a focused first step.</p><p><b>Package-manager mismatch:</b> package.json declares pnpm while package-lock.json is committed. Choose one manager, regenerate its lockfile, and use a frozen install in CI.</p><p><b>Python dependency drift:</b> no requirements.txt, pyproject.toml, or environment.yml is tracked. Declare pinned, tested direct dependencies.</p><div class="code"><button class="copy">Copy</button><pre><code>cd react_app&#10;npm audit&#10;npm outdated&#10;&#10;python -m pip check&#10;python -m pip_audit</code></pre></div><p>No specific CVE is asserted; run current audits.</p>`],
-["Code / structure issues",`<p><span class="tag">FRESH CHECKOUT BLOCKER</span> <b>Missing private config:</b> backend modules import <code>flask_app/config.py</code>, which is gitignored and absent. Add a sanitized template documenting <code>database_uri</code> and <code>databases</code>, or move settings to validated environment variables. Never commit real DB values.</p><p><b>No tracked tests:</b> add auth, reporting SQL, and parameter-binding coverage. Main lacks root .gitignore; ignore local config, virtualenvs, bytecode, node_modules, and logs.</p><p><b>Build/media duplication:</b> public assets and checked-in build output repeat old media and hashed artifacts. Prefer a CI build artifact if release operations allow.</p><p><b>Thin README:</b> document setup, config provisioning, migrations, run ports, deploy, and rollback.</p><div class="code"><button class="copy">Copy</button><pre><code># Add sanitized templates only; never real credentials&#10;# flask_app/config.example.py: document required DB settings&#10;# Add clean-environment setup and smoke-test instructions</code></pre></div>`],
-["Branch strategy",`<p><b>Consolidation:</b> contabo and update_JAN_2025 have no tracked-tree delta. Confirm ownership, protection, and deploy role, then designate one canonical line. Do not delete a branch before that decision.</p><p><b>CI scope:</b> deployment currently runs only on contabo. Add pull-request test/build validation and keep deployment gated.</p><p><b>Pin actions:</b> workflow uses mutable <code>@master</code> refs. Pin reviewed action SHAs and use least-privilege permissions.</p><div class="code"><button class="copy">Copy</button><pre><code>git diff --exit-code contabo..update_JAN_2025&#10;# Exit 0 with no output means identical tracked trees&#10;git log --graph --decorate --oneline --all</code></pre></div>`],
-["Step-by-step recipes",`<p><b>Move Flask secret:</b> read <code>FLASK_SECRET_KEY</code> at startup, provision it via host/GitHub environment, rotate the deployed secret, and fail fast if missing.</p><p><b>Reproducible setup:</b> add a pinned Python manifest, sanitized .env.example, and Firebase Admin Application Default Credentials instructions.</p><p><b>Test CI:</b> run Python tests/lint and React test/build on pull requests; deploy only after checks pass.</p><div class="code"><button class="copy">Copy</button><pre><code>git switch contabo&#10;git diff --stat main...HEAD&#10;&#10;# After agreeing base and branch policy&#10;git switch -c feature/retention-report main</code></pre></div><p>Examples are guidance; this report does not alter source or Git settings.</p>`]
-];
-document.getElementById("accordions").innerHTML=issues.map(([title,body])=>`<article class="accordion ${title==="Security issues"?"open":""}"><button type="button" aria-expanded="${title==="Security issues"}">${title}</button><div class="accbody"><div class="accinner"><div class="acccontent">${body}</div></div></div></article>`).join("");
-document.querySelectorAll(".accordion button").forEach(b=>b.onclick=()=>{const a=b.closest(".accordion");a.classList.toggle("open");b.setAttribute("aria-expanded",String(a.classList.contains("open")));});
-document.getElementById("search").addEventListener("input",e=>document.querySelectorAll(".tree").forEach(t=>{let files=src.slice();if(t.dataset.tree==="main")files=files.filter(p=>!featureOnly.split("|").includes(p)).concat(["database_dumps/.gitignore","database_dumps/clone_collections_db.py","flask_app/create_retentions_alerts_table.py"]);t.innerHTML=tree(files,e.target.value.trim());}));
-document.addEventListener("click",async e=>{const b=e.target.closest(".copy");if(!b)return;const text=b.parentElement.querySelector("code").innerText;try{await navigator.clipboard.writeText(text);}catch{const x=document.createElement("textarea");x.value=text;document.body.append(x);x.select();document.execCommand("copy");x.remove();}b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1300);});
-const root=document.documentElement,stored=localStorage.getItem("retentions-theme");if(stored==="light")root.dataset.theme="light";document.getElementById("theme").onclick=()=>{const light=root.dataset.theme!=="light";if(light)root.dataset.theme="light";else delete root.dataset.theme;localStorage.setItem("retentions-theme",light?"light":"dark");};
-const links=[...document.querySelectorAll(".nav a")],observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){document.getElementById("now").textContent="Viewing "+e.target.querySelector("h2").textContent;links.forEach(a=>a.classList.toggle("active",a.hash==="#"+e.target.id));}}),{rootMargin:"-18% 0px -68% 0px"});document.querySelectorAll("main section").forEach(s=>observer.observe(s));
+(function(){
+ var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+ // code blocks
+ $$('script.code').forEach(function(s){
+  var d=document.createElement('div');d.className='cb blk';
+  var h=document.createElement('header'),l=document.createElement('span');l.textContent=s.dataset.lang||'';
+  var b=document.createElement('button');b.textContent='Copy';
+  var p=document.createElement('pre'),c=document.createElement('code');c.textContent=s.textContent.replace(/^\n/,'');
+  b.onclick=function(){var t=c.textContent;var ok=function(){b.textContent='Copied ✓';b.classList.add('done');setTimeout(function(){b.textContent='Copy';b.classList.remove('done')},1400)};
+   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();
+   function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}a.remove()}};
+  h.appendChild(l);h.appendChild(b);p.appendChild(c);d.appendChild(h);d.appendChild(p);s.replaceWith(d);
+ });
+ // theme
+ var root=document.documentElement;
+ try{var th=localStorage.getItem('theme');if(th)root.dataset.theme=th}catch(e){}
+ $('#theme').onclick=function(){var n=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=n;try{localStorage.setItem('theme',n)}catch(e){}};
+ $('#burger').onclick=function(){$('#side').classList.toggle('open')};
+ $$('#nav a').forEach(function(a){a.addEventListener('click',function(){$('#side').classList.remove('open')})});
+ // accordions
+ $('#expAll').onclick=function(){$$('details').forEach(function(d){d.open=true})};
+ $('#colAll').onclick=function(){$$('details').forEach(function(d){d.open=false})};
+ // checklist persistence
+ $$('ul.chk input').forEach(function(i,n){var k='chk'+n;try{i.checked=localStorage.getItem(k)==='1'}catch(e){}i.onchange=function(){try{localStorage.setItem(k,i.checked?'1':'0')}catch(e){}}});
+ // scroll spy
+ var links={};$$('#nav a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a});
+ var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){$$('#nav a').forEach(function(a){a.classList.remove('on')});links[e.target.id]&&links[e.target.id].classList.add('on')}})},{rootMargin:'-20% 0px -70% 0px'});
+ $$('main section').forEach(function(s){io.observe(s)});
+ // back to top
+ var top=$('#top');addEventListener('scroll',function(){top.style.display=scrollY>500?'block':'none'});top.onclick=function(){scrollTo({top:0,behavior:'smooth'})};
+ // search
+ $('#q').addEventListener('input',function(){
+  var q=this.value.trim().toLowerCase();
+  $$('main section').forEach(function(s){
+   var hit=!q||s.textContent.toLowerCase().indexOf(q)>-1;
+   links[s.id]&&links[s.id].classList.toggle('nomatch',!hit);
+   $$('.blk',s).forEach(function(b){var m=!q||b.textContent.toLowerCase().indexOf(q)>-1;b.classList.toggle('hide',!m);if(q&&m&&b.tagName==='DETAILS')b.open=true});
+  });
+ });
+})();
 </script>
 </body>
 </html>
