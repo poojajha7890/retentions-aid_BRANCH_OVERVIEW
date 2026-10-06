@@ -882,7 +882,529 @@ GOOGLE_APPLICATION_CREDENTIALS=/path/to/firebase-dev.json   # DEV project, not p
   <li><b>Bucket hygiene (Option C):</b> private bucket, SSE enabled, IAM limited to <code>s3:GetObject</code> on the dump prefix, lifecycle rule 7 days.</li>
   <li><b>Never use Option D</b> with the app's production credentials — only <code>dev_readonly</code>, and only for short lookups.</li>
 </ul>
+<!-- ─── 7.7 Windows-specific: 5 ways to run the whole project locally ─ -->
+<h3>7.7 · Windows setup — 5 ways to run the whole project locally</h3>
+<p class="sub">Production server is <b>Windows</b>, so Docker Desktop won't run on it — but every developer machine (Windows 10/11) can. Pick one of the five approaches below. All of them reach the same end state: a local Postgres on <code>localhost:5432</code>, a Flask API on <code>localhost:8000</code>, and a React UI on <code>localhost:3000</code>.</p>
 
+<!-- ═══════ OPTION 1 ═══════ -->
+<details class="blk" open><summary>Way 1 · Docker Desktop + WSL 2 backend (recommended) <span class="pill low">Effort: Low</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Install Docker Desktop for Windows with the WSL 2 backend. Run every service — Postgres, Flask, React — as Linux containers. No native Python/Node install on the host.</dd>
+<dt>Why</dt><dd>Identical behaviour to production Linux containers, one command to start everything, cleanest to onboard a new developer.</dd>
+<dt>Where</dt><dd>Host prerequisites: Windows 10 2004+ or Windows 11, WSL 2 enabled, virtualization enabled in BIOS. Then Docker Desktop installs WSL distro <code>docker-desktop</code>.</dd>
+<dt>Impact</dt><dd>Everything runs in containers. Host stays clean. Slight disk overhead (~2 GB per image). Perfect for CI parity.</dd>
+<dt>Risk</dt><dd>Low. Main gotcha is the WSL 2 memory ceiling — configure <code>.wslconfig</code> if the machine has &lt; 8 GB RAM.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="powershell"># One-time setup (Admin PowerShell)
+wsl --install                      # installs WSL 2 + Ubuntu
+# reboot, set Ubuntu username/password, then:
+winget install Docker.DockerDesktop
+# Launch Docker Desktop → Settings → General → "Use WSL 2 based engine" ✔
+
+# Verify
+docker --version
+docker compose version</script>
+<script type="text/plain" class="code" data-lang="yaml"># docker-compose.yml — full stack
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: postgres
+    ports: ["5432:5432"]
+    volumes:
+      - ./docker/db_data:/var/lib/postgresql/data
+      - ./docker/dumps:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user"]
+      interval: 5s
+
+  api:
+    build: ./flask_app
+    ports: ["8000:8000"]
+    env_file: [.env]
+    depends_on:
+      db: { condition: service_healthy }
+    volumes:
+      - ./flask_app:/app
+    command: gunicorn --bind 0.0.0.0:8000 app:app
+
+  ui:
+    build: ./react_app
+    ports: ["3000:80"]
+    depends_on: [api]</script>
+<script type="text/plain" class="code" data-lang="bash">docker compose up -d              # start everything
+docker compose logs -f api        # watch API logs
+docker compose down               # stop
+docker compose down -v            # stop + wipe DB volume</script>
+</div></details>
+
+<!-- ═══════ OPTION 2 ═══════ -->
+<details class="blk"><summary>Way 2 · Docker Desktop — DB in Docker, API & UI natively on Windows <span class="pill low">Effort: Low</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Postgres runs in a Docker container. Flask and React run directly on Windows using conda and Node — the same way they run today on the VPS.</dd>
+<dt>Why</dt><dd>Debugging is easier (native debugger, no container rebuilds), and it's the least-change path from how the team already works.</dd>
+<dt>Where</dt><dd>Docker Desktop for the DB only; <code>conda create -n retentions-aid python=3.11</code>; Node 16+ from <code>winget install OpenJS.NodeJS.LTS</code>.</dd>
+<dt>Impact</dt><dd>Fastest iteration on backend code — Flask's auto-reload works immediately. DB still isolated. Downside: host must have Python + Node installed, so "works on my machine" risk returns.</dd>
+<dt>Risk</dt><dd>Low. Only friction is a firewall prompt the first time Flask binds port 8000.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="powershell"># DB only
+docker compose -f docker-compose.db.yml up -d
+
+# API natively
+conda activate retentions-aid
+cd flask_app
+python app.py                      # → http://127.0.0.1:8000
+
+# UI natively
+cd react_app
+npm ci
+npm start                          # → http://localhost:3000</script>
+</div></details>
+
+<!-- ═══════ OPTION 3 ═══════ -->
+<details class="blk"><summary>Way 3 · WSL 2 Ubuntu — everything inside Linux, no Docker Desktop <span class="pill med">Effort: Medium</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Install Docker Engine <i>inside</i> a WSL 2 Ubuntu distro. Run the entire stack from a Linux shell. No Docker Desktop licence needed.</dd>
+<dt>Why</dt><dd>Free for commercial use, lower memory footprint than Docker Desktop, closest to a Linux dev experience without leaving Windows.</dd>
+<dt>Where</dt><dd><code>wsl --install -d Ubuntu</code> → inside Ubuntu: <code>curl -fsSL https://get.docker.com | sh</code> → add user to docker group.</dd>
+<dt>Impact</dt><dd>Two shells (Windows for VS Code, WSL for docker + git). All Linux-native: paths like <code>/mnt/d/retentions-aid</code>. Line-ending issues disappear because git runs inside Linux.</dd>
+<dt>Risk</dt><dd>Medium — no Docker Desktop GUI, no automatic updates, you maintain the engine. Enterprise machines may block <code>wsl --install</code>.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="bash"># Inside WSL Ubuntu
+sudo apt update && sudo apt install -y docker.io docker-compose-plugin git
+sudo usermod -aG docker $USER        # log out + back in
+cd /mnt/d/retentions-aid
+docker compose up -d</script>
+<div class="callout info"><p><b>ℹ️ File performance tip:</b> keep the repo inside the WSL filesystem (<code>~/retentions-aid</code>) rather than <code>/mnt/d/...</code> — file I/O is 3–5× faster there. Use Windows Explorer's <code>\\wsl$\Ubuntu\home\you\retentions-aid</code> to browse files from Windows.</p></div>
+</div></details>
+
+<!-- ═══════ OPTION 4 ═══════ -->
+<details class="blk"><summary>Way 4 · Windows Containers — everything Windows-native <span class="pill" style="color:var(--bad);border-color:var(--bad)">Effort: High · 🚫 not recommended</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Run Windows Server Core containers instead of Linux ones, using the Windows container mode of Docker Desktop.</dd>
+<dt>Why</dt><dd>Theoretically matches the Windows production server. In practice nothing else here works well.</dd>
+<dt>Where</dt><dd>Docker Desktop → switch to "Windows containers". Postgres image must be a Windows build; the Python images need Windows base OS layers.</dd>
+<dt>Impact</dt><dd><b>Very negative.</b> Official Postgres and Python "Windows" images are huge (2–6 GB each), slow to start, poorly maintained, and don't match what production actually runs.</dd>
+<dt>Risk</dt><dd><b>High.</b> Breaks <code>psycopg2</code> wheels, breaks Gunicorn (not Windows-native), breaks your Dockerfiles. Do not pursue.</dd>
+</dl>
+<div class="callout bad"><p><b>🚫 Why we don't do this:</b> production already runs native Windows Postgres + conda + Gunicorn-under-WSL. Introducing Windows containers adds a third environment that matches <i>neither</i> the current server nor the recommended local setup. It's the worst of both worlds.</p></div>
+</div></details>
+
+<!-- ═══════ OPTION 5 ═══════ -->
+<details class="blk"><summary>Way 5 · No Docker at all — native Windows Postgres + native Python/Node <span class="pill med">Effort: Medium</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Install PostgreSQL natively on Windows (the same installer the VPS uses), install Python via conda, run the app exactly as today. Skip Docker entirely.</dd>
+<dt>Why</dt><dd>No Docker licence issue, no WSL, smallest learning curve for developers who already know this stack. Matches production 1:1.</dd>
+<dt>Where</dt><dd><code>winget install PostgreSQL.PostgreSQL.15</code> · <code>winget install Anaconda.Miniconda3</code> · <code>winget install OpenJS.NodeJS.LTS</code>. Then <code>pg_restore</code> the dumps into the native instance.</dd>
+<dt>Impact</dt><dd>Multiple native services running on each laptop, port conflicts when someone has two projects, no isolation between dev and personal Postgres instances. Fresh-clone setup takes 30–60 min vs 5 min with Docker.</dd>
+<dt>Risk</dt><dd>Medium — hard to reproduce exactly across machines because Windows Postgres versions/patches drift.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="powershell">winget install PostgreSQL.PostgreSQL.15
+# during install: set superuser password, port 5432
+# then in psql:
+#   CREATE USER user WITH PASSWORD 'pass' SUPERUSER;
+#   CREATE DATABASE clinic_a OWNER user;
+# restore dumps
+psql -U user -d clinic_a -f D:\dumps\clinic_a.sql</script>
+</div></details>
+
+<!-- ─── Comparison table ───────────────────────────────────────── -->
+<h3>7.8 · Way-by-way comparison</h3>
+<div class="tw"><table><thead><tr>
+<th>#</th><th>Approach</th><th>Docker on host</th><th>Setup time</th><th>Parity w/ prod</th><th>Licence</th><th>Best for</th><th>Recommend</th>
+</tr></thead><tbody>
+<tr><td>1</td><td>Docker Desktop + WSL 2 (full stack)</td><td>Yes</td><td>~30 min</td><td>High</td><td>Free &lt; 250 emp.</td><td>Team default; CI parity</td><td><b>✅ Recommended</b></td></tr>
+<tr><td>2</td><td>Docker for DB, native API + UI</td><td>Yes</td><td>~20 min</td><td>Medium</td><td>Free &lt; 250 emp.</td><td>Backend-heavy debugging</td><td>✅ Good alternative</td></tr>
+<tr><td>3</td><td>WSL 2 Ubuntu + Docker Engine</td><td>Inside WSL</td><td>~45 min</td><td>High</td><td>Free (no Desktop)</td><td>Enterprises blocking Desktop</td><td>✅ If Desktop blocked</td></tr>
+<tr><td>4</td><td>Windows Containers</td><td>Yes (Win mode)</td><td>Days</td><td>Low</td><td>Windows Server lic.</td><td>Nothing in this project</td><td>🚫 Skip</td></tr>
+<tr><td>5</td><td>Fully native (no Docker)</td><td>No</td><td>30–60 min</td><td>High</td><td>None</td><td>Machines without virtualization</td><td>⚠️ Only as fallback</td></tr>
+</tbody></table></div>
+
+<!-- ─── Decision tree diagram ─────────────────────────────────── -->
+<h3>7.9 · Which way should I pick?</h3>
+<div class="diagram"><svg viewBox="0 0 820 340" role="img" aria-label="Decision tree">
+  <rect class="hl" x="310" y="10" width="200" height="44" rx="10"/>
+    <text x="330" y="38">Can you install WSL 2?</text>
+  <path class="ln" d="M410 54 L 200 100"/>
+  <path class="ln" d="M410 54 L 620 100"/>
+  <text x="180" y="80" class="m">yes</text><text x="600" y="80" class="m">no</text>
+
+  <rect class="ok" x="80" y="100" width="240" height="44" rx="10"/>
+    <text x="100" y="128">Docker Desktop allowed?</text>
+  <path class="ln" d="M200 144 L 140 190"/>
+  <path class="ln" d="M200 144 L 280 190"/>
+  <text x="115" y="172" class="m">yes</text><text x="270" y="172" class="m">no</text>
+
+  <rect class="ok" x="20" y="190" width="230" height="54" rx="10"/>
+    <text x="40" y="214">✅ Way 1 (or Way 2 for API dev)</text>
+    <text x="40" y="232" class="m">Docker Desktop + WSL 2</text>
+  <rect class="hl" x="270" y="190" width="230" height="54" rx="10"/>
+    <text x="290" y="214">✅ Way 3</text>
+    <text x="290" y="232" class="m">WSL Ubuntu + Docker Engine</text>
+
+  <rect class="box" x="520" y="100" width="240" height="54" rx="10"/>
+    <text x="540" y="124">Has virtualization + admin?</text>
+    <text x="540" y="142" class="m">(Hyper-V / VT-x in BIOS)</text>
+  <path class="ln" d="M640 154 L 580 200"/>
+  <path class="ln" d="M640 154 L 700 200"/>
+  <text x="560" y="182" class="m">yes</text><text x="700" y="182" class="m">no</text>
+
+  <rect class="box" x="500" y="200" width="160" height="54" rx="10"/>
+    <text x="520" y="224">✅ Way 5</text>
+    <text x="520" y="242" class="m">Fully native</text>
+  <rect class="del" x="680" y="200" width="130" height="54" rx="10"/>
+    <text x="700" y="224">🚫 Blocked</text>
+    <text x="700" y="242" class="m">Escalate to IT</text>
+
+  <text x="20" y="290" class="m">Way 4 (Windows Containers) is intentionally not on this tree — it's not recommended for any branch.</text>
+  <text x="20" y="312" class="m">If Docker Desktop licence is a concern (org ≥ 250 employees / &gt; $10M revenue), go straight to Way 3.</text>
+</svg></div>
+
+<!-- ─── End-to-end flow for Way 1 ─────────────────────────────── -->
+<h3>7.10 · End-to-end flow (Way 1 — full Docker stack)</h3>
+<div class="diagram"><svg viewBox="0 0 820 260" role="img" aria-label="Full stack flow">
+  <text x="10" y="18" class="m">WINDOWS HOST</text>
+  <rect class="box" x="10" y="30" width="180" height="70" rx="10"/>
+    <text x="26" y="56">Browser</text><text x="26" y="74" class="m">http://localhost:3000</text>
+  <rect class="hl" x="220" y="30" width="180" height="70" rx="10"/>
+    <text x="236" y="56">UI container</text><text x="236" y="74" class="m">nginx :80 → 3000</text>
+  <rect class="hl" x="430" y="30" width="180" height="70" rx="10"/>
+    <text x="446" y="56">API container</text><text x="446" y="74" class="m">gunicorn :8000</text>
+  <rect class="hl" x="640" y="30" width="170" height="70" rx="10"/>
+    <text x="656" y="56">DB container</text><text x="656" y="74" class="m">postgres :5432</text>
+  <path class="ln" d="M190 65H218M400 65H428M610 65H638"/>
+
+  <rect class="ok" x="640" y="140" width="170" height="60" rx="10"/>
+    <text x="656" y="164">volume</text><text x="656" y="182" class="m">./docker/db_data</text>
+  <path class="ln" d="M725 100V138"/>
+  <rect class="box" x="430" y="140" width="180" height="60" rx="10"/>
+    <text x="446" y="164">./docker/dumps</text><text x="446" y="182" class="m">daily masked dump</text>
+  <path class="ln" d="M520 138V100" stroke-dasharray="4 4"/>
+
+  <text x="10" y="160" class="m">WSL 2 backend</text>
+  <rect class="box" x="10" y="170" width="360" height="60" rx="10"/>
+    <text x="26" y="194">docker-desktop distro</text>
+    <text x="26" y="214" class="m">all four containers share this Linux kernel</text>
+</svg></div>
+
+<!-- ─── Where each piece goes ─────────────────────────────────── -->
+<h3>7.11 · Where each piece lives after setup (Way 1)</h3>
+<div class="two">
+<div class="tree">D:\retentions-aid\
+├─ <b>docker-compose.yml</b>       (full stack — Way 1)
+├─ <b>docker-compose.db.yml</b>    (DB only — Way 2)
+├─ .env                        (local secrets, gitignored)
+├─ .env.example                (committed)
+├─ flask_app/
+│  ├─ Dockerfile
+│  ├─ requirements.txt
+│  ├─ config.example.py        (committed)
+│  └─ config.py                (gitignored)
+├─ react_app/
+│  ├─ Dockerfile
+│  ├─ nginx.conf
+│  └─ .env.development         (REACT_APP_API_URL)
+└─ docker/
+   ├─ db_data/                 (gitignored, volume)
+   └─ dumps/                   (gitignored, daily .sql)</div>
+<div class="tree">Containers after `docker compose up -d`:
+
+retentions_db        postgres:15-alpine   :5432
+retentions_api       flask_app (build)    :8000
+retentions_ui        react_app (build)    :3000
+
+Volumes:
+  docker_db_data  →  /var/lib/postgresql/data
+
+Daily sync (Windows Task Scheduler):
+  02:00 on server  →  backup_clinics.ps1  →  C:\db_backups
+  03:00 on laptop  →  sync.ps1            →  docker/dumps
+                                          →  docker exec psql restore</div>
+</div>
+
+<!-- ─── Recommendation box ────────────────────────────────────── -->
+<h3>7.12 · Recommendation</h3>
+<div class="callout ok">
+<p><b>✅ For this team, use Way 1 — Docker Desktop + WSL 2 with the full stack in containers.</b></p>
+<ul>
+<li>Reproducible across every Windows 10/11 developer machine.</li>
+<li>One command to start: <code>docker compose up -d</code>.</li>
+<li>Same container images will deploy identically in CI or any future Linux host.</li>
+<li>Production server stays as-is (native Windows) — Docker is <b>local only</b>, never installed on the VPS.</li>
+</ul>
+<p><b>Fallback:</b> if Docker Desktop is blocked by corporate policy (licence or IT), use <b>Way 3</b> (WSL Ubuntu + Docker Engine) — same result, no Desktop dependency.</p>
+</div>
+
+<div class="callout warn"><p><b>⚠️ Docker Desktop licensing.</b> Free for personal use, education, and companies with fewer than 250 employees AND less than $10M annual revenue. Larger organisations need a paid subscription. If in doubt, go with Way 3.</p></div>
+
+<!-- ─── 7.13 Daily 8:30 dump → local Docker Postgres ───────────── -->
+<h3>7.13 · Daily 8:30 AM dump → local Docker Postgres (Windows server → Windows laptop)</h3>
+<p class="sub">Production = Windows server. Portal + PostgreSQL both live there. A scheduled task creates a DB dump every day at <b>08:30</b>. Goal: that dump lands on each developer's Windows laptop automatically and is restored into a local Docker container — so by ~9:00 AM every laptop has today's data.</p>
+
+<div class="callout info"><p><b>ℹ️ Division of responsibility.</b> The <b>server</b> only dumps and publishes. The <b>laptop</b> only pulls and restores. They never talk directly to each other's Postgres — that would risk production writes and lock contention.</p></div>
+
+<!-- ─── A. High-level flow ─────────────────────────────────── -->
+<h3>7.13.1 · Flow at a glance</h3>
+<div class="diagram"><svg viewBox="0 0 820 300" role="img" aria-label="8:30 dump to local Docker flow">
+  <text x="10" y="16" class="m">PRODUCTION — WINDOWS SERVER</text>
+  <rect class="hl" x="10" y="30" width="150" height="60" rx="10"/>
+    <text x="26" y="54">Task Scheduler</text><text x="26" y="72" class="m">daily 08:30</text>
+  <rect class="box" x="180" y="30" width="150" height="60" rx="10"/>
+    <text x="196" y="54">pg_dump.exe</text><text x="196" y="72" class="m">per clinic DB</text>
+  <rect class="box" x="350" y="30" width="150" height="60" rx="10"/>
+    <text x="366" y="54">mask PII</text><text x="366" y="72" class="m">scratch DB → re-dump</text>
+  <rect class="ok" x="520" y="30" width="150" height="60" rx="10"/>
+    <text x="536" y="54">publish</text><text x="536" y="72" class="m">share / S3 / SFTP</text>
+  <rect class="box" x="690" y="30" width="120" height="60" rx="10"/>
+    <text x="706" y="54">retain 7 d</text><text x="706" y="72" class="m">auto-delete</text>
+  <path class="ln" d="M160 60H178M330 60H348M500 60H518M670 60H688"/>
+
+  <text x="10" y="140" class="m">DEVELOPER LAPTOP — WINDOWS 10/11</text>
+  <rect class="hl" x="10" y="152" width="150" height="60" rx="10"/>
+    <text x="26" y="176">Task Scheduler</text><text x="26" y="194" class="m">daily 09:00</text>
+  <rect class="box" x="180" y="152" width="150" height="60" rx="10"/>
+    <text x="196" y="176">pull</text><text x="196" y="194" class="m">robocopy / scp / s3 sync</text>
+  <rect class="box" x="350" y="152" width="150" height="60" rx="10"/>
+    <text x="366" y="176">verify</text><text x="366" y="194" class="m">.done marker + checksum</text>
+  <rect class="hl" x="520" y="152" width="150" height="60" rx="10"/>
+    <text x="536" y="176">docker exec psql</text><text x="536" y="194" class="m">restore into container</text>
+  <rect class="ok" x="690" y="152" width="120" height="60" rx="10"/>
+    <text x="706" y="176">local ready</text><text x="706" y="194" class="m">localhost:5432</text>
+  <path class="ln" d="M160 182H178M330 182H348M500 182H518M670 182H688"/>
+
+  <path class="ln" d="M595 90 Q 595 120 595 150" stroke-dasharray="5 4"/>
+  <text x="600" y="128" class="m">transfer</text>
+</svg></div>
+
+<!-- ─── B. Server side ─────────────────────────────────────── -->
+<h3>7.13.2 · Server side — dump at 08:30</h3>
+<p>Create a PowerShell script and register it with Task Scheduler. Run as a dedicated Windows account that has read access to PostgreSQL.</p>
+
+<script type="text/plain" class="code" data-lang="powershell"># C:\scripts\dump_clinics.ps1
+$ErrorActionPreference = "Stop"
+
+$pgBin    = "C:\Program Files\PostgreSQL\15\bin"
+$stamp    = Get-Date -Format "yyyy-MM-dd"
+$stageDir = "C:\db_stage\$stamp"          # per-day folder
+$pubDir   = "C:\db_publish"               # what laptops pull from
+$clinics  = @("clinic_a", "clinic_b", "clinic_c")   # = CLINIC_DATABASES
+
+New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
+New-Item -ItemType Directory -Force -Path $pubDir   | Out-Null
+
+foreach ($db in $clinics) {
+    $raw = Join-Path $stageDir "raw_$db.sql"
+    $out = Join-Path $stageDir "${db}_$stamp.sql"
+
+    # 1. dump raw
+    & "$pgBin\pg_dump.exe" `
+        "postgresql://backup_ro:***REDACTED***@localhost:5432/$db" `
+        -C --no-owner --no-privileges --schema=public `
+        -f $raw
+
+    # 2. mask PII (see mask.sql below) — load into scratch DB, run mask, re-dump
+    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/postgres" `
+        -c "DROP DATABASE IF EXISTS scratch_mask; CREATE DATABASE scratch_mask;"
+    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/scratch_mask" `
+        -f $raw | Out-Null
+    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/scratch_mask" `
+        -f "C:\scripts\mask.sql" | Out-Null
+    & "$pgBin\pg_dump.exe" `
+        "postgresql://backup_ro:***REDACTED***@localhost:5432/scratch_mask" `
+        -C --no-owner --no-privileges --schema=public `
+        -f $out
+    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/postgres" `
+        -c "DROP DATABASE scratch_mask;"
+
+    # 3. copy masked dump into publish folder
+    Copy-Item $out (Join-Path $pubDir (Split-Path $out -Leaf)) -Force
+}
+
+# 4. write a marker so laptops know the day's batch is complete
+"$stamp" | Out-File (Join-Path $pubDir "LATEST.done") -Encoding ascii
+
+# 5. keep last 7 days only
+Get-ChildItem $pubDir -Filter "*.sql" |
+    Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-7) } |
+    Remove-Item -Force</script>
+
+<script type="text/plain" class="code" data-lang="sql">-- C:\scripts\mask.sql — de-identify before the dump leaves the server
+BEGIN;
+UPDATE patients SET
+  name  = 'MASKED-' || id,
+  phone = '0000000000',
+  email = NULL,
+  dob   = '1900-01-01',
+  notes = NULL,
+  address = NULL
+WHERE 1=1;   -- adjust columns to your schema
+COMMIT;
+-- add UPDATEs for any other table with PII (appointments.notes, insurance.*, etc.)</script>
+
+<script type="text/plain" class="code" data-lang="xml">&lt;!-- Register with Task Scheduler — run as SYSTEM or a service account --&gt;
+&lt;Task version="1.4"&gt;
+  &lt;Triggers&gt;&lt;CalendarTrigger&gt;
+    &lt;StartBoundary&gt;2026-10-06T08:30:00&lt;/StartBoundary&gt;
+    &lt;ScheduleByDay&gt;&lt;DaysInterval&gt;1&lt;/DaysInterval&gt;&lt;/ScheduleByDay&gt;
+  &lt;/CalendarTrigger&gt;&lt;/Triggers&gt;
+  &lt;Actions&gt;&lt;Exec&gt;
+    &lt;Command&gt;powershell.exe&lt;/Command&gt;
+    &lt;Arguments&gt;-NoProfile -ExecutionPolicy Bypass -File C:\scripts\dump_clinics.ps1&lt;/Arguments&gt;
+  &lt;/Exec&gt;&lt;/Actions&gt;
+&lt;/Task&gt;</script>
+
+<div class="callout warn"><p><b>⚠️ Use a read-only Postgres role.</b> <code>backup_ro</code> should have <code>SELECT</code> only. It must not be able to write. Create it once on the server:</p>
+<script type="text/plain" class="code" data-lang="sql">CREATE ROLE backup_ro LOGIN PASSWORD '***REDACTED***';
+GRANT CONNECT ON DATABASE clinic_a TO backup_ro;
+GRANT USAGE   ON SCHEMA public      TO backup_ro;
+GRANT SELECT  ON ALL TABLES IN SCHEMA public TO backup_ro;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO backup_ro;
+-- repeat GRANTs for clinic_b, clinic_c</script>
+</div>
+
+<!-- ─── C. Transfer methods ────────────────────────────────── -->
+<h3>7.13.3 · How the dump travels from server → laptop (pick one)</h3>
+
+<details class="blk" open><summary>Transfer A · Shared Windows folder (SMB) <span class="pill low">Effort: Low · Best in office LAN</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Server shares <code>C:\db_publish</code> on the LAN. Laptops copy with <code>robocopy</code> at 09:00.</dd>
+<dt>Best for</dt><dd>Office-based team on the same domain/VPN.</dd>
+<dt>Risk</dt><dd>Low. Share must be read-only and restricted to a security group. Works with existing AD accounts — no new credentials.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="powershell"># On the server (once)
+New-SmbShare -Name DbPublish -Path C:\db_publish -ReadAccess "DOMAIN\Developers"
+
+# On each laptop — sync.ps1 (Task Scheduler → 09:00)
+$src = "\\server\DbPublish"
+$dst = "D:\retentions-aid\docker\dumps"
+robocopy $src $dst *.sql *.done /MIR /R:2 /W:5 /NP
+if (Test-Path "$dst\LATEST.done") { Write-Host "Batch ready" }</script>
+</div></details>
+
+<details class="blk"><summary>Transfer B · SFTP / SCP over SSH <span class="pill low">Effort: Low · Best outside LAN</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Windows Server ships with OpenSSH. Publish a read-only SFTP folder; laptops pull with <code>scp</code> using an SSH key.</dd>
+<dt>Best for</dt><dd>Remote developers, VPN-based access, or when SMB is blocked.</dd>
+<dt>Risk</dt><dd>Low. Key-based auth only (no passwords). Restrict the SFTP user to <code>C:\db_publish</code>.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="powershell"># On server: enable OpenSSH Server (Settings → Optional features)
+# Create a local user "dbsync" whose home = C:\db_publish, no shell rights beyond SFTP.
+
+# On each laptop — sync.ps1
+$key = "$env:USERPROFILE\.ssh\db_sync_ed25519"
+scp -i $key -r dbsync@server:C:/db_publish/* D:\retentions-aid\docker\dumps\</script>
+</div></details>
+
+<details class="blk"><summary>Transfer C · Cloud bucket relay (S3 / Azure Blob / Backblaze) <span class="pill med">Effort: Medium · Best off-network</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Server uploads masked dumps to a private bucket; laptops download with the vendor CLI.</dd>
+<dt>Best for</dt><dd>Hybrid / fully remote teams. Bucket lifecycle handles 7-day retention automatically.</dd>
+<dt>Risk</dt><dd>Medium — private bucket, SSE encryption, IAM read-only keys per laptop, audit logging on.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="powershell"># Server side (after step 5 in dump_clinics.ps1)
+aws s3 cp "C:\db_publish\" "s3://clinic-db-drops/$stamp/" `
+    --recursive --exclude "*" --include "*.sql" --sse AES256
+aws s3 cp "C:\db_publish\LATEST.done" "s3://clinic-db-drops/$stamp/"
+
+# Laptop side
+aws s3 sync "s3://clinic-db-drops/$stamp/" "D:\retentions-aid\docker\dumps\"</script>
+</div></details>
+
+<details class="blk"><summary>Transfer D · rsync over SSH (via WSL or cwRsync) <span class="pill med">Effort: Medium</span></summary><div class="ab">
+<dl class="k">
+<dt>What</dt><dd>Mirror only changed files. Useful once you have many clinics or dumps get large.</dd>
+<dt>Best for</dt><dd>Larger installs, incremental transfers, or when bandwidth matters.</dd>
+<dt>Risk</dt><dd>Medium — need rsync on Windows (via WSL or cwRsync). Slightly more moving parts.</dd>
+</dl>
+<script type="text/plain" class="code" data-lang="bash"># From WSL on the laptop
+rsync -avz --delete -e ssh dbsync@server:/cygdrive/c/db_publish/ /mnt/d/retentions-aid/docker/dumps/</script>
+</div></details>
+
+<!-- ─── D. Laptop side ─────────────────────────────────────── -->
+<h3>7.13.4 · Laptop side — pull at 09:00 and restore</h3>
+<script type="text/plain" class="code" data-lang="powershell"># D:\retentions-aid\sync.ps1
+$ErrorActionPreference = "Stop"
+$localDumps = "D:\retentions-aid\docker\dumps"
+$container  = "retentions_db"
+
+# 1. pull (Way A: SMB)
+robocopy "\\server\DbPublish" $localDumps *.sql *.done /MIR /R:2 /W:5 /NP
+
+# 2. wait for LATEST.done marker (server finished the batch)
+if (-not (Test-Path "$localDumps\LATEST.done")) {
+    Write-Warning "Batch not ready yet — aborting this run."
+    exit 0
+}
+
+# 3. ensure container is running
+docker start $container 2>$null | Out-Null
+
+# 4. wipe + recreate each clinic DB, then restore
+$clinics = @("clinic_a", "clinic_b", "clinic_c")
+foreach ($db in $clinics) {
+    $sql = Get-ChildItem "$localDumps\${db}_*.sql" | Sort-Object Name -Descending | Select-Object -First 1
+    if (-not $sql) { Write-Warning "No dump for $db"; continue }
+
+    docker exec $container psql -U user -d postgres -c "DROP DATABASE IF EXISTS $db;"
+    # pg_dump -C includes CREATE DATABASE so the restore makes it
+    Get-Content $sql.FullName -Raw |
+        docker exec -i $container psql -U user -d postgres
+    Write-Host "Restored $db from $($sql.Name)"
+}
+
+Write-Host "Local DB synced at $(Get-Date)"</script>
+
+<script type="text/plain" class="code" data-lang="xml">&lt;!-- Task Scheduler — daily 09:00 --&gt;
+&lt;Task version="1.4"&gt;
+  &lt;Triggers&gt;&lt;CalendarTrigger&gt;
+    &lt;StartBoundary&gt;2026-10-06T09:00:00&lt;/StartBoundary&gt;
+    &lt;ScheduleByDay&gt;&lt;DaysInterval&gt;1&lt;/DaysInterval&gt;&lt;/ScheduleByDay&gt;
+  &lt;/CalendarTrigger&gt;&lt;/Triggers&gt;
+  &lt;Actions&gt;&lt;Exec&gt;
+    &lt;Command&gt;powershell.exe&lt;/Command&gt;
+    &lt;Arguments&gt;-NoProfile -ExecutionPolicy Bypass -File D:\retentions-aid\sync.ps1&lt;/Arguments&gt;
+  &lt;/Exec&gt;&lt;/Actions&gt;
+&lt;/Task&gt;</script>
+
+<div class="callout ok"><p><b>✅ End state.</b> Every weekday morning around 09:00, each developer's laptop Docker Postgres contains the same masked data that production had at 08:30. No manual work, no direct connection from laptop to production, no patient data leaks.</p></div>
+
+<!-- ─── E. Manual run (when needed) ────────────────────────── -->
+<h3>7.13.5 · Manual refresh (any time)</h3>
+<script type="text/plain" class="code" data-lang="powershell"># Force a pull + restore right now
+powershell -ExecutionPolicy Bypass -File D:\retentions-aid\sync.ps1
+
+# See what is in the local DB
+docker exec -it retentions_db psql -U user -d clinic_a -c "\dt"
+docker exec -it retentions_db psql -U user -d clinic_a -c "SELECT COUNT(*) FROM patients;"</script>
+
+<!-- ─── F. Timing / failure handling ──────────────────────── -->
+<h3>7.13.6 · Timing, failures, and safe-guards</h3>
+<div class="tw"><table><thead><tr>
+<th>Concern</th><th>Handling</th>
+</tr></thead><tbody>
+<tr><td>Server dump slower than usual</td><td><code>LATEST.done</code> marker only written after every clinic dump succeeds; laptop waits for it.</td></tr>
+<tr><td>Laptop offline at 09:00</td><td>Task Scheduler runs at next logon (<code>StartWhenAvailable</code>) → catch-up automatically.</td></tr>
+<tr><td>Dump half-copied</td><td>Only restore files ending <code>.sql</code> that match the <code>*.done</code> marker's date. Optionally checksum with <code>Get-FileHash</code>.</td></tr>
+<tr><td>Restore fails midway</td><td>Restore uses <code>DROP DATABASE IF EXISTS</code> first; the pg_dump output recreates it. If it fails, no partial data — the DB is simply absent until next run.</td></tr>
+<tr><td>Developer wants yesterday's data</td><td>Keep 7 days of dumps; the restore script can pick a specific file. Add <code>-Date 2026-10-03</code> parameter.</td></tr>
+<tr><td>Disk growth on laptop</td><td>Keep last 3 dumps only: <code>Get-ChildItem ... | Sort LastWriteTime -Desc | Select -Skip 3 | Remove-Item</code>.</td></tr>
+<tr><td>Docker daemon not running</td><td>In <code>sync.ps1</code>, check <code>docker info</code>; if it fails, print "Start Docker Desktop" and exit 1.</td></tr>
+</tbody></table></div>
+
+<!-- ─── G. What never to do ───────────────────────────────── -->
+<h3>7.13.7 · What never to do</h3>
+<ul>
+  <li><b>Never</b> point a laptop's Flask <code>.env</code> at the production server. Always <code>localhost:5432</code>.</li>
+  <li><b>Never</b> use the app's production Postgres user for dumps — only <code>backup_ro</code>.</li>
+  <li><b>Never</b> skip PII masking because "it's only one dump". It's still PHI.</li>
+  <li><b>Never</b> commit dumps to git. <code>docker/dumps/</code> is in <code>.gitignore</code>.</li>
+  <li><b>Never</b> install Docker on the production Windows Server — Docker Desktop does not support Windows Server as a host and it would destabilise production.</li>
+</ul>
+
+<!-- ─── H. One-line summary ──────────────────────────────── -->
+<div class="callout info"><p><b>ℹ️ One-sentence summary:</b> Server dumps and masks at 08:30 → publishes to a shared folder / SFTP / bucket → each laptop pulls at 09:00 and restores into a local Docker Postgres. Local DB mirrors production daily without ever touching the production server's database directly.</p></div>
 </section>
 
 <!-- ═══════════ §8 ═══════════ -->
