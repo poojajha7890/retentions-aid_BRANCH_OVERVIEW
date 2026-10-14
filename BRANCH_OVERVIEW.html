@@ -1,150 +1,716 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Retentions-Aid — Migration Plan</title>
-<style>
-:root{--bg:#0e1116;--panel:#161b22;--panel2:#1c232c;--line:#2a3340;--tx:#e6edf3;--mut:#8b98a8;--acc:#4cc2ff;--acc2:#7ee787;--warn:#f0b429;--bad:#ff6b6b;--code:#0a0d12;--shadow:0 6px 24px rgba(0,0,0,.35)}
-[data-theme=light]{--bg:#f6f8fa;--panel:#fff;--panel2:#f0f3f6;--line:#d8dee4;--tx:#1f2328;--mut:#59636e;--acc:#0969da;--acc2:#1a7f37;--warn:#9a6700;--bad:#cf222e;--code:#f6f8fa;--shadow:0 6px 24px rgba(31,35,40,.10)}
-*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:20px}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-a{color:var(--acc)}
-#side{position:fixed;inset:0 auto 0 0;width:270px;background:var(--panel);border-right:1px solid var(--line);padding:16px;overflow:auto;z-index:20}
-#side h1{font-size:15px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-#q{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--tx);margin-bottom:10px}
-#side nav a{display:block;padding:7px 10px;border-radius:8px;color:var(--mut);text-decoration:none;font-size:14px}
-#side nav a:hover{background:var(--panel2);color:var(--tx)}
-#side nav a.on{background:var(--panel2);color:var(--acc);font-weight:600}
-#side nav a.nomatch{display:none}
-button.t{background:var(--panel2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:4px 9px;cursor:pointer}
-main{margin-left:270px;padding:0 40px 80px;max-width:1180px}
-section{padding-top:36px}
-h2{font-size:26px;margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-h3{font-size:18px;margin:26px 0 8px}
-.hero{margin:0 -40px;padding:48px 40px 28px;background:linear-gradient(135deg,var(--panel2),var(--bg));border-bottom:1px solid var(--line)}
-.hero h1{font-size:34px;line-height:1.2;margin:0 0 8px}
-.sub{color:var(--mut)}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:18px 0}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
-.card b{display:block;color:var(--acc);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.card .big{font-size:18px;font-weight:650}
-.pill{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;border:1px solid var(--line);background:var(--panel2);color:var(--mut)}
-.low{color:var(--acc2);border-color:var(--acc2)}.med{color:var(--warn);border-color:var(--warn)}
-.callout{border-radius:12px;padding:12px 16px;margin:16px 0;border:1px solid;border-left-width:5px}
-.callout.warn{background:rgba(240,180,41,.09);border-color:var(--warn)}
-.callout.info{background:rgba(76,194,255,.08);border-color:var(--acc)}
-.callout.ok{background:rgba(126,231,135,.08);border-color:var(--acc2)}
-.callout.bad{background:rgba(255,107,107,.09);border-color:var(--bad)}
-.callout p{margin:4px 0}
-table{border-collapse:separate;border-spacing:0;width:100%;margin:12px 0;font-size:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.tw{overflow:auto;max-height:520px;border-radius:10px}
-th{position:sticky;top:0;background:var(--panel2);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);z-index:1}
-td{padding:8px 12px;vertical-align:top;border-bottom:1px solid var(--line)}
-tbody tr:nth-child(even){background:var(--panel2)}
-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
-p code,td code,li code{background:var(--panel2);padding:1px 6px;border-radius:5px;border:1px solid var(--line)}
-.cb{background:var(--code);border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}
-.cb header{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;background:var(--panel2);border-bottom:1px solid var(--line);font-size:12px;color:var(--mut)}
-.cb pre{margin:0;padding:12px 14px;overflow:auto;max-height:560px}
-.cb button{background:transparent;border:1px solid var(--line);color:var(--tx);border-radius:6px;padding:2px 10px;cursor:pointer;font-size:12px}
-.cb button.done{color:var(--acc2);border-color:var(--acc2)}
-details{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden}
-summary{cursor:pointer;padding:12px 16px;font-weight:600;display:flex;gap:10px;align-items:center;list-style:none}
-summary::before{content:"▸";color:var(--acc);transition:transform .15s}
-details[open]>summary::before{transform:rotate(90deg)}
-summary .pill{margin-left:auto}
-.ab{padding:0 16px 14px}
-dl.k{display:grid;grid-template-columns:70px 1fr;gap:4px 12px;margin:6px 0}
-dl.k dt{color:var(--mut);font-weight:600}dl.k dd{margin:0}
-.diagram{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;margin:14px 0;overflow:auto}
-.diagram svg{width:100%;height:auto;min-width:560px}
-svg text{fill:var(--tx);font:13px system-ui,sans-serif}svg .m{fill:var(--mut)}svg .box{fill:var(--panel2);stroke:var(--line)}
-svg .hl{fill:rgba(76,194,255,.14);stroke:var(--acc)}svg .del{fill:rgba(255,107,107,.12);stroke:var(--bad);stroke-dasharray:5 3}
-svg .ok{fill:rgba(126,231,135,.12);stroke:var(--acc2)}svg .ln{stroke:var(--mut);fill:none;stroke-width:1.6}
-.tree{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px 14px;white-space:pre;overflow:auto;font:13px/1.55 ui-monospace,Consolas,monospace}
-.tree b{color:var(--acc);background:rgba(76,194,255,.14);padding:0 4px;border-radius:4px}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
-ul.chk{list-style:none;padding:0}ul.chk li{padding:5px 0}ul.chk input{margin-right:8px;transform:scale(1.15)}
-#top{position:fixed;right:22px;bottom:22px;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--tx);cursor:pointer;box-shadow:var(--shadow);display:none;font-size:18px}
-.hide{display:none!important}
-#burger{display:none}
-@media(max-width:900px){
- #side{position:sticky;top:0;width:auto;inset:auto;border-right:0;border-bottom:1px solid var(--line);padding:10px 14px;max-height:none}
- #side nav{display:none;max-height:50vh;overflow:auto}#side.open nav{display:block}
- #burger{display:inline-block}main{margin-left:0;padding:0 16px 80px}.hero{margin:0 -16px;padding:28px 16px 20px}.hero h1{font-size:26px}
-}
-@media print{#side,#top{display:none}main{margin:0}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Retentions-Aid — Migration Plan</title>
+  <style>
+    :root {
+      --bg: #0e1116;
+      --panel: #161b22;
+      --panel2: #1c232c;
+      --line: #2a3340;
+      --tx: #e6edf3;
+      --mut: #8b98a8;
+      --acc: #4cc2ff;
+      --acc2: #7ee787;
+      --warn: #f0b429;
+      --bad: #ff6b6b;
+      --code: #0a0d12;
+      --shadow: 0 6px 24px rgba(0, 0, 0, .35)
+    }
+
+    [data-theme=light] {
+      --bg: #f6f8fa;
+      --panel: #fff;
+      --panel2: #f0f3f6;
+      --line: #d8dee4;
+      --tx: #1f2328;
+      --mut: #59636e;
+      --acc: #0969da;
+      --acc2: #1a7f37;
+      --warn: #9a6700;
+      --bad: #cf222e;
+      --code: #f6f8fa;
+      --shadow: 0 6px 24px rgba(31, 35, 40, .10)
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 20px
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--tx);
+      font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif
+    }
+
+    a {
+      color: var(--acc)
+    }
+
+    #side {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 270px;
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 16px;
+      overflow: auto;
+      z-index: 20
+    }
+
+    #side h1 {
+      font-size: 15px;
+      margin: 0 0 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px
+    }
+
+    #q {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--tx);
+      margin-bottom: 10px
+    }
+
+    #side nav a {
+      display: block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      color: var(--mut);
+      text-decoration: none;
+      font-size: 14px
+    }
+
+    #side nav a:hover {
+      background: var(--panel2);
+      color: var(--tx)
+    }
+
+    #side nav a.on {
+      background: var(--panel2);
+      color: var(--acc);
+      font-weight: 600
+    }
+
+    #side nav a.nomatch {
+      display: none
+    }
+
+    button.t {
+      background: var(--panel2);
+      color: var(--tx);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 4px 9px;
+      cursor: pointer
+    }
+
+    main {
+      margin-left: 270px;
+      padding: 0 40px 80px;
+      max-width: 1180px
+    }
+
+    section {
+      padding-top: 36px
+    }
+
+    h2 {
+      font-size: 26px;
+      margin: 0 0 6px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    h3 {
+      font-size: 18px;
+      margin: 26px 0 8px
+    }
+
+    .hero {
+      margin: 0 -40px;
+      padding: 48px 40px 28px;
+      background: linear-gradient(135deg, var(--panel2), var(--bg));
+      border-bottom: 1px solid var(--line)
+    }
+
+    .hero h1 {
+      font-size: 34px;
+      line-height: 1.2;
+      margin: 0 0 8px
+    }
+
+    .sub {
+      color: var(--mut)
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin: 18px 0
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow)
+    }
+
+    .card b {
+      display: block;
+      color: var(--acc);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 4px
+    }
+
+    .card .big {
+      font-size: 18px;
+      font-weight: 650
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 1px 9px;
+      border-radius: 99px;
+      font-size: 12px;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--mut)
+    }
+
+    .low {
+      color: var(--acc2);
+      border-color: var(--acc2)
+    }
+
+    .med {
+      color: var(--warn);
+      border-color: var(--warn)
+    }
+
+    .callout {
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      border: 1px solid;
+      border-left-width: 5px
+    }
+
+    .callout.warn {
+      background: rgba(240, 180, 41, .09);
+      border-color: var(--warn)
+    }
+
+    .callout.info {
+      background: rgba(76, 194, 255, .08);
+      border-color: var(--acc)
+    }
+
+    .callout.ok {
+      background: rgba(126, 231, 135, .08);
+      border-color: var(--acc2)
+    }
+
+    .callout.bad {
+      background: rgba(255, 107, 107, .09);
+      border-color: var(--bad)
+    }
+
+    .callout p {
+      margin: 4px 0
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      margin: 12px 0;
+      font-size: 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .tw {
+      overflow: auto;
+      max-height: 520px;
+      border-radius: 10px
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: var(--panel2);
+      text-align: left;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--line);
+      z-index: 1
+    }
+
+    td {
+      padding: 8px 12px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line)
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--panel2)
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px
+    }
+
+    p code,
+    td code,
+    li code {
+      background: var(--panel2);
+      padding: 1px 6px;
+      border-radius: 5px;
+      border: 1px solid var(--line)
+    }
+
+    .cb {
+      background: var(--code);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 12px 0;
+      overflow: hidden
+    }
+
+    .cb header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      background: var(--panel2);
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--mut)
+    }
+
+    .cb pre {
+      margin: 0;
+      padding: 12px 14px;
+      overflow: auto;
+      max-height: 560px
+    }
+
+    .cb button {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--tx);
+      border-radius: 6px;
+      padding: 2px 10px;
+      cursor: pointer;
+      font-size: 12px
+    }
+
+    .cb button.done {
+      color: var(--acc2);
+      border-color: var(--acc2)
+    }
+
+    details {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin: 10px 0;
+      overflow: hidden
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 12px 16px;
+      font-weight: 600;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      list-style: none
+    }
+
+    summary::before {
+      content: "▸";
+      color: var(--acc);
+      transition: transform .15s
+    }
+
+    details[open]>summary::before {
+      transform: rotate(90deg)
+    }
+
+    summary .pill {
+      margin-left: auto
+    }
+
+    .ab {
+      padding: 0 16px 14px
+    }
+
+    dl.k {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 4px 12px;
+      margin: 6px 0
+    }
+
+    dl.k dt {
+      color: var(--mut);
+      font-weight: 600
+    }
+
+    dl.k dd {
+      margin: 0
+    }
+
+    .diagram {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      margin: 14px 0;
+      overflow: auto
+    }
+
+    .diagram svg {
+      width: 100%;
+      height: auto;
+      min-width: 560px
+    }
+
+    svg text {
+      fill: var(--tx);
+      font: 13px system-ui, sans-serif
+    }
+
+    svg .m {
+      fill: var(--mut)
+    }
+
+    svg .box {
+      fill: var(--panel2);
+      stroke: var(--line)
+    }
+
+    svg .hl {
+      fill: rgba(76, 194, 255, .14);
+      stroke: var(--acc)
+    }
+
+    svg .del {
+      fill: rgba(255, 107, 107, .12);
+      stroke: var(--bad);
+      stroke-dasharray: 5 3
+    }
+
+    svg .ok {
+      fill: rgba(126, 231, 135, .12);
+      stroke: var(--acc2)
+    }
+
+    svg .ln {
+      stroke: var(--mut);
+      fill: none;
+      stroke-width: 1.6
+    }
+
+    .tree {
+      background: var(--code);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      white-space: pre;
+      overflow: auto;
+      font: 13px/1.55 ui-monospace, Consolas, monospace
+    }
+
+    .tree b {
+      color: var(--acc);
+      background: rgba(76, 194, 255, .14);
+      padding: 0 4px;
+      border-radius: 4px
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 14px
+    }
+
+    ul.chk {
+      list-style: none;
+      padding: 0
+    }
+
+    ul.chk li {
+      padding: 5px 0
+    }
+
+    ul.chk input {
+      margin-right: 8px;
+      transform: scale(1.15)
+    }
+
+    #top {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--tx);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      display: none;
+      font-size: 18px
+    }
+
+    .hide {
+      display: none !important
+    }
+
+    #burger {
+      display: none
+    }
+
+    @media(max-width:900px) {
+      #side {
+        position: sticky;
+        top: 0;
+        width: auto;
+        inset: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 10px 14px;
+        max-height: none
+      }
+
+      #side nav {
+        display: none;
+        max-height: 50vh;
+        overflow: auto
+      }
+
+      #side.open nav {
+        display: block
+      }
+
+      #burger {
+        display: inline-block
+      }
+
+      main {
+        margin-left: 0;
+        padding: 0 16px 80px
+      }
+
+      .hero {
+        margin: 0 -16px;
+        padding: 28px 16px 20px
+      }
+
+      .hero h1 {
+        font-size: 26px
+      }
+    }
+
+    @media print {
+
+      #side,
+      #top {
+        display: none
+      }
+
+      main {
+        margin: 0
+      }
+    }
+  </style>
 </head>
+
 <body>
-<aside id="side">
- <h1><span>🧭 Migration Plan</span><span><button class="t" id="burger" aria-label="Menu">☰</button> <button class="t" id="theme" aria-label="Toggle theme">☀︎/☾</button></span></h1>
- <input id="q" type="search" placeholder="Search headings &amp; code…" aria-label="Search">
- <nav id="nav">
-  <a href="#s1">§1 Overview</a><a href="#s2">§2 Branch rename</a><a href="#s3">§3 GitHub Actions</a>
-  <a href="#s4">§4 Config module</a><a href="#s5">§5 Loaders</a><a href="#s6">§6 Backend optimization</a>
-  <a href="#s7">§7 Local DB (Docker)</a><a href="#s8">§8 requirements + README</a><a href="#s9">§9 Cheat sheet</a>
- </nav>
-</aside>
-<main>
+  <aside id="side">
+    <h1><span>🧭 Migration Plan</span><span><button class="t" id="burger" aria-label="Menu">☰</button> <button class="t"
+          id="theme" aria-label="Toggle theme">☀︎/☾</button></span></h1>
+    <input id="q" type="search" placeholder="Search headings &amp; code…" aria-label="Search">
+    <nav id="nav">
+      <a href="#s1">§1 Overview</a><a href="#s2">§2 Branch rename</a><a href="#s3">§3 GitHub Actions</a>
+      <a href="#s4">§4 Config module</a><a href="#s5">§5 Loaders</a><a href="#s6">§6 Backend optimization</a>
+      <a href="#s7">§7 Local DB (Docker)</a><a href="#s8">§8 requirements + README</a><a href="#s9">§9 Cheat sheet</a>
+      <a href="#s10">§10 Frontend code</a>
+    </nav>
+  </aside>
+  <main>
 
-<!-- ═══════════ §1 ═══════════ -->
-<section id="s1" class="first">
-<div class="hero">
- <span class="pill">Generated 2026-10-05 · read-only analysis · no source files changed</span>
- <h1>Retentions-Aid — Migration, Optimization &amp; Local Setup Plan</h1>
- <p class="sub">Flask + React retention-management app · origin <code>flodata-analytics/retentions-aid</code> · facts gathered via <code>git show &lt;branch&gt;:&lt;path&gt;</code> (no checkout needed, working tree untouched).</p>
-</div>
-<div class="grid">
- <div class="card"><b>Branch target state</b><div class="big">prod (default) · dev</div><span class="sub">contabo → prod, update_JAN_2025 → dev</span></div>
- <div class="card"><b>Deleted</b><div class="big">main</div><span class="sub">68 commits behind; nothing unique to keep</span></div>
- <div class="card"><b>New</b><div class="big">5 additions</div><span class="sub">Dockerized local DB, config module, loaders, requirements.txt, README</span></div>
- <div class="card"><b>Backend</b><div class="big">Queries preserved</div><span class="sub">Structure optimized; SQL byte-identical</span></div>
-</div>
+    <!-- ═══════════ §1 ═══════════ -->
+    <section id="s1" class="first">
+      <div class="hero">
+        <span class="pill">Generated 2026-10-05 · read-only analysis · no source files changed</span>
+        <h1>Retentions-Aid — Migration, Optimization &amp; Local Setup Plan</h1>
+        <p class="sub">Flask + React retention-management app · origin <code>flodata-analytics/retentions-aid</code> ·
+          facts gathered via <code>git show &lt;branch&gt;:&lt;path&gt;</code> (no checkout needed, working tree
+          untouched).</p>
+      </div>
+      <div class="grid">
+        <div class="card"><b>Branch target state</b>
+          <div class="big">prod (default) · dev</div><span class="sub">contabo → prod, update_JAN_2025 → dev</span>
+        </div>
+        <div class="card"><b>Deleted</b>
+          <div class="big">main</div><span class="sub">68 commits behind; nothing unique to keep</span>
+        </div>
+        <div class="card"><b>New</b>
+          <div class="big">5 additions</div><span class="sub">Dockerized local DB, config module, loaders,
+            requirements.txt, README</span>
+        </div>
+        <div class="card"><b>Backend</b>
+          <div class="big">Queries preserved</div><span class="sub">Structure optimized; SQL byte-identical</span>
+        </div>
+      </div>
 
-<h3>Branch stats (as found)</h3>
-<div class="tw"><table><thead><tr><th>Branch</th><th>HEAD</th><th>Files</th><th>Notes</th></tr></thead><tbody>
-<tr><td><code>main</code> (origin/HEAD)</td><td><code>0342ee3</code></td><td>282</td><td>Stale. <code>main..contabo</code> = 94 files, +7,878 / −677. Missing monthly_reports.py, weekly_report.py, weekly_status.sql, root .gitignore.</td></tr>
-<tr><td><code>contabo</code></td><td><code>d749a5d</code></td><td>329</td><td>Merge of PR #2 from update_JAN_2025. Deploy trigger of current workflow.</td></tr>
-<tr><td><code>update_JAN_2025</code></td><td><code>55b1f06</code></td><td>329</td><td>Ancestor of contabo; <code>git diff contabo update_JAN_2025</code> is empty → <b>trees are identical today</b>.</td></tr>
-</tbody></table></div>
+      <h3>Branch stats (as found)</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Branch</th>
+              <th>HEAD</th>
+              <th>Files</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>main</code> (origin/HEAD)</td>
+              <td><code>0342ee3</code></td>
+              <td>282</td>
+              <td>Stale. <code>main..contabo</code> = 94 files, +7,878 / −677. Missing monthly_reports.py,
+                weekly_report.py, weekly_status.sql, root .gitignore.</td>
+            </tr>
+            <tr>
+              <td><code>contabo</code></td>
+              <td><code>d749a5d</code></td>
+              <td>329</td>
+              <td>Merge of PR #2 from update_JAN_2025. Deploy trigger of current workflow.</td>
+            </tr>
+            <tr>
+              <td><code>update_JAN_2025</code></td>
+              <td><code>55b1f06</code></td>
+              <td>329</td>
+              <td>Ancestor of contabo; <code>git diff contabo update_JAN_2025</code> is empty → <b>trees are identical
+                  today</b>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-<div class="callout info"><p><b>ℹ️ Findings that change the plan vs. the original brief</b></p>
-<ul>
-<li><b>Existing <code>config.py</code> is a flat module</b> (gitignored), not a class: code does <code>from config import database_uri, databases</code> and <code>config.postgres_server/_port/_username/_password</code>. The new template (§4) keeps those names so nothing else changes.</li>
-<li><b>One Postgres database per clinic</b> (<code>config.databases</code>, <code>create_engine(database_uri + db)</code>). The local Docker DB (§7) must restore several databases, not one.</li>
-<li><b>Schema SQL says <code>OWNER TO collections_app</code></b> → the local container needs that role (§7).</li>
-<li><b>React dev points at production</b>: <code>ApiContext.js</code> sets the API domain to <code>https://retentionsaid.com</code> in <i>both</i> NODE_ENV branches. Local UI work would hit prod until fixed (§5/§7).</li>
-<li><code>app.py</code> already calls <code>load_dotenv()</code>, uses Flask-Caching (SimpleCache) and orjson; <code>email_util.py</code> already reads env vars. Those parts are "done"; plan items below only cover the gaps.</li>
-<li>There is no <code>react_app/src/App.js</code> or <code>components/LoadingPage.js</code>; the real files are <code>src/index.js</code> and <code>src/pages/LoadingPage.js</code>.</li></ul></div>
-</section>
+      <div class="callout info">
+        <p><b>ℹ️ Findings that change the plan vs. the original brief</b></p>
+        <ul>
+          <li><b>Existing <code>config.py</code> is a flat module</b> (gitignored), not a class: code does
+            <code>from config import database_uri, databases</code> and
+            <code>config.postgres_server/_port/_username/_password</code>. The new template (§4) keeps those names so
+            nothing else changes.
+          </li>
+          <li><b>One Postgres database per clinic</b> (<code>config.databases</code>,
+            <code>create_engine(database_uri + db)</code>). The local Docker DB (§7) must restore several databases, not
+            one.
+          </li>
+          <li><b>Schema SQL says <code>OWNER TO collections_app</code></b> → the local container needs that role (§7).
+          </li>
+          <li><b>React dev points at production</b>: <code>ApiContext.js</code> sets the API domain to
+            <code>https://retentionsaid.com</code> in <i>both</i> NODE_ENV branches. Local UI work would hit prod until
+            fixed (§5/§7).
+          </li>
+          <li><code>app.py</code> already calls <code>load_dotenv()</code>, uses Flask-Caching (SimpleCache) and orjson;
+            <code>email_util.py</code> already reads env vars. Those parts are "done"; plan items below only cover the
+            gaps.
+          </li>
+          <li>There is no <code>react_app/src/App.js</code> or <code>components/LoadingPage.js</code>; the real files
+            are <code>src/index.js</code> and <code>src/pages/LoadingPage.js</code>.</li>
+        </ul>
+      </div>
+    </section>
 
-<!-- ═══════════ §2 ═══════════ -->
-<section id="s2">
-<h2>§2 · Branch rename plan</h2>
-<p class="sub"><code>contabo → prod</code>, <code>update_JAN_2025 → dev</code>, delete <code>main</code>.</p>
-<div class="tw"><table><thead><tr><th>Reason</th><th>Detail</th></tr></thead><tbody>
-<tr><td>Naming convention</td><td>"contabo" is a hosting vendor and "update_JAN_2025" a dated task; <code>prod</code>/<code>dev</code> describe role.</td></tr>
-<tr><td>Clarity</td><td>Three trees, one stale: <code>main</code> is the GitHub default yet nobody deploys it.</td></tr>
-<tr><td>Less confusion</td><td>contabo and update_JAN_2025 are identical today; two names for one tree invites pushing to the wrong one.</td></tr>
-<tr><td>Safe to delete main</td><td><code>main</code> is a strict ancestor of contabo: <code>git log contabo..main</code> should print nothing (verify first).</td></tr>
-</tbody></table></div>
+    <!-- ═══════════ §2 ═══════════ -->
+    <section id="s2">
+      <h2>§2 · Branch rename plan</h2>
+      <p class="sub"><code>contabo → prod</code>, <code>update_JAN_2025 → dev</code>, delete <code>main</code>.</p>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Reason</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Naming convention</td>
+              <td>"contabo" is a hosting vendor and "update_JAN_2025" a dated task; <code>prod</code>/<code>dev</code>
+                describe role.</td>
+            </tr>
+            <tr>
+              <td>Clarity</td>
+              <td>Three trees, one stale: <code>main</code> is the GitHub default yet nobody deploys it.</td>
+            </tr>
+            <tr>
+              <td>Less confusion</td>
+              <td>contabo and update_JAN_2025 are identical today; two names for one tree invites pushing to the wrong
+                one.</td>
+            </tr>
+            <tr>
+              <td>Safe to delete main</td>
+              <td><code>main</code> is a strict ancestor of contabo: <code>git log contabo..main</code> should print
+                nothing (verify first).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-<div class="diagram"><svg viewBox="0 0 760 250" role="img" aria-label="Branch before and after">
-<text x="70" y="22" class="m">BEFORE</text><text x="470" y="22" class="m">AFTER</text>
-<rect class="box" x="30" y="35" width="250" height="44" rx="10"/><text x="46" y="62">main  (default · stale)</text>
-<rect class="box" x="30" y="100" width="250" height="44" rx="10"/><text x="46" y="127">contabo  (deploy trigger)</text>
-<rect class="box" x="30" y="165" width="250" height="44" rx="10"/><text x="46" y="192">update_JAN_2025  (work)</text>
-<rect class="del" x="430" y="35" width="250" height="44" rx="10"/><text x="446" y="62">main  — deleted</text>
-<rect class="ok" x="430" y="100" width="250" height="44" rx="10"/><text x="446" y="127">prod  (default · deploy)</text>
-<rect class="hl" x="430" y="165" width="250" height="44" rx="10"/><text x="446" y="192">dev  (integration)</text>
-<path class="ln" d="M285 57 L425 57" stroke-dasharray="4 4"/><path class="ln" d="M285 122 L425 122"/><path class="ln" d="M285 187 L425 187"/>
-<text x="330" y="52" class="m">delete</text><text x="330" y="117" class="m">rename</text><text x="330" y="182" class="m">rename</text>
-</svg></div>
+      <div class="diagram"><svg viewBox="0 0 760 250" role="img" aria-label="Branch before and after">
+          <text x="70" y="22" class="m">BEFORE</text><text x="470" y="22" class="m">AFTER</text>
+          <rect class="box" x="30" y="35" width="250" height="44" rx="10" /><text x="46" y="62">main (default ·
+            stale)</text>
+          <rect class="box" x="30" y="100" width="250" height="44" rx="10" /><text x="46" y="127">contabo (deploy
+            trigger)</text>
+          <rect class="box" x="30" y="165" width="250" height="44" rx="10" /><text x="46" y="192">update_JAN_2025
+            (work)</text>
+          <rect class="del" x="430" y="35" width="250" height="44" rx="10" /><text x="446" y="62">main — deleted</text>
+          <rect class="ok" x="430" y="100" width="250" height="44" rx="10" /><text x="446" y="127">prod (default ·
+            deploy)</text>
+          <rect class="hl" x="430" y="165" width="250" height="44" rx="10" /><text x="446" y="192">dev
+            (integration)</text>
+          <path class="ln" d="M285 57 L425 57" stroke-dasharray="4 4" />
+          <path class="ln" d="M285 122 L425 122" />
+          <path class="ln" d="M285 187 L425 187" />
+          <text x="330" y="52" class="m">delete</text><text x="330" y="117" class="m">rename</text><text x="330" y="182"
+            class="m">rename</text>
+        </svg></div>
 
-<h3>Rename commands</h3>
-<script type="text/plain" class="code" data-lang="bash"># 0. Safety: prove main holds nothing unique (expect empty output)
+      <h3>Rename commands</h3>
+      <script type="text/plain" class="code" data-lang="bash"># 0. Safety: prove main holds nothing unique (expect empty output)
 git fetch --all --prune
 git log --oneline contabo..origin/main
 
@@ -165,40 +731,90 @@ git push origin --delete update_JAN_2025
 git branch -D main
 git push origin --delete main
 git remote set-head origin -a</script>
-<div class="callout warn"><p><b>⚠️ Order matters.</b> GitHub requires you to change the default branch to <code>prod</code> BEFORE deleting <code>main</code>. Do this in Settings → Branches. Also update the GitHub Actions workflow (§3) <i>before</i> the first push to <code>prod</code>, or the deploy will not trigger.</p></div>
-<div class="callout info"><p><b>ℹ️ Alternative:</b> Settings → Branches → ✏️ rename on GitHub does the push/delete/default-switch in one step, retargets open PRs and branch protection, and leaves redirects. Then on each clone: <code>git branch -m contabo prod &amp;&amp; git fetch origin &amp;&amp; git branch -u origin/prod prod</code>.</p></div>
-<h3>Post-rename checklist</h3>
-<ul class="chk">
-<li><label><input type="checkbox"> Verified <code>git log contabo..origin/main</code> is empty</label></li>
-<li><label><input type="checkbox"> Default branch = <code>prod</code> on GitHub</label></li>
-<li><label><input type="checkbox"> Workflow trigger updated to <code>prod</code> (§3) and merged</label></li>
-<li><label><input type="checkbox"> Old remote branches deleted</label></li>
-<li><label><input type="checkbox"> Branch protection on <code>prod</code> (PR + passing checks)</label></li>
-<li><label><input type="checkbox"> Teammates ran the local rename / re-clone</label></li>
-<li><label><input type="checkbox"> VPS checkout (if git-based) switched to <code>prod</code></label></li>
-<li><label><input type="checkbox"> Open PRs retargeted; bookmarks/docs referencing <code>contabo</code> updated</label></li></ul>
-</section>
+      <div class="callout warn">
+        <p><b>⚠️ Order matters.</b> GitHub requires you to change the default branch to <code>prod</code> BEFORE
+          deleting <code>main</code>. Do this in Settings → Branches. Also update the GitHub Actions workflow (§3)
+          <i>before</i> the first push to <code>prod</code>, or the deploy will not trigger.
+        </p>
+      </div>
+      <div class="callout info">
+        <p><b>ℹ️ Alternative:</b> Settings → Branches → ✏️ rename on GitHub does the push/delete/default-switch in one
+          step, retargets open PRs and branch protection, and leaves redirects. Then on each clone:
+          <code>git branch -m contabo prod &amp;&amp; git fetch origin &amp;&amp; git branch -u origin/prod prod</code>.
+        </p>
+      </div>
+      <h3>Post-rename checklist</h3>
+      <ul class="chk">
+        <li><label><input type="checkbox"> Verified <code>git log contabo..origin/main</code> is empty</label></li>
+        <li><label><input type="checkbox"> Default branch = <code>prod</code> on GitHub</label></li>
+        <li><label><input type="checkbox"> Workflow trigger updated to <code>prod</code> (§3) and merged</label></li>
+        <li><label><input type="checkbox"> Old remote branches deleted</label></li>
+        <li><label><input type="checkbox"> Branch protection on <code>prod</code> (PR + passing checks)</label></li>
+        <li><label><input type="checkbox"> Teammates ran the local rename / re-clone</label></li>
+        <li><label><input type="checkbox"> VPS checkout (if git-based) switched to <code>prod</code></label></li>
+        <li><label><input type="checkbox"> Open PRs retargeted; bookmarks/docs referencing <code>contabo</code>
+            updated</label></li>
+      </ul>
+    </section>
 
-<!-- ═══════════ §3 ═══════════ -->
-<section id="s3">
-<h2>§3 · GitHub Actions update</h2>
-<h3>Current workflow (paraphrased, secrets not shown)</h3>
-<ul><li>Name <code>CI</code>; trigger <code>push</code> on <code>contabo</code>.</li>
-<li>Step 1: <code>actions/checkout@master</code> (unpinned).</li>
-<li>Step 2: <code>appleboy/scp-action@master</code> copies the whole repo (minus node_modules, __pycache__) to the VPS using an SSH <b>password</b> secret.</li>
-<li>Step 3: <code>appleboy/ssh-action@v1.0.3</code>, password auth, runs <code>cd $PROJECT_FOLDER/flask_app; sudo bash restart.sh &gt; restart.log 2&gt;&amp;1 &amp;</code>.</li>
-<li>Secrets referenced: <code>SSH_HOST, SSH_USER, SSH_PORT, SSH_PASSWORD(***REDACTED***), PROJECT_FOLDER</code>. No tests; the React <code>build/</code> folder is committed and served by Flask.</li></ul>
-<div class="callout bad"><p><b>What breaks after rename:</b> <code>branches: [contabo]</code> never matches again → pushes to <code>prod</code> silently stop deploying.</p></div>
-<div class="tw"><table><thead><tr><th>Old</th><th>New</th></tr></thead><tbody>
-<tr><td><code>push: [contabo]</code></td><td><code>push: [prod]</code></td></tr>
-<tr><td>(none)</td><td><code>pull_request: [prod, dev]</code> → tests on PRs</td></tr>
-<tr><td>scp + ssh, password</td><td>ssh-action, SSH key</td></tr>
-<tr><td><code>@master</code> actions</td><td>pinned <code>@v4</code>, <code>@v5</code>, <code>@v1.0.3</code></td></tr>
-<tr><td>implicit write token</td><td><code>permissions: contents: read</code></td></tr>
-<tr><td>deploy always</td><td><code>needs: test</code> and only on <code>refs/heads/prod</code></td></tr>
-</tbody></table></div>
-<h3>New workflow <code>.github/workflows/main.yml</code></h3>
-<script type="text/plain" class="code" data-lang="yaml">name: deploy-prod
+    <!-- ═══════════ §3 ═══════════ -->
+    <section id="s3">
+      <h2>§3 · GitHub Actions update</h2>
+      <h3>Current workflow (paraphrased, secrets not shown)</h3>
+      <ul>
+        <li>Name <code>CI</code>; trigger <code>push</code> on <code>contabo</code>.</li>
+        <li>Step 1: <code>actions/checkout@master</code> (unpinned).</li>
+        <li>Step 2: <code>appleboy/scp-action@master</code> copies the whole repo (minus node_modules, __pycache__) to
+          the VPS using an SSH <b>password</b> secret.</li>
+        <li>Step 3: <code>appleboy/ssh-action@v1.0.3</code>, password auth, runs
+          <code>cd $PROJECT_FOLDER/flask_app; sudo bash restart.sh &gt; restart.log 2&gt;&amp;1 &amp;</code>.
+        </li>
+        <li>Secrets referenced: <code>SSH_HOST, SSH_USER, SSH_PORT, SSH_PASSWORD(***REDACTED***), PROJECT_FOLDER</code>.
+          No tests; the React <code>build/</code> folder is committed and served by Flask.</li>
+      </ul>
+      <div class="callout bad">
+        <p><b>What breaks after rename:</b> <code>branches: [contabo]</code> never matches again → pushes to
+          <code>prod</code> silently stop deploying.
+        </p>
+      </div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Old</th>
+              <th>New</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>push: [contabo]</code></td>
+              <td><code>push: [prod]</code></td>
+            </tr>
+            <tr>
+              <td>(none)</td>
+              <td><code>pull_request: [prod, dev]</code> → tests on PRs</td>
+            </tr>
+            <tr>
+              <td>scp + ssh, password</td>
+              <td>ssh-action, SSH key</td>
+            </tr>
+            <tr>
+              <td><code>@master</code> actions</td>
+              <td>pinned <code>@v4</code>, <code>@v5</code>, <code>@v1.0.3</code></td>
+            </tr>
+            <tr>
+              <td>implicit write token</td>
+              <td><code>permissions: contents: read</code></td>
+            </tr>
+            <tr>
+              <td>deploy always</td>
+              <td><code>needs: test</code> and only on <code>refs/heads/prod</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>New workflow <code>.github/workflows/main.yml</code></h3>
+      <script type="text/plain" class="code" data-lang="yaml">name: deploy-prod
 
 on:
   push:
@@ -235,20 +851,39 @@ jobs:
             cd ${{ secrets.PROJECT_FOLDER }}
             git pull origin prod
             sudo bash flask_app/restart.sh > flask_app/restart.log 2>&1 &</script>
-<div class="callout warn"><p><b>⚠️ Prerequisites before this deploy works</b></p>
-<ul><li>Today the VPS folder is populated by <b>scp</b>; it may not be a git checkout. Either clone the repo there once (read-only deploy key), or keep an scp step but with <code>key:</code> instead of <code>password:</code>.</li>
-<li>Add secret <code>SSH_KEY</code> (private key; public half in the VPS <code>authorized_keys</code>), then delete the old password secret.</li>
-<li>I kept <code>sudo</code> and the <code>&amp;</code> background from the current script (<code>restart.sh</code> daemonizes gunicorn and <code>pkill</code>s the old one). Your brief omitted <code>sudo</code>; drop it only if the VPS user can pkill/run gunicorn unprivileged.</li>
-<li><code>flask_app/requirements.txt</code> must exist on the branch (§8) or the <code>test</code> job fails.</li>
-<li><code>restart.sh</code> hardcodes <code>/home/ubuntu/retentions_aid</code>; <code>PROJECT_FOLDER</code> must match it.</li></ul></div>
-</section>
+      <div class="callout warn">
+        <p><b>⚠️ Prerequisites before this deploy works</b></p>
+        <ul>
+          <li>Today the VPS folder is populated by <b>scp</b>; it may not be a git checkout. Either clone the repo there
+            once (read-only deploy key), or keep an scp step but with <code>key:</code> instead of
+            <code>password:</code>.
+          </li>
+          <li>Add secret <code>SSH_KEY</code> (private key; public half in the VPS <code>authorized_keys</code>), then
+            delete the old password secret.</li>
+          <li>I kept <code>sudo</code> and the <code>&amp;</code> background from the current script
+            (<code>restart.sh</code> daemonizes gunicorn and <code>pkill</code>s the old one). Your brief omitted
+            <code>sudo</code>; drop it only if the VPS user can pkill/run gunicorn unprivileged.
+          </li>
+          <li><code>flask_app/requirements.txt</code> must exist on the branch (§8) or the <code>test</code> job fails.
+          </li>
+          <li><code>restart.sh</code> hardcodes <code>/home/ubuntu/retentions_aid</code>; <code>PROJECT_FOLDER</code>
+            must match it.</li>
+        </ul>
+      </div>
+    </section>
 
-<!-- ═══════════ §4 ═══════════ -->
-<section id="s4">
-<h2>§4 · Config module — why and how</h2>
-<p><b>Why:</b> <code>flask_app/config.py</code> is gitignored (<code>flask_app/.gitignore</code>), so a fresh clone fails at <code>from config import database_uri</code> in 6 files. App-level secrets are scattered: <code>SECRET_KEY</code> is a literal inside <code>app.py</code>'s inline <code>Config</code> class, credentials come from env in some modules and from <code>config.py</code> in others.</p>
-<p><b>How:</b> commit a template <code>config.example.py</code> + <code>.env.example</code>; each developer/server copies the template to the gitignored <code>config.py</code>. The template keeps the <b>existing module-level names</b> so nothing else changes, and adds a <code>Config</code> class for Flask.</p>
-<script type="text/plain" class="code" data-lang="python"># flask_app/config.example.py  (COMMIT THIS — copy to config.py)
+    <!-- ═══════════ §4 ═══════════ -->
+    <section id="s4">
+      <h2>§4 · Config module — why and how</h2>
+      <p><b>Why:</b> <code>flask_app/config.py</code> is gitignored (<code>flask_app/.gitignore</code>), so a fresh
+        clone fails at <code>from config import database_uri</code> in 6 files. App-level secrets are scattered:
+        <code>SECRET_KEY</code> is a literal inside <code>app.py</code>'s inline <code>Config</code> class, credentials
+        come from env in some modules and from <code>config.py</code> in others.
+      </p>
+      <p><b>How:</b> commit a template <code>config.example.py</code> + <code>.env.example</code>; each developer/server
+        copies the template to the gitignored <code>config.py</code>. The template keeps the <b>existing module-level
+          names</b> so nothing else changes, and adds a <code>Config</code> class for Flask.</p>
+      <script type="text/plain" class="code" data-lang="python"># flask_app/config.example.py  (COMMIT THIS — copy to config.py)
 import os
 from urllib.parse import quote_plus
 
@@ -290,7 +925,7 @@ class Config:
     UI_ORIGIN = os.environ.get("UI_ORIGIN", "http://localhost:3000")
     FIREBASE_CREDS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
     SIB_API_KEY = os.environ.get("SIB_API_KEY")</script>
-<script type="text/plain" class="code" data-lang="dotenv"># .env.example  (COMMIT THIS — copy to .env, never commit .env)
+      <script type="text/plain" class="code" data-lang="dotenv"># .env.example  (COMMIT THIS — copy to .env, never commit .env)
 FLASK_SECRET_KEY=change-me
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
@@ -306,28 +941,49 @@ RETENTIONS_ADMIN_EMAIL=admin@example.com
 RETENTIONS_ADMIN_PASSWORD=change-me
 RETENTIONS_ADMIN_ORG=example
 UI_ORIGIN=http://localhost:3000</script>
-<div class="callout info"><p><b>Deviation from the brief:</b> instead of a single <code>DATABASE_URL</code>, the template builds <code>database_uri</code> from <code>POSTGRES_*</code> because the app appends a per-clinic database name and <code>create_tables_and_triggers.py</code> needs host/port/user/password separately. Also add <code>.env.example</code> / <code>config.example.py</code> to git; keep <code>config.py</code> and <code>.env</code> ignored (already are).</p></div>
-<h3>Where it loads</h3>
-<div class="diagram"><svg viewBox="0 0 760 210" role="img" aria-label="Config load flow">
-<rect class="box" x="10" y="70" width="110" height="50" rx="10"/><text x="30" y="100">.env / OS env</text>
-<rect class="hl" x="170" y="70" width="150" height="50" rx="10"/><text x="182" y="92">load_dotenv()</text><text x="182" y="110" class="m">app.py line ~14</text>
-<rect class="hl" x="370" y="70" width="150" height="50" rx="10"/><text x="388" y="92">config.py</text><text x="388" y="110" class="m">Config + names</text>
-<rect class="box" x="580" y="10" width="170" height="40" rx="10"/><text x="595" y="35">app.py (from_object)</text>
-<rect class="box" x="580" y="62" width="170" height="40" rx="10"/><text x="595" y="87">app_db.py (database_uri)</text>
-<rect class="box" x="580" y="114" width="170" height="40" rx="10"/><text x="595" y="139">clinic_manager.py</text>
-<rect class="box" x="580" y="166" width="170" height="40" rx="10"/><text x="595" y="191">cron scripts / schema</text>
-<path class="ln" d="M120 95H168M320 95H368M520 95L578 30M520 95L578 82M520 95L578 134M520 95L578 186"/>
-</svg></div>
-<p>In <code>app.py</code>: delete the inline <code>class Config</code> and use <code>import config</code> … <code>app.config.from_object(config.Config)</code>. <code>load_dotenv()</code> already runs before the local imports there — but <code>update_alerts.py</code>, <code>update_user_alerts.py</code> and the schema script import <code>config</code> without it; add <code>load_dotenv()</code> there too (§5b).</p>
-</section>
+      <div class="callout info">
+        <p><b>Deviation from the brief:</b> instead of a single <code>DATABASE_URL</code>, the template builds
+          <code>database_uri</code> from <code>POSTGRES_*</code> because the app appends a per-clinic database name and
+          <code>create_tables_and_triggers.py</code> needs host/port/user/password separately. Also add
+          <code>.env.example</code> / <code>config.example.py</code> to git; keep <code>config.py</code> and
+          <code>.env</code> ignored (already are).
+        </p>
+      </div>
+      <h3>Where it loads</h3>
+      <div class="diagram"><svg viewBox="0 0 760 210" role="img" aria-label="Config load flow">
+          <rect class="box" x="10" y="70" width="110" height="50" rx="10" /><text x="30" y="100">.env / OS env</text>
+          <rect class="hl" x="170" y="70" width="150" height="50" rx="10" /><text x="182"
+            y="92">load_dotenv()</text><text x="182" y="110" class="m">app.py line ~14</text>
+          <rect class="hl" x="370" y="70" width="150" height="50" rx="10" /><text x="388" y="92">config.py</text><text
+            x="388" y="110" class="m">Config + names</text>
+          <rect class="box" x="580" y="10" width="170" height="40" rx="10" /><text x="595" y="35">app.py
+            (from_object)</text>
+          <rect class="box" x="580" y="62" width="170" height="40" rx="10" /><text x="595" y="87">app_db.py
+            (database_uri)</text>
+          <rect class="box" x="580" y="114" width="170" height="40" rx="10" /><text x="595"
+            y="139">clinic_manager.py</text>
+          <rect class="box" x="580" y="166" width="170" height="40" rx="10" /><text x="595" y="191">cron scripts /
+            schema</text>
+          <path class="ln" d="M120 95H168M320 95H368M520 95L578 30M520 95L578 82M520 95L578 134M520 95L578 186" />
+        </svg></div>
+      <p>In <code>app.py</code>: delete the inline <code>class Config</code> and use <code>import config</code> …
+        <code>app.config.from_object(config.Config)</code>. <code>load_dotenv()</code> already runs before the local
+        imports there — but <code>update_alerts.py</code>, <code>update_user_alerts.py</code> and the schema script
+        import <code>config</code> without it; add <code>load_dotenv()</code> there too (§5b).
+      </p>
+    </section>
 
-<!-- ═══════════ §5 ═══════════ -->
-<section id="s5">
-<h2>§5 · Loaders — where and how</h2>
-<p>"Loaders" here means three things: React spinners for slow API calls, Python env loading at startup, and an optional DB schema loader.</p>
-<h3>(a) React loading indicator</h3>
-<p><b>Where:</b> new hook in <code>react_app/src/hooks/useLoading.js</code>; component already exists at <code>react_app/src/pages/LoadingPage.js</code> (also <code>components/LoadingWidget.js</code>, <code>LoaderSVG</code>). Pages that fetch via <code>useApi()</code> wrap their calls.</p>
-<script type="text/plain" class="code" data-lang="javascript">// react_app/src/hooks/useLoading.js
+    <!-- ═══════════ §5 ═══════════ -->
+    <section id="s5">
+      <h2>§5 · Loaders — where and how</h2>
+      <p>"Loaders" here means three things: React spinners for slow API calls, Python env loading at startup, and an
+        optional DB schema loader.</p>
+      <h3>(a) React loading indicator</h3>
+      <p><b>Where:</b> new hook in <code>react_app/src/hooks/useLoading.js</code>; component already exists at
+        <code>react_app/src/pages/LoadingPage.js</code> (also <code>components/LoadingWidget.js</code>,
+        <code>LoaderSVG</code>). Pages that fetch via <code>useApi()</code> wrap their calls.
+      </p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/hooks/useLoading.js
 import { useState, useCallback } from 'react';
 export function useLoading() {
   const [loading, setLoading] = useState(false);
@@ -337,18 +993,25 @@ export function useLoading() {
   }, []);
   return { loading, wrap };
 }</script>
-<script type="text/plain" class="code" data-lang="javascript">// usage in a page
+      <script type="text/plain" class="code" data-lang="javascript">// usage in a page
 import LoadingPage from "../pages/LoadingPage";
 import { useLoading } from "../hooks/useLoading";
 
 const { loading, wrap } = useLoading();
 useEffect(() => { wrap(fetchMonthlyReports); }, []);   // fetchMonthlyReports = your existing call
 if (loading) return <LoadingPage />;</script>
-<div class="callout warn"><p><b>Also required for local work (source change, not done here):</b> in <code>react_app/src/contexts/ApiContext.js</code> replace the hardcoded production domain with
-<code>const domain = process.env.REACT_APP_API_URL || "http://localhost:8000"</code> and put <code>REACT_APP_API_URL=http://localhost:8000</code> in <code>react_app/.env.development</code>. Production builds set <code>https://retentionsaid.com</code>.</p></div>
-<h3>(b) Python env loading</h3>
-<p><b>Where:</b> top of <code>flask_app/app.py</code>. It already has this (lines 14–16), after the third-party imports. Make it explicit that it precedes any <code>config</code> import:</p>
-<script type="text/plain" class="code" data-lang="diff"> from flask_caching import Cache
+      <div class="callout warn">
+        <p><b>Also required for local work (source change, not done here):</b> in
+          <code>react_app/src/contexts/ApiContext.js</code> replace the hardcoded production domain with
+          <code>const domain = process.env.REACT_APP_API_URL || "http://localhost:8000"</code> and put
+          <code>REACT_APP_API_URL=http://localhost:8000</code> in <code>react_app/.env.development</code>. Production
+          builds set <code>https://retentionsaid.com</code>.
+        </p>
+      </div>
+      <h3>(b) Python env loading</h3>
+      <p><b>Where:</b> top of <code>flask_app/app.py</code>. It already has this (lines 14–16), after the third-party
+        imports. Make it explicit that it precedes any <code>config</code> import:</p>
+      <script type="text/plain" class="code" data-lang="diff"> from flask_caching import Cache
  from dotenv import load_dotenv
 
  load_dotenv()                      # BEFORE anything that imports config
@@ -361,9 +1024,12 @@ if (loading) return <LoadingPage />;</script>
 -    ...
 -app.config.from_object(Config)
 +app.config.from_object(config.Config)</script>
-<h3>(c) DB schema loader</h3>
-<p><b>Where:</b> new <code>flask_app/load_schema.py</code>. It reuses the existing <code>create_tables_and_triggers(databases)</code> function — the SQL strings are not touched. (The existing script's <code>__main__</code> passes an empty list, so it does nothing as written.)</p>
-<script type="text/plain" class="code" data-lang="python"># flask_app/load_schema.py
+      <h3>(c) DB schema loader</h3>
+      <p><b>Where:</b> new <code>flask_app/load_schema.py</code>. It reuses the existing
+        <code>create_tables_and_triggers(databases)</code> function — the SQL strings are not touched. (The existing
+        script's <code>__main__</code> passes an empty list, so it does nothing as written.)
+      </p>
+      <script type="text/plain" class="code" data-lang="python"># flask_app/load_schema.py
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -376,39 +1042,82 @@ if __name__ == "__main__":
     # not on a restored prod dump (which already contains them).
     create_tables_and_triggers(config.databases)
     print(f"Schema loaded into: {', '.join(config.databases)}")</script>
-<h3>Where things live</h3>
-<div class="two">
-<div class="tree">flask_app/
-├─ <b>config.example.py</b>   (new, committed)
-├─ config.py           (local, gitignored)
-├─ app.py              (load_dotenv + Config)
-├─ app_db.py           (pool tuning)
-├─ <b>load_schema.py</b>      (new)
-└─ <b>requirements.txt</b>    (new)</div>
-<div class="tree">react_app/src/
-├─ <b>hooks/useLoading.js</b>   (new)
-├─ pages/LoadingPage.js
-├─ components/LoadingWidget.js
-└─ contexts/ApiContext.js   (API URL via env)
-<b>.env.example</b> · <b>docker-compose.db.yml</b>  (repo root)</div></div>
-</section>
+      <h3>Where things live</h3>
+      <div class="two">
+        <div class="tree">flask_app/
+          ├─ <b>config.example.py</b> (new, committed)
+          ├─ config.py (local, gitignored)
+          ├─ app.py (load_dotenv + Config)
+          ├─ app_db.py (pool tuning)
+          ├─ <b>load_schema.py</b> (new)
+          └─ <b>requirements.txt</b> (new)</div>
+        <div class="tree">react_app/src/
+          ├─ <b>hooks/useLoading.js</b> (new)
+          ├─ pages/LoadingPage.js
+          ├─ components/LoadingWidget.js
+          └─ contexts/ApiContext.js (API URL via env)
+          <b>.env.example</b> · <b>docker-compose.db.yml</b> (repo root)
+        </div>
+      </div>
+    </section>
 
-<!-- ═══════════ §6 ═══════════ -->
-<section id="s6">
-<h2>§6 · Backend optimization — without changing queries</h2>
-<div class="callout ok"><p><b>✅ Rule:</b> SQL strings stay byte-for-byte identical. Every item changes plumbing around the queries only; verify with <code>git diff -U0 | grep -iE "select|insert|update|delete"</code> showing no SQL lines.</p></div>
-<div class="callout bad"><p><b>🚫 MUST NOT TOUCH</b> (SQL lives here):</p>
-<ul><li><code>flask_app/app_db.py</code> SQL blocks (cpt column / fee lookups)</li><li><code>flask_app/reports.py</code> (~48 SQL statements: weekly status, patient data, retention report)</li><li><code>flask_app/create_tables_and_triggers.py</code> (DDL + plpgsql triggers)</li><li><code>flask_app/weekly_status.sql</code></li><li>Inline queries in <code>app.py</code> (get_alerts etc.), <code>clinic_manager.py</code>, <code>firebase_user.py</code>, <code>update_alerts.py</code>, <code>update_user_alerts.py</code>, <code>monthly_reports.py</code></li></ul></div>
-<p><button class="t" id="expAll">Expand all</button> <button class="t" id="colAll">Collapse all</button></p>
+    <!-- ═══════════ §6 ═══════════ -->
+    <section id="s6">
+      <h2>§6 · Backend optimization — without changing queries</h2>
+      <div class="callout ok">
+        <p><b>✅ Rule:</b> SQL strings stay byte-for-byte identical. Every item changes plumbing around the queries only;
+          verify with <code>git diff -U0 | grep -iE "select|insert|update|delete"</code> showing no SQL lines.</p>
+      </div>
+      <div class="callout bad">
+        <p><b>🚫 MUST NOT TOUCH</b> (SQL lives here):</p>
+        <ul>
+          <li><code>flask_app/app_db.py</code> SQL blocks (cpt column / fee lookups)</li>
+          <li><code>flask_app/reports.py</code> (~48 SQL statements: weekly status, patient data, retention report)</li>
+          <li><code>flask_app/create_tables_and_triggers.py</code> (DDL + plpgsql triggers)</li>
+          <li><code>flask_app/weekly_status.sql</code></li>
+          <li>Inline queries in <code>app.py</code> (get_alerts etc.), <code>clinic_manager.py</code>,
+            <code>firebase_user.py</code>, <code>update_alerts.py</code>, <code>update_user_alerts.py</code>,
+            <code>monthly_reports.py</code>
+          </li>
+        </ul>
+      </div>
+      <p><button class="t" id="expAll">Expand all</button> <button class="t" id="colAll">Collapse all</button></p>
 
-<details class="blk"><summary>1 · Env-backed config <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Move secrets/URIs to env via <code>config.py</code>.</dd><dt>Where</dt><dd><code>app.py</code> Config class (~line 31); <code>flask_app/config.py</code>.</dd>
-<dt>Why</dt><dd>Fresh clones work; secrets leave source; literal <code>SECRET_KEY</code> removed.</dd><dt>Risk</dt><dd>Low — see §4 for code. Rotate the old key (sessions invalidate).</dd></dl></div></details>
+      <details class="blk">
+        <summary>1 · Env-backed config <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Move secrets/URIs to env via <code>config.py</code>.</dd>
+            <dt>Where</dt>
+            <dd><code>app.py</code> Config class (~line 31); <code>flask_app/config.py</code>.</dd>
+            <dt>Why</dt>
+            <dd>Fresh clones work; secrets leave source; literal <code>SECRET_KEY</code> removed.</dd>
+            <dt>Risk</dt>
+            <dd>Low — see §4 for code. Rotate the old key (sessions invalidate).</dd>
+          </dl>
+        </div>
+      </details>
 
-<details class="blk"><summary>2 · Flask-Caching on read routes <span class="pill med">Risk: Low–Med</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Add <code>@cache.cached</code> to read-only GET/POST report routes.</dd><dt>Where</dt><dd><code>app.py</code>: <code>get_clinics</code>, <code>get_clinics_all</code>, <code>get_weekly_stats</code>, <code>get_patients_data</code>, <code>retention_report</code> (currently commented out).</dd>
-<dt>Why</dt><dd>Repeated report loads skip the multi-database SQL fan-out.</dd><dt>Risk</dt><dd>Low for the query; <b>Med for correctness</b>: the existing <code>make_cache_key</code> keys on path + body only. <code>get_alerts</code> (cached 5 s) and any role-filtered report would then be served across users. Include the user's uid in the key.</dd></dl>
-<script type="text/plain" class="code" data-lang="python">def make_cache_key():
+      <details class="blk">
+        <summary>2 · Flask-Caching on read routes <span class="pill med">Risk: Low–Med</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Add <code>@cache.cached</code> to read-only GET/POST report routes.</dd>
+            <dt>Where</dt>
+            <dd><code>app.py</code>: <code>get_clinics</code>, <code>get_clinics_all</code>,
+              <code>get_weekly_stats</code>, <code>get_patients_data</code>, <code>retention_report</code> (currently
+              commented out).
+            </dd>
+            <dt>Why</dt>
+            <dd>Repeated report loads skip the multi-database SQL fan-out.</dd>
+            <dt>Risk</dt>
+            <dd>Low for the query; <b>Med for correctness</b>: the existing <code>make_cache_key</code> keys on path +
+              body only. <code>get_alerts</code> (cached 5 s) and any role-filtered report would then be served across
+              users. Include the user's uid in the key.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python">def make_cache_key():
     uid = request.headers.get("Authorization", "")[-24:]      # or firebase uid
     body = json.dumps(request.get_json(force=True, silent=True) or {}, sort_keys=True)
     return f"{request.path}|{uid}|{body}"
@@ -420,22 +1129,51 @@ if __name__ == "__main__":
 @cache.cached(timeout=600, make_cache_key=make_cache_key)   # key built per request
 def get_weekly_stats(**kwargs): ...
 
-# bust after writes:  cache.clear()   (SimpleCache is per-process; with gunicorn -w >1 use Redis/FileSystem)</script></div></details>
+# bust after writes:  cache.clear()   (SimpleCache is per-process; with gunicorn -w >1 use Redis/FileSystem)</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>3 · Tune the connection pool in app_db.py <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Configure the SQLAlchemy engine pool (warm connections, stale-connection check).</dd><dt>Where</dt><dd><code>DB_Connection.start_engine</code>, the <code>create_engine(...)</code> call only.</dd>
-<dt>Why</dt><dd>SQLAlchemy engines already pool, so a separate psycopg2 <code>SimpleConnectionPool</code> would duplicate it and complicate pandas <code>read_sql</code>. Tuning the existing pool gives the "warm connections" benefit with no query path change. Worker threads (<code>ThreadPoolExecutor</code> per clinic) need <code>pool_size</code> ≥ concurrency.</dd><dt>Risk</dt><dd>Low.</dd></dl>
-<script type="text/plain" class="code" data-lang="python">self.engine = create_engine(
+      <details class="blk">
+        <summary>3 · Tune the connection pool in app_db.py <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Configure the SQLAlchemy engine pool (warm connections, stale-connection check).</dd>
+            <dt>Where</dt>
+            <dd><code>DB_Connection.start_engine</code>, the <code>create_engine(...)</code> call only.</dd>
+            <dt>Why</dt>
+            <dd>SQLAlchemy engines already pool, so a separate psycopg2 <code>SimpleConnectionPool</code> would
+              duplicate it and complicate pandas <code>read_sql</code>. Tuning the existing pool gives the "warm
+              connections" benefit with no query path change. Worker threads (<code>ThreadPoolExecutor</code> per
+              clinic) need <code>pool_size</code> ≥ concurrency.</dd>
+            <dt>Risk</dt>
+            <dd>Low.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python">self.engine = create_engine(
     database_uri + self.db,
     pool_size=5, max_overflow=10,
     pool_pre_ping=True,      # drop dead connections transparently
     pool_recycle=1800,
-)</script></div></details>
+)</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>4 · Timing decorator for slow-query logging <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Log duration of query-executing functions.</dd><dt>Where</dt><dd>new decorator in <code>helper_classes.py</code>; apply to <code>AppDBInstance.execute_using_pandas/execute_query</code> (decorator line only).</dd>
-<dt>Why</dt><dd>Find which clinic DB / report is slow before optimizing anything.</dd><dt>Risk</dt><dd>Low.</dd></dl>
-<script type="text/plain" class="code" data-lang="python">import time, logging
+      <details class="blk">
+        <summary>4 · Timing decorator for slow-query logging <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Log duration of query-executing functions.</dd>
+            <dt>Where</dt>
+            <dd>new decorator in <code>helper_classes.py</code>; apply to
+              <code>AppDBInstance.execute_using_pandas/execute_query</code> (decorator line only).
+            </dd>
+            <dt>Why</dt>
+            <dd>Find which clinic DB / report is slow before optimizing anything.</dd>
+            <dt>Risk</dt>
+            <dd>Low.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python">import time, logging
 from functools import wraps
 log = logging.getLogger("slowquery")
 
@@ -451,12 +1189,27 @@ def timed(threshold=1.0):
                 if dt >= threshold:
                     log.warning("slow %s %.2fs db=%s", f.__name__, dt, a[1] if len(a) > 1 else "?")
         return inner
-    return deco</script></div></details>
+    return deco</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>5 · Blueprints to split app.py <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Move routes into modules; register blueprints with the same URL paths.</dd><dt>Where</dt><dd><code>app.py</code> (763 lines, ~30 routes) → <code>routes/reports.py, routes/users.py, routes/clinics.py, routes/alerts.py</code>.</dd>
-<dt>Why</dt><dd>Maintainability; handler bodies (and their SQL strings) move verbatim.</dd><dt>Risk</dt><dd>Low — keep full <code>/api/...</code> rules; the catch-all <code>/&lt;path&gt;</code> must be registered last. Do it as a pure cut/paste commit.</dd></dl>
-<script type="text/plain" class="code" data-lang="python"># routes/alerts.py
+      <details class="blk">
+        <summary>5 · Blueprints to split app.py <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Move routes into modules; register blueprints with the same URL paths.</dd>
+            <dt>Where</dt>
+            <dd><code>app.py</code> (763 lines, ~30 routes) →
+              <code>routes/reports.py, routes/users.py, routes/clinics.py, routes/alerts.py</code>.
+            </dd>
+            <dt>Why</dt>
+            <dd>Maintainability; handler bodies (and their SQL strings) move verbatim.</dd>
+            <dt>Risk</dt>
+            <dd>Low — keep full <code>/api/...</code> rules; the catch-all <code>/&lt;path&gt;</code> must be registered
+              last. Do it as a pure cut/paste commit.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python"># routes/alerts.py
 from flask import Blueprint
 bp = Blueprint("alerts", __name__)          # no url_prefix: paths stay "/api/get_alerts"
 
@@ -465,43 +1218,103 @@ def get_alerts(**kwargs): ...               # body unchanged
 
 # app.py
 from routes.alerts import bp as alerts_bp
-app.register_blueprint(alerts_bp)</script></div></details>
+app.register_blueprint(alerts_bp)</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>6 · Remove password from verification email <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd><code>html_from_verification_link</code> emails the user's login password in clear text.</dd><dt>Where</dt><dd><code>email_util.py</code> lines 10–21 and its caller in <code>firebase_user.py</code>/<code>add_user</code>.</dd>
-<dt>Why</dt><dd>Security: no credentials over email. Send the verification link plus a password-reset link (Firebase <code>generate_password_reset_link</code>).</dd><dt>Risk</dt><dd>Low; coordinate with whoever onboards users (UX change).</dd></dl>
-<script type="text/plain" class="code" data-lang="python">def html_from_verification_link(verification_link, reset_link):
+      <details class="blk">
+        <summary>6 · Remove password from verification email <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd><code>html_from_verification_link</code> emails the user's login password in clear text.</dd>
+            <dt>Where</dt>
+            <dd><code>email_util.py</code> lines 10–21 and its caller in
+              <code>firebase_user.py</code>/<code>add_user</code>.
+            </dd>
+            <dt>Why</dt>
+            <dd>Security: no credentials over email. Send the verification link plus a password-reset link (Firebase
+              <code>generate_password_reset_link</code>).
+            </dd>
+            <dt>Risk</dt>
+            <dd>Low; coordinate with whoever onboards users (UX change).</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python">def html_from_verification_link(verification_link, reset_link):
     return f"""
     <html><body>
       <h1>Verify your email address</h1>
       <p><a href="{verification_link}">Verify Email</a></p>
       <p>Then <a href="{reset_link}">set your password</a>.</p>
-    </body></html>"""</script></div></details>
+    </body></html>"""</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>7 · Restrict CORS to UI_ORIGIN <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd><code>CORS(app, resources={r"*": {"origins": "*"}})</code> → allow only the UI origin.</dd><dt>Where</dt><dd><code>app.py</code> line ~48 (and per-route <code>@cross_origin()</code>).</dd>
-<dt>Why</dt><dd>Blocks other sites from calling the API with a user's bearer token in-browser. The UI is served from the same Flask origin in prod, so CORS only matters for <code>localhost:3000</code> dev.</dd><dt>Risk</dt><dd>Low (add every legitimate origin).</dd></dl>
-<script type="text/plain" class="code" data-lang="python">CORS(app, resources={r"/api/*": {"origins": [config.Config.UI_ORIGIN, "https://retentionsaid.com"]}})
-# bare @cross_origin() on routes defaults to "*": change to @cross_origin(origins=[...]) or remove</script></div></details>
+      <details class="blk">
+        <summary>7 · Restrict CORS to UI_ORIGIN <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd><code>CORS(app, resources={r"*": {"origins": "*"}})</code> → allow only the UI origin.</dd>
+            <dt>Where</dt>
+            <dd><code>app.py</code> line ~48 (and per-route <code>@cross_origin()</code>).</dd>
+            <dt>Why</dt>
+            <dd>Blocks other sites from calling the API with a user's bearer token in-browser. The UI is served from the
+              same Flask origin in prod, so CORS only matters for <code>localhost:3000</code> dev.</dd>
+            <dt>Risk</dt>
+            <dd>Low (add every legitimate origin).</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python">CORS(app, resources={r"/api/*": {"origins": [config.Config.UI_ORIGIN, "https://retentionsaid.com"]}})
+# bare @cross_origin() on routes defaults to "*": change to @cross_origin(origins=[...]) or remove</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>8 · Enable gzip response compression (flask-compress) <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Compress JSON responses at the Flask layer. A 10k-row payload that is 5–10&nbsp;MB uncompressed drops to roughly 500&nbsp;KB–1&nbsp;MB on the wire.</dd>
-<dt>Where</dt><dd><code>app.py</code>, immediately after <code>app = Flask(__name__)</code>; add <code>Flask-Compress</code> to <code>requirements.txt</code>.</dd>
-<dt>Why</dt><dd>The report routes return the <b>full</b> result set by design (no pagination). Compression is the single biggest speed-up for large responses and requires no change to routes, query strings, or DataFrame code.</dd>
-<dt>Risk</dt><dd>Low. Transparent to clients — browsers and <code>axios</code> decompress automatically. Skip if a downstream proxy already gzips, to avoid double work.</dd></dl>
-<script type="text/plain" class="code" data-lang="python"># app.py
+      <details class="blk">
+        <summary>8 · Enable gzip response compression (flask-compress) <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Compress JSON responses at the Flask layer. A 10k-row payload that is 5–10&nbsp;MB uncompressed drops to
+              roughly 500&nbsp;KB–1&nbsp;MB on the wire.</dd>
+            <dt>Where</dt>
+            <dd><code>app.py</code>, immediately after <code>app = Flask(__name__)</code>; add
+              <code>Flask-Compress</code> to <code>requirements.txt</code>.
+            </dd>
+            <dt>Why</dt>
+            <dd>The report routes return the <b>full</b> result set by design (no pagination). Compression is the single
+              biggest speed-up for large responses and requires no change to routes, query strings, or DataFrame code.
+            </dd>
+            <dt>Risk</dt>
+            <dd>Low. Transparent to clients — browsers and <code>axios</code> decompress automatically. Skip if a
+              downstream proxy already gzips, to avoid double work.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python"># app.py
 from flask_compress import Compress
 Compress(app)                    # gzip anything larger than ~500 bytes
 
 # requirements.txt
-# Flask-Compress==1.15</script></div></details>
+# Flask-Compress==1.15</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>8b · Trim unused columns before serialisation <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Return only the columns the UI and exports actually use, instead of every field the query produced.</dd>
-<dt>Where</dt><dd>Route handlers in <code>app.py</code> that call <code>.to_dict(orient="records")</code> — <code>get_patients_data</code>, <code>retention_report</code>, <code>get_clinics_all</code>. Select the columns <b>after</b> the DataFrame is returned.</dd>
-<dt>Why</dt><dd>10k rows × 20 fields ≈ 5&nbsp;MB JSON; 10k rows × 6 fields ≈ 1.5&nbsp;MB. Same data, smaller payload, faster JSON encoding with <code>orjson</code> (already in the stack).</dd>
-<dt>Risk</dt><dd>Low, but check export/CSV code first — anything that expects a column you drop will break. Keep the full DataFrame available internally; trim only the outgoing records.</dd></dl>
-<script type="text/plain" class="code" data-lang="python"># trim AFTER the query/DataFrame — SQL is untouched
+      <details class="blk">
+        <summary>8b · Trim unused columns before serialisation <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Return only the columns the UI and exports actually use, instead of every field the query produced.</dd>
+            <dt>Where</dt>
+            <dd>Route handlers in <code>app.py</code> that call <code>.to_dict(orient="records")</code> —
+              <code>get_patients_data</code>, <code>retention_report</code>, <code>get_clinics_all</code>. Select the
+              columns <b>after</b> the DataFrame is returned.
+            </dd>
+            <dt>Why</dt>
+            <dd>10k rows × 20 fields ≈ 5&nbsp;MB JSON; 10k rows × 6 fields ≈ 1.5&nbsp;MB. Same data, smaller payload,
+              faster JSON encoding with <code>orjson</code> (already in the stack).</dd>
+            <dt>Risk</dt>
+            <dd>Low, but check export/CSV code first — anything that expects a column you drop will break. Keep the full
+              DataFrame available internally; trim only the outgoing records.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python"># trim AFTER the query/DataFrame — SQL is untouched
 FIELDS = ["patient_id", "name", "clinic", "status", "last_visit", "notes"]
 
 def only_fields(records, fields=FIELDS):
@@ -509,14 +1322,32 @@ def only_fields(records, fields=FIELDS):
 
 # usage inside a route handler
 data = df.to_dict(orient="records")     # existing line, unchanged
-return jsonify(only_fields(data))       # send fewer keys</script></div></details>
+return jsonify(only_fields(data))       # send fewer keys</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>8c · Frontend virtualisation — render only visible rows <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>Keep the full 10k-row array in React state, but render only the ~20 rows on screen. Scrolling swaps rows in and out instead of holding 200k DOM nodes.</dd>
-<dt>Where</dt><dd>Table renderers in <code>react_app/src/pages/patients/PatientsTableComponentRenderer.js</code> and <code>react_app/src/pages/homepage/VirtualTable.js</code>. Libraries <code>react-window</code> / <code>react-virtualized</code> are already declared in <code>package.json</code>.</dd>
-<dt>Why</dt><dd>The bottleneck for 10k rows is the browser drawing them, not the data size. Virtualisation keeps memory flat and scroll smooth. Exports, sorting, and totals still see the full array — nothing downstream breaks.</dd>
-<dt>Risk</dt><dd>Low. UI-only change; API and SQL untouched. Verify sticky headers and row heights still line up — virtual lists need a fixed <code>itemSize</code>.</dd></dl>
-<script type="text/plain" class="code" data-lang="javascript">// react_app/src/components/VirtualTable.js
+      <details class="blk">
+        <summary>8c · Frontend virtualisation — render only visible rows <span class="pill low">Risk: Low</span>
+        </summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>Keep the full 10k-row array in React state, but render only the ~20 rows on screen. Scrolling swaps rows
+              in and out instead of holding 200k DOM nodes.</dd>
+            <dt>Where</dt>
+            <dd>Table renderers in <code>react_app/src/pages/patients/PatientsTableComponentRenderer.js</code> and
+              <code>react_app/src/pages/homepage/VirtualTable.js</code>. Libraries <code>react-window</code> /
+              <code>react-virtualized</code> are already declared in <code>package.json</code>.
+            </dd>
+            <dt>Why</dt>
+            <dd>The bottleneck for 10k rows is the browser drawing them, not the data size. Virtualisation keeps memory
+              flat and scroll smooth. Exports, sorting, and totals still see the full array — nothing downstream breaks.
+            </dd>
+            <dt>Risk</dt>
+            <dd>Low. UI-only change; API and SQL untouched. Verify sticky headers and row heights still line up —
+              virtual lists need a fixed <code>itemSize</code>.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="javascript">// react_app/src/components/VirtualTable.js
 import { FixedSizeList as List } from "react-window";
 
 function VirtualTable({ rows }) {
@@ -535,12 +1366,26 @@ function VirtualTable({ rows }) {
   );
 }
 // Existing .map() render is replaced by <VirtualTable rows={data} />.
-// data still contains all 10,000 rows; only ~20 are in the DOM at any time.</script></div></details>
+// data still contains all 10,000 rows; only ~20 are in the DOM at any time.</script>
+        </div>
+      </details>
 
-<details class="blk"><summary>9 · Structured JSON logging with request IDs <span class="pill low">Risk: Low</span></summary><div class="ab"><dl class="k">
-<dt>What</dt><dd>JSON log lines carrying a per-request id.</dd><dt>Where</dt><dd>new <code>logging_setup.py</code>; <code>app.py</code> before/after-request hooks. Replaces the <code>print(e)</code> in <code>retry_wrapper</code>.</dd>
-<dt>Why</dt><dd>Searchable gunicorn logs (<code>gunicorn_log.txt</code>); trace a failing report to one request.</dd><dt>Risk</dt><dd>Low.</dd></dl>
-<script type="text/plain" class="code" data-lang="python">import logging, uuid, orjson
+      <details class="blk">
+        <summary>9 · Structured JSON logging with request IDs <span class="pill low">Risk: Low</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>What</dt>
+            <dd>JSON log lines carrying a per-request id.</dd>
+            <dt>Where</dt>
+            <dd>new <code>logging_setup.py</code>; <code>app.py</code> before/after-request hooks. Replaces the
+              <code>print(e)</code> in <code>retry_wrapper</code>.
+            </dd>
+            <dt>Why</dt>
+            <dd>Searchable gunicorn logs (<code>gunicorn_log.txt</code>); trace a failing report to one request.</dd>
+            <dt>Risk</dt>
+            <dd>Low.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="python">import logging, uuid, orjson
 from flask import g, request
 
 class JsonFmt(logging.Formatter):
@@ -554,112 +1399,60 @@ logging.getLogger().addHandler(h); logging.getLogger().setLevel(logging.INFO)
 @app.before_request
 def _rid(): g.rid = request.headers.get("X-Request-ID", uuid.uuid4().hex[:12])
 @app.after_request
-def _hdr(resp): resp.headers["X-Request-ID"] = g.rid; return resp</script></div></details>
-</section>
+def _hdr(resp): resp.headers["X-Request-ID"] = g.rid; return resp</script>
+        </div>
+      </details>
+    </section>
 
-<!-- ═══════════ §7 ═══════════
-<section id="s7">
-<h2>§7 · Local DB with Docker + real-data dump</h2>
-<div class="callout bad"><p><b>🚫 Patient data.</b> The schema holds patients, appointments and insurance fields — treat any prod dump as protected health information. Mask names/DOB/phones/notes before it leaves the server, never commit it, never put it on shared drives.</p></div>
-<h3>Step 1 · <code>docker-compose.db.yml</code> (Postgres only)</h3>
-<script type="text/plain" class="code" data-lang="yaml">services:
-  db:
-    image: postgres:15-alpine
-    ports: ["5432:5432"]
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: retentions
-    volumes:
-      - ./docker/db_data:/var/lib/postgresql/data
-      - ./docker/dumps:/docker-entrypoint-initdb.d   # auto-load on FIRST start only</script>
-<h3>Step 2 · Dump prod (read-only)</h3>
-<p>The app uses a database per clinic, so dump each one. <code>-C</code> embeds <code>CREATE DATABASE</code> so the init loader recreates them all. Init scripts run alphabetically, so the role file goes first.</p>
-<script type="text/plain" class="code" data-lang="bash">mkdir -p docker/dumps
-# 00: the schema SQL does "OWNER TO collections_app" — role must exist locally
-echo "CREATE ROLE collections_app LOGIN PASSWORD 'local';" > docker/dumps/00-roles.sql
+    <!-- Old §7 removed — replaced by the version below -->
+    <!-- ═══════════ §7 ═══════════ -->
+    <section id="s7">
+      <h2>§7 · Local DB with Docker + daily server sync</h2>
+      <p class="sub">Production DBs change daily. This section shows how to keep a local Docker Postgres in sync — with
+        4 different strategies, their trade-offs, and the recommended one.</p>
 
-i=1
-for DB in clinic_a clinic_b clinic_c; do          # = CLINIC_DATABASES
-  pg_dump "postgresql://$PROD_USER:$PROD_PASS@$PROD_HOST:5432/$DB" \
-    -C --no-owner --no-privileges --schema=public \
-    > "docker/dumps/0$((i++))-$DB.sql"
-done
-# ⚠ mask PII (see warning above) BEFORE moving files off the server
-printf 'docker/dumps/\ndocker/db_data/\nconfig.py\n.env\n' >> .gitignore</script>
-<h3>Steps 3–6 · Run, verify, connect, tear down</h3>
-<script type="text/plain" class="code" data-lang="bash"># 3. start
-docker compose -f docker-compose.db.yml up -d
-docker compose -f docker-compose.db.yml logs -f db      # wait for "ready to accept connections"
+      <div class="callout bad">
+        <p><b>🚫 Patient data.</b> The schema holds patients, appointments, and insurance fields. Treat every prod dump
+          as protected health information. Mask PII columns <b>on the server</b> before the file ever leaves it, never
+          commit dumps, never place them on shared drives.</p>
+      </div>
 
-# 4. verify (repeat per DB)
-psql postgresql://user:pass@localhost:5432/clinic_a -c '\dt'
+      <!-- ─── 7.1 Why sync daily ────────────────────────────────────── -->
+      <h3>7.1 · Why a daily sync is needed</h3>
+      <p>The app stores <b>one PostgreSQL database per clinic</b>. Local development against a stale snapshot breaks as
+        soon as reports, cron jobs, or alerts reference rows that don't exist locally yet. A daily pull keeps developers
+        working against near-live data without touching production.</p>
 
-# 5. point backend at it — in .env
-#    POSTGRES_HOST=localhost  POSTGRES_USER=user  POSTGRES_PASSWORD=pass
-#    CLINIC_DATABASES=clinic_a,clinic_b,clinic_c
+      <div class="callout info">
+        <p><b>ℹ️ Two sync surfaces exist.</b> (a) <b>Data</b> — the clinic DBs, pulled daily by dump + restore. (b)
+          <b>Schema</b> — the tables/triggers, loaded once from <code>create_tables_and_triggers.py</code> on an empty
+          DB. Data restore handles schema too, so the schema loader (§5c) is only needed when a developer starts from a
+          truly empty local DB.
+        </p>
+      </div>
 
-# 6. teardown (-v + deleting ./docker/db_data wipes data; re-run step 3 to reload dumps)
-docker compose -f docker-compose.db.yml down -v
-rm -rf docker/db_data</script>
-<div class="callout info"><p>Init scripts execute only when the data directory is empty. Changing a dump later requires step 6 first. Firebase auth still needs real credentials (<code>GOOGLE_APPLICATION_CREDENTIALS</code>) — use a dev Firebase project, not prod.</p></div>
+      <!-- ─── 7.2 Four setup options ────────────────────────────────── -->
+      <h3>7.2 · Four ways to set up the local DB</h3>
+      <p>Pick one. All four end with a working local Postgres on <code>localhost:5432</code>; they differ in effort,
+        freshness, and how much patient data moves.</p>
 
-<h3>Flow diagrams</h3>
-<div class="diagram"><svg viewBox="0 0 760 330" role="img" aria-label="Docker flows">
-<text x="10" y="18" class="m">SETUP</text>
-<rect class="box" x="10" y="30" width="120" height="50" rx="10"/><text x="24" y="60">Dev machine</text>
-<rect class="hl" x="165" y="30" width="130" height="50" rx="10"/><text x="177" y="60">docker compose</text>
-<rect class="hl" x="330" y="30" width="140" height="50" rx="10"/><text x="342" y="52">Postgres 15</text><text x="342" y="69" class="m">container :5432</text>
-<rect class="box" x="505" y="30" width="110" height="50" rx="10"/><text x="513" y="52">./docker/</text><text x="513" y="69" class="m">db_data (volume)</text>
-<rect class="ok" x="640" y="30" width="110" height="50" rx="10"/><text x="648" y="52">initdb.d</text><text x="648" y="69" class="m">dump auto-load</text>
-<path class="ln" d="M130 55H163M295 55H328M470 55H503M615 55H638"/>
-<text x="10" y="140" class="m">RUNTIME</text>
-<rect class="box" x="10" y="152" width="150" height="56" rx="10"/><text x="24" y="176">React (browser)</text><text x="24" y="194" class="m">:3000 npm start</text>
-<rect class="hl" x="220" y="152" width="190" height="56" rx="10"/><text x="234" y="176">Flask (gunicorn)</text><text x="234" y="194" class="m">:8000 /api/*</text>
-<rect class="hl" x="470" y="152" width="180" height="56" rx="10"/><text x="484" y="176">Postgres container</text><text x="484" y="194" class="m">1 DB per clinic</text>
-<path class="ln" d="M160 180H218M410 180H468"/><text x="168" y="172" class="m">REACT_APP_API_URL</text><text x="418" y="172" class="m">database_uri</text>
-<rect class="box" x="220" y="250" width="190" height="44" rx="10"/><text x="234" y="277">Firebase (dev project)</text><path class="ln" d="M315 208V248"/>
-</svg></div>
-<script type="text/plain" class="code" data-lang="text">ASCII
-Dev Machine ──▶ docker compose ──▶ [Postgres 15 container :5432]
-                                      ├─ volume ./docker/db_data   (persistent)
-                                      └─ ./docker/dumps → /docker-entrypoint-initdb.d
-                                           00-roles.sql, 01-clinic_a.sql … (first start only)
-
-Browser (React :3000) ──▶ Flask/gunicorn (:8000 /api/*) ──▶ Postgres container :5432</script>
-<script type="text/plain" class="code" data-lang="mermaid">flowchart LR
-  Dev[Dev machine] --> DC[docker compose]
-  DC --> PG[(Postgres 15 :5432)]
-  PG --- VOL[(./docker/db_data volume)]
-  DUMP[docker/dumps/*.sql] -- first start --> PG
-  UI[React :3000] --> API[Flask gunicorn :8000] --> PG
-  API --> FB[Firebase dev project]</script>
-</section> -->
-<!-- ═══════════ §7 ═══════════ -->
-<section id="s7">
-<h2>§7 · Local DB with Docker + daily server sync</h2>
-<p class="sub">Production DBs change daily. This section shows how to keep a local Docker Postgres in sync — with 4 different strategies, their trade-offs, and the recommended one.</p>
-
-<div class="callout bad"><p><b>🚫 Patient data.</b> The schema holds patients, appointments, and insurance fields. Treat every prod dump as protected health information. Mask PII columns <b>on the server</b> before the file ever leaves it, never commit dumps, never place them on shared drives.</p></div>
-
-<!-- ─── 7.1 Why sync daily ────────────────────────────────────── -->
-<h3>7.1 · Why a daily sync is needed</h3>
-<p>The app stores <b>one PostgreSQL database per clinic</b>. Local development against a stale snapshot breaks as soon as reports, cron jobs, or alerts reference rows that don't exist locally yet. A daily pull keeps developers working against near-live data without touching production.</p>
-
-<div class="callout info"><p><b>ℹ️ Two sync surfaces exist.</b> (a) <b>Data</b> — the clinic DBs, pulled daily by dump + restore. (b) <b>Schema</b> — the tables/triggers, loaded once from <code>create_tables_and_triggers.py</code> on an empty DB. Data restore handles schema too, so the schema loader (§5c) is only needed when a developer starts from a truly empty local DB.</p></div>
-
-<!-- ─── 7.2 Four setup options ────────────────────────────────── -->
-<h3>7.2 · Four ways to set up the local DB</h3>
-<p>Pick one. All four end with a working local Postgres on <code>localhost:5432</code>; they differ in effort, freshness, and how much patient data moves.</p>
-
-<details class="blk" open><summary>Option A · Manual one-shot dump + restore <span class="pill low">Effort: Low · Freshness: stale</span></summary><div class="ab">
-<dl class="k">
-<dt>Setup</dt><dd>Developer SSHes to the VPS, runs <code>pg_dump</code>, copies the file down with <code>scp</code>, and restores it into the local container once.</dd>
-<dt>Best for</dt><dd>Onboarding a new developer, or one-off debugging against a specific snapshot.</dd>
-<dt>Impact</dt><dd>Zero automation. Data goes stale the moment the server runs its next write. Every refresh is a manual 5-minute dance.</dd>
-<dt>Risk</dt><dd>Low — no automation, no secrets stored, no cron.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="bash"># On the VPS (read-only)
+      <details class="blk" open>
+        <summary>Option A · Manual one-shot dump + restore <span class="pill low">Effort: Low · Freshness: stale</span>
+        </summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>Setup</dt>
+            <dd>Developer SSHes to the VPS, runs <code>pg_dump</code>, copies the file down with <code>scp</code>, and
+              restores it into the local container once.</dd>
+            <dt>Best for</dt>
+            <dd>Onboarding a new developer, or one-off debugging against a specific snapshot.</dd>
+            <dt>Impact</dt>
+            <dd>Zero automation. Data goes stale the moment the server runs its next write. Every refresh is a manual
+              5-minute dance.</dd>
+            <dt>Risk</dt>
+            <dd>Low — no automation, no secrets stored, no cron.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="bash"># On the VPS (read-only)
 pg_dump "postgresql://$PROD_USER:$PROD_PASS@localhost:5432/clinic_a" \
   -C --no-owner --no-privileges --schema=public \
   > clinic_a_$(date +%F).sql
@@ -668,16 +1461,27 @@ pg_dump "postgresql://$PROD_USER:$PROD_PASS@localhost:5432/clinic_a" \
 scp ubuntu@vps:/home/ubuntu/clinic_a_$(date +%F).sql ./docker/dumps/
 docker compose -f docker-compose.db.yml up -d
 docker exec -i retentions_db psql -U user -d postgres < ./docker/dumps/clinic_a_$(date +%F).sql</script>
-</div></details>
+        </div>
+      </details>
 
-<details class="blk"><summary>Option B · Cron on VPS + scheduled pull on laptop <span class="pill med">Effort: Medium · Freshness: 24 h</span></summary><div class="ab">
-<dl class="k">
-<dt>Setup</dt><dd>Server runs <code>pg_dump</code> every night at 02:00 via cron. Each developer machine runs a scheduled task at 03:00 that pulls the newest dump with <code>scp</code> (or <code>rsync</code>) and restores it into the local container.</dd>
-<dt>Best for</dt><dd>Small teams; developers work at their desk with predictable morning-fresh data.</dd>
-<dt>Impact</dt><dd>Data at most 24 h old. Requires SSH access from each laptop to the VPS. Works offline once pulled.</dd>
-<dt>Risk</dt><dd>Medium — SSH key on each laptop, credentials scoped to a read-only DB user, dump file sits on disk until the next pull overwrites it.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="bash"># ── On the VPS: /etc/cron.d/backup_clinics ────────────────────
+      <details class="blk">
+        <summary>Option B · Cron on VPS + scheduled pull on laptop <span class="pill med">Effort: Medium · Freshness: 24
+            h</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>Setup</dt>
+            <dd>Server runs <code>pg_dump</code> every night at 02:00 via cron. Each developer machine runs a scheduled
+              task at 03:00 that pulls the newest dump with <code>scp</code> (or <code>rsync</code>) and restores it
+              into the local container.</dd>
+            <dt>Best for</dt>
+            <dd>Small teams; developers work at their desk with predictable morning-fresh data.</dd>
+            <dt>Impact</dt>
+            <dd>Data at most 24 h old. Requires SSH access from each laptop to the VPS. Works offline once pulled.</dd>
+            <dt>Risk</dt>
+            <dd>Medium — SSH key on each laptop, credentials scoped to a read-only DB user, dump file sits on disk until
+              the next pull overwrites it.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="bash"># ── On the VPS: /etc/cron.d/backup_clinics ────────────────────
 0 2 * * * ubuntu /home/ubuntu/scripts/backup_clinics.sh >> /var/log/db_backup.log 2>&1
 
 # /home/ubuntu/scripts/backup_clinics.sh
@@ -691,7 +1495,7 @@ for DB in clinic_a clinic_b clinic_c; do
     > "$DIR/${DB}_${DATE}.sql"
 done
 find "$DIR" -name '*.sql' -mtime +7 -delete</script>
-<script type="text/plain" class="code" data-lang="powershell"># ── On Windows: Task Scheduler → Daily 03:00 → powershell -File sync.ps1 ─
+          <script type="text/plain" class="code" data-lang="powershell"># ── On Windows: Task Scheduler → Daily 03:00 → powershell -File sync.ps1 ─
 # sync.ps1
 $vps = "ubuntu@your-vps-ip"
 $remote = "/home/ubuntu/db_backups"
@@ -703,16 +1507,28 @@ Get-ChildItem "$local\*.sql" | Sort-Object Name | ForEach-Object {
   docker exec -i retentions_db psql -U user -d postgres -f - < $_.FullName
 }
 Write-Host "Local DB synced at $(Get-Date)"</script>
-</div></details>
+        </div>
+      </details>
 
-<details class="blk"><summary>Option C · Cloud bucket relay (S3 / Backblaze / Drive) <span class="pill med">Effort: Medium · Freshness: 24 h</span></summary><div class="ab">
-<dl class="k">
-<dt>Setup</dt><dd>Server cron dumps and uploads to a private bucket with <code>aws s3 cp</code> (or <code>rclone</code>). Developers pull with <code>aws s3 sync</code> from their laptop — no direct SSH needed.</dd>
-<dt>Best for</dt><dd>Teams that want to avoid granting each laptop SSH access to the production VPS, or developers on networks that block port 22.</dd>
-<dt>Impact</dt><dd>Same 24 h freshness as Option B, plus versioning/retention on the bucket and audit logs of who downloaded what.</dd>
-<dt>Risk</dt><dd>Medium — bucket must be private, encrypted at rest, lifecycle-expire after 7 days. Each developer gets a scoped read-only key, not the server's write key.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="bash"># Server side (after the dump loop)
+      <details class="blk">
+        <summary>Option C · Cloud bucket relay (S3 / Backblaze / Drive) <span class="pill med">Effort: Medium ·
+            Freshness: 24 h</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>Setup</dt>
+            <dd>Server cron dumps and uploads to a private bucket with <code>aws s3 cp</code> (or <code>rclone</code>).
+              Developers pull with <code>aws s3 sync</code> from their laptop — no direct SSH needed.</dd>
+            <dt>Best for</dt>
+            <dd>Teams that want to avoid granting each laptop SSH access to the production VPS, or developers on
+              networks that block port 22.</dd>
+            <dt>Impact</dt>
+            <dd>Same 24 h freshness as Option B, plus versioning/retention on the bucket and audit logs of who
+              downloaded what.</dd>
+            <dt>Risk</dt>
+            <dd>Medium — bucket must be private, encrypted at rest, lifecycle-expire after 7 days. Each developer gets a
+              scoped read-only key, not the server's write key.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="bash"># Server side (after the dump loop)
 aws s3 cp "$DIR/" "s3://clinic-db-backups/$(date +%F)/" \
   --recursive --exclude "*" --include "*.sql" \
   --sse AES256
@@ -723,17 +1539,34 @@ docker compose -f docker-compose.db.yml up -d
 for f in ./docker/dumps/*.sql; do
   docker exec -i retentions_db psql -U user -d postgres < "$f"
 done</script>
-<div class="callout warn"><p><b>⚠️ Encryption &amp; retention.</b> Enable SSE on the bucket, restrict with an IAM policy limited to <code>s3:GetObject</code> on that prefix, and set a lifecycle rule deleting objects after 7 days. Log bucket access.</p></div>
-</div></details>
+          <div class="callout warn">
+            <p><b>⚠️ Encryption &amp; retention.</b> Enable SSE on the bucket, restrict with an IAM policy limited to
+              <code>s3:GetObject</code> on that prefix, and set a lifecycle rule deleting objects after 7 days. Log
+              bucket access.
+            </p>
+          </div>
+        </div>
+      </details>
 
-<details class="blk"><summary>Option D · Direct tunnel — developer queries the live DB <span class="pill" style="color:var(--bad);border-color:var(--bad)">Effort: Low · Freshness: live</span></summary><div class="ab">
-<dl class="k">
-<dt>Setup</dt><dd>An SSH tunnel forwards <code>localhost:5433 → vps:5432</code>. Backend <code>.env</code> points at <code>localhost:5433</code>. No dump, no container.</dd>
-<dt>Best for</dt><dd>Read-only exploration, debugging a specific production row.</dd>
-<dt>Impact</dt><dd>Always fresh — but every query hits production. A developer running an expensive report slows the production server for real users.</dd>
-<dt>Risk</dt><dd><b>High — do not use for day-to-day development.</b> Accidental writes go straight to prod; connection storms from local testing can exhaust the server's pool; no PII masking between dev and prod.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="bash"># Read-only tunnel — use only for short, targeted lookups
+      <details class="blk">
+        <summary>Option D · Direct tunnel — developer queries the live DB <span class="pill"
+            style="color:var(--bad);border-color:var(--bad)">Effort: Low · Freshness: live</span></summary>
+        <div class="ab">
+          <dl class="k">
+            <dt>Setup</dt>
+            <dd>An SSH tunnel forwards <code>localhost:5433 → vps:5432</code>. Backend <code>.env</code> points at
+              <code>localhost:5433</code>. No dump, no container.
+            </dd>
+            <dt>Best for</dt>
+            <dd>Read-only exploration, debugging a specific production row.</dd>
+            <dt>Impact</dt>
+            <dd>Always fresh — but every query hits production. A developer running an expensive report slows the
+              production server for real users.</dd>
+            <dt>Risk</dt>
+            <dd><b>High — do not use for day-to-day development.</b> Accidental writes go straight to prod; connection
+              storms from local testing can exhaust the server's pool; no PII masking between dev and prod.</dd>
+          </dl>
+          <script type="text/plain" class="code" data-lang="bash"># Read-only tunnel — use only for short, targeted lookups
 ssh -L 5433:localhost:5432 ubuntu@vps -N
 # then: POSTGRES_HOST=localhost POSTGRES_PORT=5433 in .env
 # ⚠️ Create a read-only role on the VPS and connect with it:
@@ -741,87 +1574,144 @@ ssh -L 5433:localhost:5432 ubuntu@vps -N
 #    GRANT CONNECT ON DATABASE clinic_a TO dev_readonly;
 #    GRANT USAGE ON SCHEMA public TO dev_readonly;
 #    GRANT SELECT ON ALL TABLES IN SCHEMA public TO dev_readonly;</script>
-<div class="callout bad"><p><b>🚫 Never use Option D with the production credentials.</b> If you must tunnel, tunnel as <code>dev_readonly</code>, never as the app user. Prefer Option B or C for anything longer than a single debugging session.</p></div>
-</div></details>
+          <div class="callout bad">
+            <p><b>🚫 Never use Option D with the production credentials.</b> If you must tunnel, tunnel as
+              <code>dev_readonly</code>, never as the app user. Prefer Option B or C for anything longer than a single
+              debugging session.
+            </p>
+          </div>
+        </div>
+      </details>
 
-<!-- ─── 7.3 Comparison table ──────────────────────────────────── -->
-<h3>7.3 · Option comparison</h3>
-<div class="tw"><table><thead><tr>
-<th>Option</th><th>Freshness</th><th>Setup effort</th><th>Automation</th><th>Impact on prod</th><th>Data on laptop</th><th>Recommended</th>
-</tr></thead><tbody>
-<tr><td><b>A</b> · Manual dump</td><td>Stale</td><td>Low</td><td>None</td><td>None</td><td>Yes (when pulled)</td><td>Only for onboarding</td></tr>
-<tr><td><b>B</b> · Cron + scp</td><td>24 h</td><td>Medium</td><td>Cron + Task Scheduler</td><td>None (dump is read-only)</td><td>Yes (masked)</td><td><b>✅ Recommended</b></td></tr>
-<tr><td><b>C</b> · Cloud bucket relay</td><td>24 h</td><td>Medium</td><td>Cron + S3 sync</td><td>None</td><td>Yes (masked)</td><td>✅ If SSH is restricted</td></tr>
-<tr><td><b>D</b> · Direct tunnel</td><td>Live</td><td>Low</td><td>None</td><td><b>High risk</b></td><td>No (remote)</td><td>🚫 Only for lookups</td></tr>
-</tbody></table></div>
+      <!-- ─── 7.3 Comparison table ──────────────────────────────────── -->
+      <h3>7.3 · Option comparison</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Freshness</th>
+              <th>Setup effort</th>
+              <th>Automation</th>
+              <th>Impact on prod</th>
+              <th>Data on laptop</th>
+              <th>Recommended</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>A</b> · Manual dump</td>
+              <td>Stale</td>
+              <td>Low</td>
+              <td>None</td>
+              <td>None</td>
+              <td>Yes (when pulled)</td>
+              <td>Only for onboarding</td>
+            </tr>
+            <tr>
+              <td><b>B</b> · Cron + scp</td>
+              <td>24 h</td>
+              <td>Medium</td>
+              <td>Cron + Task Scheduler</td>
+              <td>None (dump is read-only)</td>
+              <td>Yes (masked)</td>
+              <td><b>✅ Recommended</b></td>
+            </tr>
+            <tr>
+              <td><b>C</b> · Cloud bucket relay</td>
+              <td>24 h</td>
+              <td>Medium</td>
+              <td>Cron + S3 sync</td>
+              <td>None</td>
+              <td>Yes (masked)</td>
+              <td>✅ If SSH is restricted</td>
+            </tr>
+            <tr>
+              <td><b>D</b> · Direct tunnel</td>
+              <td>Live</td>
+              <td>Low</td>
+              <td>None</td>
+              <td><b>High risk</b></td>
+              <td>No (remote)</td>
+              <td>🚫 Only for lookups</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-<!-- ─── 7.4 Flow diagrams ─────────────────────────────────────── -->
-<h3>7.4 · Flow diagrams</h3>
+      <!-- ─── 7.4 Flow diagrams ─────────────────────────────────────── -->
+      <h3>7.4 · Flow diagrams</h3>
 
-<h4 style="color:var(--mut);margin:14px 0 6px">Option B — cron + pull (recommended)</h4>
-<div class="diagram"><svg viewBox="0 0 820 300" role="img" aria-label="Daily sync flow">
-  <text x="10" y="18" class="m">PRODUCTION VPS</text>
-  <rect class="hl" x="10" y="30" width="180" height="60" rx="10"/>
-    <text x="26" y="54">cron 02:00</text><text x="26" y="72" class="m">backup_clinics.sh</text>
-  <rect class="box" x="220" y="30" width="180" height="60" rx="10"/>
-    <text x="236" y="54">pg_dump per clinic</text><text x="236" y="72" class="m">--no-owner --clean</text>
-  <rect class="ok" x="430" y="30" width="180" height="60" rx="10"/>
-    <text x="446" y="54">/home/ubuntu/</text><text x="446" y="72" class="m">db_backups/*.sql</text>
-  <rect class="box" x="640" y="30" width="170" height="60" rx="10"/>
-    <text x="654" y="54">retain 7 days</text><text x="654" y="72" class="m">find -mtime +7 -delete</text>
-  <path class="ln" d="M190 60H218M400 60H428M610 60H638"/>
+      <h4 style="color:var(--mut);margin:14px 0 6px">Option B — cron + pull (recommended)</h4>
+      <div class="diagram"><svg viewBox="0 0 820 300" role="img" aria-label="Daily sync flow">
+          <text x="10" y="18" class="m">PRODUCTION VPS</text>
+          <rect class="hl" x="10" y="30" width="180" height="60" rx="10" />
+          <text x="26" y="54">cron 02:00</text><text x="26" y="72" class="m">backup_clinics.sh</text>
+          <rect class="box" x="220" y="30" width="180" height="60" rx="10" />
+          <text x="236" y="54">pg_dump per clinic</text><text x="236" y="72" class="m">--no-owner --clean</text>
+          <rect class="ok" x="430" y="30" width="180" height="60" rx="10" />
+          <text x="446" y="54">/home/ubuntu/</text><text x="446" y="72" class="m">db_backups/*.sql</text>
+          <rect class="box" x="640" y="30" width="170" height="60" rx="10" />
+          <text x="654" y="54">retain 7 days</text><text x="654" y="72" class="m">find -mtime +7 -delete</text>
+          <path class="ln" d="M190 60H218M400 60H428M610 60H638" />
 
-  <text x="10" y="150" class="m">DEVELOPER LAPTOP</text>
-  <rect class="hl" x="10" y="162" width="180" height="60" rx="10"/>
-    <text x="26" y="186">Task Scheduler</text><text x="26" y="204" class="m">daily 03:00</text>
-  <rect class="box" x="220" y="162" width="180" height="60" rx="10"/>
-    <text x="236" y="186">scp / rsync</text><text x="236" y="204" class="m">*.sql → ./docker/dumps</text>
-  <rect class="ok" x="430" y="162" width="180" height="60" rx="10"/>
-    <text x="446" y="186">restore into</text><text x="446" y="204" class="m">Postgres container</text>
-  <rect class="box" x="640" y="162" width="170" height="60" rx="10"/>
-    <text x="654" y="186">local dev ready</text><text x="654" y="204" class="m">localhost:5432</text>
-  <path class="ln" d="M190 192H218M400 192H428M610 192H638"/>
+          <text x="10" y="150" class="m">DEVELOPER LAPTOP</text>
+          <rect class="hl" x="10" y="162" width="180" height="60" rx="10" />
+          <text x="26" y="186">Task Scheduler</text><text x="26" y="204" class="m">daily 03:00</text>
+          <rect class="box" x="220" y="162" width="180" height="60" rx="10" />
+          <text x="236" y="186">scp / rsync</text><text x="236" y="204" class="m">*.sql → ./docker/dumps</text>
+          <rect class="ok" x="430" y="162" width="180" height="60" rx="10" />
+          <text x="446" y="186">restore into</text><text x="446" y="204" class="m">Postgres container</text>
+          <rect class="box" x="640" y="162" width="170" height="60" rx="10" />
+          <text x="654" y="186">local dev ready</text><text x="654" y="204" class="m">localhost:5432</text>
+          <path class="ln" d="M190 192H218M400 192H428M610 192H638" />
 
-  <path class="ln" d="M520 90 Q 520 130 520 160" stroke-dasharray="5 4"/>
-  <text x="528" y="128" class="m">nightly pull</text>
-</svg></div>
+          <path class="ln" d="M520 90 Q 520 130 520 160" stroke-dasharray="5 4" />
+          <text x="528" y="128" class="m">nightly pull</text>
+        </svg></div>
 
-<h4 style="color:var(--mut);margin:14px 0 6px">Option C — cloud bucket relay</h4>
-<div class="diagram"><svg viewBox="0 0 820 220" role="img" aria-label="Cloud relay">
-  <rect class="hl" x="10" y="30" width="150" height="60" rx="10"/>
-    <text x="26" y="54">VPS cron</text><text x="26" y="72" class="m">pg_dump</text>
-  <rect class="ok" x="200" y="30" width="180" height="60" rx="10"/>
-    <text x="216" y="54">S3 bucket</text><text x="216" y="72" class="m">private · AES256 · 7 d TTL</text>
-  <rect class="hl" x="420" y="30" width="150" height="60" rx="10"/>
-    <text x="436" y="54">laptop pull</text><text x="436" y="72" class="m">aws s3 sync</text>
-  <rect class="box" x="610" y="30" width="180" height="60" rx="10"/>
-    <text x="626" y="54">docker restore</text><text x="626" y="72" class="m">psql &lt; dump.sql</text>
-  <path class="ln" d="M160 60H198M380 60H418M570 60H608"/>
-  <text x="10" y="150" class="m">Trade-off: no SSH from laptops → cleaner security, at the cost of a cloud account + scoped IAM keys.</text>
-  <text x="10" y="176" class="m">Masking must run on the VPS before upload, or at upload time (pg_dump piped through a masker).</text>
-  <text x="10" y="202" class="m">Never store the server's write key on a laptop. Give each developer a read-only key on that prefix only.</text>
-</svg></div>
+      <h4 style="color:var(--mut);margin:14px 0 6px">Option C — cloud bucket relay</h4>
+      <div class="diagram"><svg viewBox="0 0 820 220" role="img" aria-label="Cloud relay">
+          <rect class="hl" x="10" y="30" width="150" height="60" rx="10" />
+          <text x="26" y="54">VPS cron</text><text x="26" y="72" class="m">pg_dump</text>
+          <rect class="ok" x="200" y="30" width="180" height="60" rx="10" />
+          <text x="216" y="54">S3 bucket</text><text x="216" y="72" class="m">private · AES256 · 7 d TTL</text>
+          <rect class="hl" x="420" y="30" width="150" height="60" rx="10" />
+          <text x="436" y="54">laptop pull</text><text x="436" y="72" class="m">aws s3 sync</text>
+          <rect class="box" x="610" y="30" width="180" height="60" rx="10" />
+          <text x="626" y="54">docker restore</text><text x="626" y="72" class="m">psql &lt; dump.sql</text>
+          <path class="ln" d="M160 60H198M380 60H418M570 60H608" />
+          <text x="10" y="150" class="m">Trade-off: no SSH from laptops → cleaner security, at the cost of a cloud
+            account + scoped IAM keys.</text>
+          <text x="10" y="176" class="m">Masking must run on the VPS before upload, or at upload time (pg_dump piped
+            through a masker).</text>
+          <text x="10" y="202" class="m">Never store the server's write key on a laptop. Give each developer a read-only
+            key on that prefix only.</text>
+        </svg></div>
 
-<h4 style="color:var(--mut);margin:14px 0 6px">Option D — direct tunnel (🚫 avoid for daily dev)</h4>
-<div class="diagram"><svg viewBox="0 0 820 200" role="img" aria-label="SSH tunnel">
-  <rect class="box" x="10" y="40" width="180" height="60" rx="10"/>
-    <text x="26" y="64">local backend</text><text x="26" y="82" class="m">localhost:5433</text>
-  <rect class="del" x="230" y="40" width="200" height="60" rx="10"/>
-    <text x="246" y="64">SSH tunnel</text><text x="246" y="82" class="m">ssh -L 5433:vps:5432</text>
-  <rect class="del" x="470" y="40" width="180" height="60" rx="10"/>
-    <text x="486" y="64">production DB</text><text x="486" y="82" class="m">live, shared, hot</text>
-  <rect class="bad" x="690" y="40" width="120" height="60" rx="10" style="fill:rgba(255,107,107,.12);stroke:var(--bad)"/>
-    <text x="704" y="64">prod impact</text><text x="704" y="82" class="m">HIGH</text>
-  <path class="ln" d="M190 70H228M430 70H468M650 70H688"/>
-  <text x="10" y="150" class="m">Use only with a read-only role (dev_readonly), only for short lookups, never for reports or cron.</text>
-  <text x="10" y="176" class="m">Common failure: local report loops exhaust the VPS connection pool → production users see timeouts.</text>
-</svg></div>
+      <h4 style="color:var(--mut);margin:14px 0 6px">Option D — direct tunnel (🚫 avoid for daily dev)</h4>
+      <div class="diagram"><svg viewBox="0 0 820 200" role="img" aria-label="SSH tunnel">
+          <rect class="box" x="10" y="40" width="180" height="60" rx="10" />
+          <text x="26" y="64">local backend</text><text x="26" y="82" class="m">localhost:5433</text>
+          <rect class="del" x="230" y="40" width="200" height="60" rx="10" />
+          <text x="246" y="64">SSH tunnel</text><text x="246" y="82" class="m">ssh -L 5433:vps:5432</text>
+          <rect class="del" x="470" y="40" width="180" height="60" rx="10" />
+          <text x="486" y="64">production DB</text><text x="486" y="82" class="m">live, shared, hot</text>
+          <rect class="bad" x="690" y="40" width="120" height="60" rx="10"
+            style="fill:rgba(255,107,107,.12);stroke:var(--bad)" />
+          <text x="704" y="64">prod impact</text><text x="704" y="82" class="m">HIGH</text>
+          <path class="ln" d="M190 70H228M430 70H468M650 70H688" />
+          <text x="10" y="150" class="m">Use only with a read-only role (dev_readonly), only for short lookups, never
+            for reports or cron.</text>
+          <text x="10" y="176" class="m">Common failure: local report loops exhaust the VPS connection pool → production
+            users see timeouts.</text>
+        </svg></div>
 
-<!-- ─── 7.5 Recommended: Option B walkthrough ────────────────── -->
-<h3>7.5 · Recommended setup — Option B in 6 steps</h3>
+      <!-- ─── 7.5 Recommended: Option B walkthrough ────────────────── -->
+      <h3>7.5 · Recommended setup — Option B in 6 steps</h3>
 
-<h4>Step 1 · Docker compose for Postgres only</h4>
-<script type="text/plain" class="code" data-lang="yaml"># docker-compose.db.yml
+      <h4>Step 1 · Docker compose for Postgres only</h4>
+      <script type="text/plain" class="code" data-lang="yaml"># docker-compose.db.yml
 services:
   db:
     image: postgres:15-alpine
@@ -835,8 +1725,8 @@ services:
       - ./docker/db_data:/var/lib/postgresql/data
       - ./docker/dumps:/docker-entrypoint-initdb.d   # first start only</script>
 
-<h4>Step 2 · Create a read-only backup role on the VPS</h4>
-<script type="text/plain" class="code" data-lang="sql">-- Run once on the VPS as a superuser
+      <h4>Step 2 · Create a read-only backup role on the VPS</h4>
+      <script type="text/plain" class="code" data-lang="sql">-- Run once on the VPS as a superuser
 CREATE ROLE backup_ro LOGIN PASSWORD '***REDACTED***';
 GRANT CONNECT ON DATABASE clinic_a TO backup_ro;
 GRANT USAGE   ON SCHEMA public      TO backup_ro;
@@ -844,11 +1734,13 @@ GRANT SELECT  ON ALL TABLES IN SCHEMA public TO backup_ro;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO backup_ro;
 -- Repeat GRANTs for clinic_b, clinic_c</script>
 
-<h4>Step 3 · Server cron (see Option B code above)</h4>
-<p>Install the backup script at <code>/home/ubuntu/scripts/backup_clinics.sh</code> and schedule it with <code>/etc/cron.d/backup_clinics</code> to run daily at 02:00.</p>
+      <h4>Step 3 · Server cron (see Option B code above)</h4>
+      <p>Install the backup script at <code>/home/ubuntu/scripts/backup_clinics.sh</code> and schedule it with
+        <code>/etc/cron.d/backup_clinics</code> to run daily at 02:00.
+      </p>
 
-<h4>Step 4 · Add PII masking on the server before the file is written</h4>
-<script type="text/plain" class="code" data-lang="bash"># mask.sql — applied to the dump as it is written
+      <h4>Step 4 · Add PII masking on the server before the file is written</h4>
+      <script type="text/plain" class="code" data-lang="bash"># mask.sql — applied to the dump as it is written
 UPDATE patients SET name = 'MASKED', phone = '0000000000',
                     dob = '1900-01-01', notes = NULL;
 -- Repeat per sensitive table/column discovered in the schema
@@ -857,11 +1749,12 @@ UPDATE patients SET name = 'MASKED', phone = '0000000000',
 pg_dump ... | psql --set ON_ERROR_STOP=1 -f mask.sql > "${DB}_${DATE}.sql"
 # (simplest safe version: dump → restore into a scratch DB on the VPS → run mask.sql → dump the scratch DB)</script>
 
-<h4>Step 5 · Laptop pull + restore (Windows Task Scheduler → sync.ps1)</h4>
-<p>See the <code>sync.ps1</code> block under Option B above. Schedule it 03:00 daily, after the server backup finishes.</p>
+      <h4>Step 5 · Laptop pull + restore (Windows Task Scheduler → sync.ps1)</h4>
+      <p>See the <code>sync.ps1</code> block under Option B above. Schedule it 03:00 daily, after the server backup
+        finishes.</p>
 
-<h4>Step 6 · Point the backend at the local DB</h4>
-<script type="text/plain" class="code" data-lang="dotenv"># .env  (local)
+      <h4>Step 6 · Point the backend at the local DB</h4>
+      <script type="text/plain" class="code" data-lang="dotenv"># .env  (local)
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_USER=user
@@ -869,550 +1762,41 @@ POSTGRES_PASSWORD=pass
 CLINIC_DATABASES=clinic_a,clinic_b,clinic_c
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/firebase-dev.json   # DEV project, not prod</script>
 
-<div class="callout ok"><p><b>✅ End state:</b> every morning, without human action, the local Docker Postgres contains yesterday's masked production data. Run <code>docker compose -f docker-compose.db.yml up -d</code>, then <code>python app.py</code>, and the backend is working against near-live data.</p></div>
-
-<!-- ─── 7.6 Safety ───────────────────────────────────────────── -->
-<h3>7.6 · Safety rules (all options)</h3>
-<ul>
-  <li><b>Mask PII on the VPS</b>, before the file leaves it. Never rely on the laptop to mask.</li>
-  <li><b>Read-only DB role</b> for all backups. <code>backup_ro</code> has <code>SELECT</code> only.</li>
-  <li><b>Dumps never enter git.</b> Add <code>docker/dumps/</code>, <code>docker/db_data/</code>, <code>*.sql</code> at the repo root level to <code>.gitignore</code>.</li>
-  <li><b>Retention:</b> delete dumps older than 7 days on both the server and the laptop.</li>
-  <li><b>Dev Firebase only.</b> <code>GOOGLE_APPLICATION_CREDENTIALS</code> must point at a dev project. Never copy production Firebase credentials to a laptop.</li>
-  <li><b>Bucket hygiene (Option C):</b> private bucket, SSE enabled, IAM limited to <code>s3:GetObject</code> on the dump prefix, lifecycle rule 7 days.</li>
-  <li><b>Never use Option D</b> with the app's production credentials — only <code>dev_readonly</code>, and only for short lookups.</li>
-</ul>
-<!-- ─── 7.7 Windows-specific: 5 ways to run the whole project locally ─ -->
-<h3>7.7 · Windows setup — 5 ways to run the whole project locally</h3>
-<p class="sub">Production server is <b>Windows</b>, so Docker Desktop won't run on it — but every developer machine (Windows 10/11) can. Pick one of the five approaches below. All of them reach the same end state: a local Postgres on <code>localhost:5432</code>, a Flask API on <code>localhost:8000</code>, and a React UI on <code>localhost:3000</code>.</p>
-
-<!-- ═══════ OPTION 1 ═══════ -->
-<details class="blk" open><summary>Way 1 · Docker Desktop + WSL 2 backend (recommended) <span class="pill low">Effort: Low</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Install Docker Desktop for Windows with the WSL 2 backend. Run every service — Postgres, Flask, React — as Linux containers. No native Python/Node install on the host.</dd>
-<dt>Why</dt><dd>Identical behaviour to production Linux containers, one command to start everything, cleanest to onboard a new developer.</dd>
-<dt>Where</dt><dd>Host prerequisites: Windows 10 2004+ or Windows 11, WSL 2 enabled, virtualization enabled in BIOS. Then Docker Desktop installs WSL distro <code>docker-desktop</code>.</dd>
-<dt>Impact</dt><dd>Everything runs in containers. Host stays clean. Slight disk overhead (~2 GB per image). Perfect for CI parity.</dd>
-<dt>Risk</dt><dd>Low. Main gotcha is the WSL 2 memory ceiling — configure <code>.wslconfig</code> if the machine has &lt; 8 GB RAM.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="powershell"># One-time setup (Admin PowerShell)
-wsl --install                      # installs WSL 2 + Ubuntu
-# reboot, set Ubuntu username/password, then:
-winget install Docker.DockerDesktop
-# Launch Docker Desktop → Settings → General → "Use WSL 2 based engine" ✔
-
-# Verify
-docker --version
-docker compose version</script>
-<script type="text/plain" class="code" data-lang="yaml"># docker-compose.yml — full stack
-services:
-  db:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: postgres
-    ports: ["5432:5432"]
-    volumes:
-      - ./docker/db_data:/var/lib/postgresql/data
-      - ./docker/dumps:/docker-entrypoint-initdb.d
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user"]
-      interval: 5s
-
-  api:
-    build: ./flask_app
-    ports: ["8000:8000"]
-    env_file: [.env]
-    depends_on:
-      db: { condition: service_healthy }
-    volumes:
-      - ./flask_app:/app
-    command: gunicorn --bind 0.0.0.0:8000 app:app
-
-  ui:
-    build: ./react_app
-    ports: ["3000:80"]
-    depends_on: [api]</script>
-<script type="text/plain" class="code" data-lang="bash">docker compose up -d              # start everything
-docker compose logs -f api        # watch API logs
-docker compose down               # stop
-docker compose down -v            # stop + wipe DB volume</script>
-</div></details>
-
-<!-- ═══════ OPTION 2 ═══════ -->
-<details class="blk"><summary>Way 2 · Docker Desktop — DB in Docker, API & UI natively on Windows <span class="pill low">Effort: Low</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Postgres runs in a Docker container. Flask and React run directly on Windows using conda and Node — the same way they run today on the VPS.</dd>
-<dt>Why</dt><dd>Debugging is easier (native debugger, no container rebuilds), and it's the least-change path from how the team already works.</dd>
-<dt>Where</dt><dd>Docker Desktop for the DB only; <code>conda create -n retentions-aid python=3.11</code>; Node 16+ from <code>winget install OpenJS.NodeJS.LTS</code>.</dd>
-<dt>Impact</dt><dd>Fastest iteration on backend code — Flask's auto-reload works immediately. DB still isolated. Downside: host must have Python + Node installed, so "works on my machine" risk returns.</dd>
-<dt>Risk</dt><dd>Low. Only friction is a firewall prompt the first time Flask binds port 8000.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="powershell"># DB only
-docker compose -f docker-compose.db.yml up -d
-
-# API natively
-conda activate retentions-aid
-cd flask_app
-python app.py                      # → http://127.0.0.1:8000
-
-# UI natively
-cd react_app
-npm ci
-npm start                          # → http://localhost:3000</script>
-</div></details>
-
-<!-- ═══════ OPTION 3 ═══════ -->
-<details class="blk"><summary>Way 3 · WSL 2 Ubuntu — everything inside Linux, no Docker Desktop <span class="pill med">Effort: Medium</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Install Docker Engine <i>inside</i> a WSL 2 Ubuntu distro. Run the entire stack from a Linux shell. No Docker Desktop licence needed.</dd>
-<dt>Why</dt><dd>Free for commercial use, lower memory footprint than Docker Desktop, closest to a Linux dev experience without leaving Windows.</dd>
-<dt>Where</dt><dd><code>wsl --install -d Ubuntu</code> → inside Ubuntu: <code>curl -fsSL https://get.docker.com | sh</code> → add user to docker group.</dd>
-<dt>Impact</dt><dd>Two shells (Windows for VS Code, WSL for docker + git). All Linux-native: paths like <code>/mnt/d/retentions-aid</code>. Line-ending issues disappear because git runs inside Linux.</dd>
-<dt>Risk</dt><dd>Medium — no Docker Desktop GUI, no automatic updates, you maintain the engine. Enterprise machines may block <code>wsl --install</code>.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="bash"># Inside WSL Ubuntu
-sudo apt update && sudo apt install -y docker.io docker-compose-plugin git
-sudo usermod -aG docker $USER        # log out + back in
-cd /mnt/d/retentions-aid
-docker compose up -d</script>
-<div class="callout info"><p><b>ℹ️ File performance tip:</b> keep the repo inside the WSL filesystem (<code>~/retentions-aid</code>) rather than <code>/mnt/d/...</code> — file I/O is 3–5× faster there. Use Windows Explorer's <code>\\wsl$\Ubuntu\home\you\retentions-aid</code> to browse files from Windows.</p></div>
-</div></details>
-
-<!-- ═══════ OPTION 4 ═══════ -->
-<details class="blk"><summary>Way 4 · Windows Containers — everything Windows-native <span class="pill" style="color:var(--bad);border-color:var(--bad)">Effort: High · 🚫 not recommended</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Run Windows Server Core containers instead of Linux ones, using the Windows container mode of Docker Desktop.</dd>
-<dt>Why</dt><dd>Theoretically matches the Windows production server. In practice nothing else here works well.</dd>
-<dt>Where</dt><dd>Docker Desktop → switch to "Windows containers". Postgres image must be a Windows build; the Python images need Windows base OS layers.</dd>
-<dt>Impact</dt><dd><b>Very negative.</b> Official Postgres and Python "Windows" images are huge (2–6 GB each), slow to start, poorly maintained, and don't match what production actually runs.</dd>
-<dt>Risk</dt><dd><b>High.</b> Breaks <code>psycopg2</code> wheels, breaks Gunicorn (not Windows-native), breaks your Dockerfiles. Do not pursue.</dd>
-</dl>
-<div class="callout bad"><p><b>🚫 Why we don't do this:</b> production already runs native Windows Postgres + conda + Gunicorn-under-WSL. Introducing Windows containers adds a third environment that matches <i>neither</i> the current server nor the recommended local setup. It's the worst of both worlds.</p></div>
-</div></details>
-
-<!-- ═══════ OPTION 5 ═══════ -->
-<details class="blk"><summary>Way 5 · No Docker at all — native Windows Postgres + native Python/Node <span class="pill med">Effort: Medium</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Install PostgreSQL natively on Windows (the same installer the VPS uses), install Python via conda, run the app exactly as today. Skip Docker entirely.</dd>
-<dt>Why</dt><dd>No Docker licence issue, no WSL, smallest learning curve for developers who already know this stack. Matches production 1:1.</dd>
-<dt>Where</dt><dd><code>winget install PostgreSQL.PostgreSQL.15</code> · <code>winget install Anaconda.Miniconda3</code> · <code>winget install OpenJS.NodeJS.LTS</code>. Then <code>pg_restore</code> the dumps into the native instance.</dd>
-<dt>Impact</dt><dd>Multiple native services running on each laptop, port conflicts when someone has two projects, no isolation between dev and personal Postgres instances. Fresh-clone setup takes 30–60 min vs 5 min with Docker.</dd>
-<dt>Risk</dt><dd>Medium — hard to reproduce exactly across machines because Windows Postgres versions/patches drift.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="powershell">winget install PostgreSQL.PostgreSQL.15
-# during install: set superuser password, port 5432
-# then in psql:
-#   CREATE USER user WITH PASSWORD 'pass' SUPERUSER;
-#   CREATE DATABASE clinic_a OWNER user;
-# restore dumps
-psql -U user -d clinic_a -f D:\dumps\clinic_a.sql</script>
-</div></details>
-
-<!-- ─── Comparison table ───────────────────────────────────────── -->
-<h3>7.8 · Way-by-way comparison</h3>
-<div class="tw"><table><thead><tr>
-<th>#</th><th>Approach</th><th>Docker on host</th><th>Setup time</th><th>Parity w/ prod</th><th>Licence</th><th>Best for</th><th>Recommend</th>
-</tr></thead><tbody>
-<tr><td>1</td><td>Docker Desktop + WSL 2 (full stack)</td><td>Yes</td><td>~30 min</td><td>High</td><td>Free &lt; 250 emp.</td><td>Team default; CI parity</td><td><b>✅ Recommended</b></td></tr>
-<tr><td>2</td><td>Docker for DB, native API + UI</td><td>Yes</td><td>~20 min</td><td>Medium</td><td>Free &lt; 250 emp.</td><td>Backend-heavy debugging</td><td>✅ Good alternative</td></tr>
-<tr><td>3</td><td>WSL 2 Ubuntu + Docker Engine</td><td>Inside WSL</td><td>~45 min</td><td>High</td><td>Free (no Desktop)</td><td>Enterprises blocking Desktop</td><td>✅ If Desktop blocked</td></tr>
-<tr><td>4</td><td>Windows Containers</td><td>Yes (Win mode)</td><td>Days</td><td>Low</td><td>Windows Server lic.</td><td>Nothing in this project</td><td>🚫 Skip</td></tr>
-<tr><td>5</td><td>Fully native (no Docker)</td><td>No</td><td>30–60 min</td><td>High</td><td>None</td><td>Machines without virtualization</td><td>⚠️ Only as fallback</td></tr>
-</tbody></table></div>
-
-<!-- ─── Decision tree diagram ─────────────────────────────────── -->
-<h3>7.9 · Which way should I pick?</h3>
-<div class="diagram"><svg viewBox="0 0 820 340" role="img" aria-label="Decision tree">
-  <rect class="hl" x="310" y="10" width="200" height="44" rx="10"/>
-    <text x="330" y="38">Can you install WSL 2?</text>
-  <path class="ln" d="M410 54 L 200 100"/>
-  <path class="ln" d="M410 54 L 620 100"/>
-  <text x="180" y="80" class="m">yes</text><text x="600" y="80" class="m">no</text>
-
-  <rect class="ok" x="80" y="100" width="240" height="44" rx="10"/>
-    <text x="100" y="128">Docker Desktop allowed?</text>
-  <path class="ln" d="M200 144 L 140 190"/>
-  <path class="ln" d="M200 144 L 280 190"/>
-  <text x="115" y="172" class="m">yes</text><text x="270" y="172" class="m">no</text>
-
-  <rect class="ok" x="20" y="190" width="230" height="54" rx="10"/>
-    <text x="40" y="214">✅ Way 1 (or Way 2 for API dev)</text>
-    <text x="40" y="232" class="m">Docker Desktop + WSL 2</text>
-  <rect class="hl" x="270" y="190" width="230" height="54" rx="10"/>
-    <text x="290" y="214">✅ Way 3</text>
-    <text x="290" y="232" class="m">WSL Ubuntu + Docker Engine</text>
-
-  <rect class="box" x="520" y="100" width="240" height="54" rx="10"/>
-    <text x="540" y="124">Has virtualization + admin?</text>
-    <text x="540" y="142" class="m">(Hyper-V / VT-x in BIOS)</text>
-  <path class="ln" d="M640 154 L 580 200"/>
-  <path class="ln" d="M640 154 L 700 200"/>
-  <text x="560" y="182" class="m">yes</text><text x="700" y="182" class="m">no</text>
-
-  <rect class="box" x="500" y="200" width="160" height="54" rx="10"/>
-    <text x="520" y="224">✅ Way 5</text>
-    <text x="520" y="242" class="m">Fully native</text>
-  <rect class="del" x="680" y="200" width="130" height="54" rx="10"/>
-    <text x="700" y="224">🚫 Blocked</text>
-    <text x="700" y="242" class="m">Escalate to IT</text>
-
-  <text x="20" y="290" class="m">Way 4 (Windows Containers) is intentionally not on this tree — it's not recommended for any branch.</text>
-  <text x="20" y="312" class="m">If Docker Desktop licence is a concern (org ≥ 250 employees / &gt; $10M revenue), go straight to Way 3.</text>
-</svg></div>
-
-<!-- ─── End-to-end flow for Way 1 ─────────────────────────────── -->
-<h3>7.10 · End-to-end flow (Way 1 — full Docker stack)</h3>
-<div class="diagram"><svg viewBox="0 0 820 260" role="img" aria-label="Full stack flow">
-  <text x="10" y="18" class="m">WINDOWS HOST</text>
-  <rect class="box" x="10" y="30" width="180" height="70" rx="10"/>
-    <text x="26" y="56">Browser</text><text x="26" y="74" class="m">http://localhost:3000</text>
-  <rect class="hl" x="220" y="30" width="180" height="70" rx="10"/>
-    <text x="236" y="56">UI container</text><text x="236" y="74" class="m">nginx :80 → 3000</text>
-  <rect class="hl" x="430" y="30" width="180" height="70" rx="10"/>
-    <text x="446" y="56">API container</text><text x="446" y="74" class="m">gunicorn :8000</text>
-  <rect class="hl" x="640" y="30" width="170" height="70" rx="10"/>
-    <text x="656" y="56">DB container</text><text x="656" y="74" class="m">postgres :5432</text>
-  <path class="ln" d="M190 65H218M400 65H428M610 65H638"/>
-
-  <rect class="ok" x="640" y="140" width="170" height="60" rx="10"/>
-    <text x="656" y="164">volume</text><text x="656" y="182" class="m">./docker/db_data</text>
-  <path class="ln" d="M725 100V138"/>
-  <rect class="box" x="430" y="140" width="180" height="60" rx="10"/>
-    <text x="446" y="164">./docker/dumps</text><text x="446" y="182" class="m">daily masked dump</text>
-  <path class="ln" d="M520 138V100" stroke-dasharray="4 4"/>
-
-  <text x="10" y="160" class="m">WSL 2 backend</text>
-  <rect class="box" x="10" y="170" width="360" height="60" rx="10"/>
-    <text x="26" y="194">docker-desktop distro</text>
-    <text x="26" y="214" class="m">all four containers share this Linux kernel</text>
-</svg></div>
-
-<!-- ─── Where each piece goes ─────────────────────────────────── -->
-<h3>7.11 · Where each piece lives after setup (Way 1)</h3>
-<div class="two">
-<div class="tree">D:\retentions-aid\
-├─ <b>docker-compose.yml</b>       (full stack — Way 1)
-├─ <b>docker-compose.db.yml</b>    (DB only — Way 2)
-├─ .env                        (local secrets, gitignored)
-├─ .env.example                (committed)
-├─ flask_app/
-│  ├─ Dockerfile
-│  ├─ requirements.txt
-│  ├─ config.example.py        (committed)
-│  └─ config.py                (gitignored)
-├─ react_app/
-│  ├─ Dockerfile
-│  ├─ nginx.conf
-│  └─ .env.development         (REACT_APP_API_URL)
-└─ docker/
-   ├─ db_data/                 (gitignored, volume)
-   └─ dumps/                   (gitignored, daily .sql)</div>
-<div class="tree">Containers after `docker compose up -d`:
-
-retentions_db        postgres:15-alpine   :5432
-retentions_api       flask_app (build)    :8000
-retentions_ui        react_app (build)    :3000
-
-Volumes:
-  docker_db_data  →  /var/lib/postgresql/data
-
-Daily sync (Windows Task Scheduler):
-  02:00 on server  →  backup_clinics.ps1  →  C:\db_backups
-  03:00 on laptop  →  sync.ps1            →  docker/dumps
-                                          →  docker exec psql restore</div>
-</div>
-
-<!-- ─── Recommendation box ────────────────────────────────────── -->
-<h3>7.12 · Recommendation</h3>
-<div class="callout ok">
-<p><b>✅ For this team, use Way 1 — Docker Desktop + WSL 2 with the full stack in containers.</b></p>
-<ul>
-<li>Reproducible across every Windows 10/11 developer machine.</li>
-<li>One command to start: <code>docker compose up -d</code>.</li>
-<li>Same container images will deploy identically in CI or any future Linux host.</li>
-<li>Production server stays as-is (native Windows) — Docker is <b>local only</b>, never installed on the VPS.</li>
-</ul>
-<p><b>Fallback:</b> if Docker Desktop is blocked by corporate policy (licence or IT), use <b>Way 3</b> (WSL Ubuntu + Docker Engine) — same result, no Desktop dependency.</p>
-</div>
-
-<div class="callout warn"><p><b>⚠️ Docker Desktop licensing.</b> Free for personal use, education, and companies with fewer than 250 employees AND less than $10M annual revenue. Larger organisations need a paid subscription. If in doubt, go with Way 3.</p></div>
-
-<!-- ─── 7.13 Daily 8:30 dump → local Docker Postgres ───────────── -->
-<h3>7.13 · Daily 8:30 AM dump → local Docker Postgres (Windows server → Windows laptop)</h3>
-<p class="sub">Production = Windows server. Portal + PostgreSQL both live there. A scheduled task creates a DB dump every day at <b>08:30</b>. Goal: that dump lands on each developer's Windows laptop automatically and is restored into a local Docker container — so by ~9:00 AM every laptop has today's data.</p>
-
-<div class="callout info"><p><b>ℹ️ Division of responsibility.</b> The <b>server</b> only dumps and publishes. The <b>laptop</b> only pulls and restores. They never talk directly to each other's Postgres — that would risk production writes and lock contention.</p></div>
-
-<!-- ─── A. High-level flow ─────────────────────────────────── -->
-<h3>7.13.1 · Flow at a glance</h3>
-<div class="diagram"><svg viewBox="0 0 820 300" role="img" aria-label="8:30 dump to local Docker flow">
-  <text x="10" y="16" class="m">PRODUCTION — WINDOWS SERVER</text>
-  <rect class="hl" x="10" y="30" width="150" height="60" rx="10"/>
-    <text x="26" y="54">Task Scheduler</text><text x="26" y="72" class="m">daily 08:30</text>
-  <rect class="box" x="180" y="30" width="150" height="60" rx="10"/>
-    <text x="196" y="54">pg_dump.exe</text><text x="196" y="72" class="m">per clinic DB</text>
-  <rect class="box" x="350" y="30" width="150" height="60" rx="10"/>
-    <text x="366" y="54">mask PII</text><text x="366" y="72" class="m">scratch DB → re-dump</text>
-  <rect class="ok" x="520" y="30" width="150" height="60" rx="10"/>
-    <text x="536" y="54">publish</text><text x="536" y="72" class="m">share / S3 / SFTP</text>
-  <rect class="box" x="690" y="30" width="120" height="60" rx="10"/>
-    <text x="706" y="54">retain 7 d</text><text x="706" y="72" class="m">auto-delete</text>
-  <path class="ln" d="M160 60H178M330 60H348M500 60H518M670 60H688"/>
-
-  <text x="10" y="140" class="m">DEVELOPER LAPTOP — WINDOWS 10/11</text>
-  <rect class="hl" x="10" y="152" width="150" height="60" rx="10"/>
-    <text x="26" y="176">Task Scheduler</text><text x="26" y="194" class="m">daily 09:00</text>
-  <rect class="box" x="180" y="152" width="150" height="60" rx="10"/>
-    <text x="196" y="176">pull</text><text x="196" y="194" class="m">robocopy / scp / s3 sync</text>
-  <rect class="box" x="350" y="152" width="150" height="60" rx="10"/>
-    <text x="366" y="176">verify</text><text x="366" y="194" class="m">.done marker + checksum</text>
-  <rect class="hl" x="520" y="152" width="150" height="60" rx="10"/>
-    <text x="536" y="176">docker exec psql</text><text x="536" y="194" class="m">restore into container</text>
-  <rect class="ok" x="690" y="152" width="120" height="60" rx="10"/>
-    <text x="706" y="176">local ready</text><text x="706" y="194" class="m">localhost:5432</text>
-  <path class="ln" d="M160 182H178M330 182H348M500 182H518M670 182H688"/>
-
-  <path class="ln" d="M595 90 Q 595 120 595 150" stroke-dasharray="5 4"/>
-  <text x="600" y="128" class="m">transfer</text>
-</svg></div>
-
-<!-- ─── B. Server side ─────────────────────────────────────── -->
-<h3>7.13.2 · Server side — dump at 08:30</h3>
-<p>Create a PowerShell script and register it with Task Scheduler. Run as a dedicated Windows account that has read access to PostgreSQL.</p>
-
-<script type="text/plain" class="code" data-lang="powershell"># C:\scripts\dump_clinics.ps1
-$ErrorActionPreference = "Stop"
-
-$pgBin    = "C:\Program Files\PostgreSQL\15\bin"
-$stamp    = Get-Date -Format "yyyy-MM-dd"
-$stageDir = "C:\db_stage\$stamp"          # per-day folder
-$pubDir   = "C:\db_publish"               # what laptops pull from
-$clinics  = @("clinic_a", "clinic_b", "clinic_c")   # = CLINIC_DATABASES
-
-New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
-New-Item -ItemType Directory -Force -Path $pubDir   | Out-Null
-
-foreach ($db in $clinics) {
-    $raw = Join-Path $stageDir "raw_$db.sql"
-    $out = Join-Path $stageDir "${db}_$stamp.sql"
-
-    # 1. dump raw
-    & "$pgBin\pg_dump.exe" `
-        "postgresql://backup_ro:***REDACTED***@localhost:5432/$db" `
-        -C --no-owner --no-privileges --schema=public `
-        -f $raw
-
-    # 2. mask PII (see mask.sql below) — load into scratch DB, run mask, re-dump
-    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/postgres" `
-        -c "DROP DATABASE IF EXISTS scratch_mask; CREATE DATABASE scratch_mask;"
-    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/scratch_mask" `
-        -f $raw | Out-Null
-    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/scratch_mask" `
-        -f "C:\scripts\mask.sql" | Out-Null
-    & "$pgBin\pg_dump.exe" `
-        "postgresql://backup_ro:***REDACTED***@localhost:5432/scratch_mask" `
-        -C --no-owner --no-privileges --schema=public `
-        -f $out
-    & "$pgBin\psql.exe" "postgresql://backup_ro:***REDACTED***@localhost:5432/postgres" `
-        -c "DROP DATABASE scratch_mask;"
-
-    # 3. copy masked dump into publish folder
-    Copy-Item $out (Join-Path $pubDir (Split-Path $out -Leaf)) -Force
-}
-
-# 4. write a marker so laptops know the day's batch is complete
-"$stamp" | Out-File (Join-Path $pubDir "LATEST.done") -Encoding ascii
-
-# 5. keep last 7 days only
-Get-ChildItem $pubDir -Filter "*.sql" |
-    Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-7) } |
-    Remove-Item -Force</script>
-
-<script type="text/plain" class="code" data-lang="sql">-- C:\scripts\mask.sql — de-identify before the dump leaves the server
-BEGIN;
-UPDATE patients SET
-  name  = 'MASKED-' || id,
-  phone = '0000000000',
-  email = NULL,
-  dob   = '1900-01-01',
-  notes = NULL,
-  address = NULL
-WHERE 1=1;   -- adjust columns to your schema
-COMMIT;
--- add UPDATEs for any other table with PII (appointments.notes, insurance.*, etc.)</script>
-
-<script type="text/plain" class="code" data-lang="xml">&lt;!-- Register with Task Scheduler — run as SYSTEM or a service account --&gt;
-&lt;Task version="1.4"&gt;
-  &lt;Triggers&gt;&lt;CalendarTrigger&gt;
-    &lt;StartBoundary&gt;2026-10-06T08:30:00&lt;/StartBoundary&gt;
-    &lt;ScheduleByDay&gt;&lt;DaysInterval&gt;1&lt;/DaysInterval&gt;&lt;/ScheduleByDay&gt;
-  &lt;/CalendarTrigger&gt;&lt;/Triggers&gt;
-  &lt;Actions&gt;&lt;Exec&gt;
-    &lt;Command&gt;powershell.exe&lt;/Command&gt;
-    &lt;Arguments&gt;-NoProfile -ExecutionPolicy Bypass -File C:\scripts\dump_clinics.ps1&lt;/Arguments&gt;
-  &lt;/Exec&gt;&lt;/Actions&gt;
-&lt;/Task&gt;</script>
-
-<div class="callout warn"><p><b>⚠️ Use a read-only Postgres role.</b> <code>backup_ro</code> should have <code>SELECT</code> only. It must not be able to write. Create it once on the server:</p>
-<script type="text/plain" class="code" data-lang="sql">CREATE ROLE backup_ro LOGIN PASSWORD '***REDACTED***';
-GRANT CONNECT ON DATABASE clinic_a TO backup_ro;
-GRANT USAGE   ON SCHEMA public      TO backup_ro;
-GRANT SELECT  ON ALL TABLES IN SCHEMA public TO backup_ro;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO backup_ro;
--- repeat GRANTs for clinic_b, clinic_c</script>
-</div>
-
-<!-- ─── C. Transfer methods ────────────────────────────────── -->
-<h3>7.13.3 · How the dump travels from server → laptop (pick one)</h3>
-
-<details class="blk" open><summary>Transfer A · Shared Windows folder (SMB) <span class="pill low">Effort: Low · Best in office LAN</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Server shares <code>C:\db_publish</code> on the LAN. Laptops copy with <code>robocopy</code> at 09:00.</dd>
-<dt>Best for</dt><dd>Office-based team on the same domain/VPN.</dd>
-<dt>Risk</dt><dd>Low. Share must be read-only and restricted to a security group. Works with existing AD accounts — no new credentials.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="powershell"># On the server (once)
-New-SmbShare -Name DbPublish -Path C:\db_publish -ReadAccess "DOMAIN\Developers"
-
-# On each laptop — sync.ps1 (Task Scheduler → 09:00)
-$src = "\\server\DbPublish"
-$dst = "D:\retentions-aid\docker\dumps"
-robocopy $src $dst *.sql *.done /MIR /R:2 /W:5 /NP
-if (Test-Path "$dst\LATEST.done") { Write-Host "Batch ready" }</script>
-</div></details>
-
-<details class="blk"><summary>Transfer B · SFTP / SCP over SSH <span class="pill low">Effort: Low · Best outside LAN</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Windows Server ships with OpenSSH. Publish a read-only SFTP folder; laptops pull with <code>scp</code> using an SSH key.</dd>
-<dt>Best for</dt><dd>Remote developers, VPN-based access, or when SMB is blocked.</dd>
-<dt>Risk</dt><dd>Low. Key-based auth only (no passwords). Restrict the SFTP user to <code>C:\db_publish</code>.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="powershell"># On server: enable OpenSSH Server (Settings → Optional features)
-# Create a local user "dbsync" whose home = C:\db_publish, no shell rights beyond SFTP.
-
-# On each laptop — sync.ps1
-$key = "$env:USERPROFILE\.ssh\db_sync_ed25519"
-scp -i $key -r dbsync@server:C:/db_publish/* D:\retentions-aid\docker\dumps\</script>
-</div></details>
-
-<details class="blk"><summary>Transfer C · Cloud bucket relay (S3 / Azure Blob / Backblaze) <span class="pill med">Effort: Medium · Best off-network</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Server uploads masked dumps to a private bucket; laptops download with the vendor CLI.</dd>
-<dt>Best for</dt><dd>Hybrid / fully remote teams. Bucket lifecycle handles 7-day retention automatically.</dd>
-<dt>Risk</dt><dd>Medium — private bucket, SSE encryption, IAM read-only keys per laptop, audit logging on.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="powershell"># Server side (after step 5 in dump_clinics.ps1)
-aws s3 cp "C:\db_publish\" "s3://clinic-db-drops/$stamp/" `
-    --recursive --exclude "*" --include "*.sql" --sse AES256
-aws s3 cp "C:\db_publish\LATEST.done" "s3://clinic-db-drops/$stamp/"
-
-# Laptop side
-aws s3 sync "s3://clinic-db-drops/$stamp/" "D:\retentions-aid\docker\dumps\"</script>
-</div></details>
-
-<details class="blk"><summary>Transfer D · rsync over SSH (via WSL or cwRsync) <span class="pill med">Effort: Medium</span></summary><div class="ab">
-<dl class="k">
-<dt>What</dt><dd>Mirror only changed files. Useful once you have many clinics or dumps get large.</dd>
-<dt>Best for</dt><dd>Larger installs, incremental transfers, or when bandwidth matters.</dd>
-<dt>Risk</dt><dd>Medium — need rsync on Windows (via WSL or cwRsync). Slightly more moving parts.</dd>
-</dl>
-<script type="text/plain" class="code" data-lang="bash"># From WSL on the laptop
-rsync -avz --delete -e ssh dbsync@server:/cygdrive/c/db_publish/ /mnt/d/retentions-aid/docker/dumps/</script>
-</div></details>
-
-<!-- ─── D. Laptop side ─────────────────────────────────────── -->
-<h3>7.13.4 · Laptop side — pull at 09:00 and restore</h3>
-<script type="text/plain" class="code" data-lang="powershell"># D:\retentions-aid\sync.ps1
-$ErrorActionPreference = "Stop"
-$localDumps = "D:\retentions-aid\docker\dumps"
-$container  = "retentions_db"
-
-# 1. pull (Way A: SMB)
-robocopy "\\server\DbPublish" $localDumps *.sql *.done /MIR /R:2 /W:5 /NP
-
-# 2. wait for LATEST.done marker (server finished the batch)
-if (-not (Test-Path "$localDumps\LATEST.done")) {
-    Write-Warning "Batch not ready yet — aborting this run."
-    exit 0
-}
-
-# 3. ensure container is running
-docker start $container 2>$null | Out-Null
-
-# 4. wipe + recreate each clinic DB, then restore
-$clinics = @("clinic_a", "clinic_b", "clinic_c")
-foreach ($db in $clinics) {
-    $sql = Get-ChildItem "$localDumps\${db}_*.sql" | Sort-Object Name -Descending | Select-Object -First 1
-    if (-not $sql) { Write-Warning "No dump for $db"; continue }
-
-    docker exec $container psql -U user -d postgres -c "DROP DATABASE IF EXISTS $db;"
-    # pg_dump -C includes CREATE DATABASE so the restore makes it
-    Get-Content $sql.FullName -Raw |
-        docker exec -i $container psql -U user -d postgres
-    Write-Host "Restored $db from $($sql.Name)"
-}
-
-Write-Host "Local DB synced at $(Get-Date)"</script>
-
-<script type="text/plain" class="code" data-lang="xml">&lt;!-- Task Scheduler — daily 09:00 --&gt;
-&lt;Task version="1.4"&gt;
-  &lt;Triggers&gt;&lt;CalendarTrigger&gt;
-    &lt;StartBoundary&gt;2026-10-06T09:00:00&lt;/StartBoundary&gt;
-    &lt;ScheduleByDay&gt;&lt;DaysInterval&gt;1&lt;/DaysInterval&gt;&lt;/ScheduleByDay&gt;
-  &lt;/CalendarTrigger&gt;&lt;/Triggers&gt;
-  &lt;Actions&gt;&lt;Exec&gt;
-    &lt;Command&gt;powershell.exe&lt;/Command&gt;
-    &lt;Arguments&gt;-NoProfile -ExecutionPolicy Bypass -File D:\retentions-aid\sync.ps1&lt;/Arguments&gt;
-  &lt;/Exec&gt;&lt;/Actions&gt;
-&lt;/Task&gt;</script>
-
-<div class="callout ok"><p><b>✅ End state.</b> Every weekday morning around 09:00, each developer's laptop Docker Postgres contains the same masked data that production had at 08:30. No manual work, no direct connection from laptop to production, no patient data leaks.</p></div>
-
-<!-- ─── E. Manual run (when needed) ────────────────────────── -->
-<h3>7.13.5 · Manual refresh (any time)</h3>
-<script type="text/plain" class="code" data-lang="powershell"># Force a pull + restore right now
-powershell -ExecutionPolicy Bypass -File D:\retentions-aid\sync.ps1
-
-# See what is in the local DB
-docker exec -it retentions_db psql -U user -d clinic_a -c "\dt"
-docker exec -it retentions_db psql -U user -d clinic_a -c "SELECT COUNT(*) FROM patients;"</script>
-
-<!-- ─── F. Timing / failure handling ──────────────────────── -->
-<h3>7.13.6 · Timing, failures, and safe-guards</h3>
-<div class="tw"><table><thead><tr>
-<th>Concern</th><th>Handling</th>
-</tr></thead><tbody>
-<tr><td>Server dump slower than usual</td><td><code>LATEST.done</code> marker only written after every clinic dump succeeds; laptop waits for it.</td></tr>
-<tr><td>Laptop offline at 09:00</td><td>Task Scheduler runs at next logon (<code>StartWhenAvailable</code>) → catch-up automatically.</td></tr>
-<tr><td>Dump half-copied</td><td>Only restore files ending <code>.sql</code> that match the <code>*.done</code> marker's date. Optionally checksum with <code>Get-FileHash</code>.</td></tr>
-<tr><td>Restore fails midway</td><td>Restore uses <code>DROP DATABASE IF EXISTS</code> first; the pg_dump output recreates it. If it fails, no partial data — the DB is simply absent until next run.</td></tr>
-<tr><td>Developer wants yesterday's data</td><td>Keep 7 days of dumps; the restore script can pick a specific file. Add <code>-Date 2026-10-03</code> parameter.</td></tr>
-<tr><td>Disk growth on laptop</td><td>Keep last 3 dumps only: <code>Get-ChildItem ... | Sort LastWriteTime -Desc | Select -Skip 3 | Remove-Item</code>.</td></tr>
-<tr><td>Docker daemon not running</td><td>In <code>sync.ps1</code>, check <code>docker info</code>; if it fails, print "Start Docker Desktop" and exit 1.</td></tr>
-</tbody></table></div>
-
-<!-- ─── G. What never to do ───────────────────────────────── -->
-<h3>7.13.7 · What never to do</h3>
-<ul>
-  <li><b>Never</b> point a laptop's Flask <code>.env</code> at the production server. Always <code>localhost:5432</code>.</li>
-  <li><b>Never</b> use the app's production Postgres user for dumps — only <code>backup_ro</code>.</li>
-  <li><b>Never</b> skip PII masking because "it's only one dump". It's still PHI.</li>
-  <li><b>Never</b> commit dumps to git. <code>docker/dumps/</code> is in <code>.gitignore</code>.</li>
-  <li><b>Never</b> install Docker on the production Windows Server — Docker Desktop does not support Windows Server as a host and it would destabilise production.</li>
-</ul>
-
-<!-- ─── H. One-line summary ──────────────────────────────── -->
-<div class="callout info"><p><b>ℹ️ One-sentence summary:</b> Server dumps and masks at 08:30 → publishes to a shared folder / SFTP / bucket → each laptop pulls at 09:00 and restores into a local Docker Postgres. Local DB mirrors production daily without ever touching the production server's database directly.</p></div>
-</section>
-
-<!-- ═══════════ §8 ═══════════ -->
-<section id="s8">
-<h2>§8 · requirements.txt + README.md</h2>
-<h3>(a) <code>flask_app/requirements.txt</code></h3>
-<p>Derived from imports found in <code>flask_app/*.py</code> and <code>database_dumps/</code> (pandas, sib_api_v3_sdk, openpyxl, tqdm, sqlalchemy, numpy, firebase_admin, flask_cors, flask_caching, orjson, sklearn, psycopg2, pytz, dotenv). Code uses SQLAlchemy 2.x style (<code>connection.commit()</code>, <code>text()</code>), so pins are 2.x/pandas 2.x.</p>
-<script type="text/plain" class="code" data-lang="text">Flask==3.0.3
+      <div class="callout ok">
+        <p><b>✅ End state:</b> every morning, without human action, the local Docker Postgres contains yesterday's
+          masked production data. Run <code>docker compose -f docker-compose.db.yml up -d</code>, then
+          <code>python app.py</code>, and the backend is working against near-live data.
+        </p>
+      </div>
+
+      <!-- ─── 7.6 Safety ───────────────────────────────────────────── -->
+      <h3>7.6 · Safety rules (all options)</h3>
+      <ul>
+        <li><b>Mask PII on the VPS</b>, before the file leaves it. Never rely on the laptop to mask.</li>
+        <li><b>Read-only DB role</b> for all backups. <code>backup_ro</code> has <code>SELECT</code> only.</li>
+        <li><b>Dumps never enter git.</b> Add <code>docker/dumps/</code>, <code>docker/db_data/</code>,
+          <code>*.sql</code> at the repo root level to <code>.gitignore</code>.
+        </li>
+        <li><b>Retention:</b> delete dumps older than 7 days on both the server and the laptop.</li>
+        <li><b>Dev Firebase only.</b> <code>GOOGLE_APPLICATION_CREDENTIALS</code> must point at a dev project. Never
+          copy production Firebase credentials to a laptop.</li>
+        <li><b>Bucket hygiene (Option C):</b> private bucket, SSE enabled, IAM limited to <code>s3:GetObject</code> on
+          the dump prefix, lifecycle rule 7 days.</li>
+        <li><b>Never use Option D</b> with the app's production credentials — only <code>dev_readonly</code>, and only
+          for short lookups.</li>
+      </ul>
+
+    </section>
+
+    <!-- ═══════════ §8 ═══════════ -->
+    <section id="s8">
+      <h2>§8 · requirements.txt + README.md</h2>
+      <h3>(a) <code>flask_app/requirements.txt</code></h3>
+      <p>Derived from imports found in <code>flask_app/*.py</code> and <code>database_dumps/</code> (pandas,
+        sib_api_v3_sdk, openpyxl, tqdm, sqlalchemy, numpy, firebase_admin, flask_cors, flask_caching, orjson, sklearn,
+        psycopg2, pytz, dotenv). Code uses SQLAlchemy 2.x style (<code>connection.commit()</code>, <code>text()</code>),
+        so pins are 2.x/pandas 2.x.</p>
+      <script type="text/plain" class="code" data-lang="text">Flask==3.0.3
 Flask-Cors==4.0.1
 Flask-Caching==2.3.0
 gunicorn==22.0.0
@@ -1428,10 +1812,15 @@ tqdm==4.66.4
 scikit-learn==1.5.1
 sib-api-v3-sdk==7.6.0
 pytz==2024.1</script>
-<div class="callout info"><p>These versions are reasonable defaults, not verified against your server. Run <code>pip freeze</code> inside the working conda env (<code>retentions-aid</code> on the VPS) to lock exact versions, then diff against this list. Also check <code>patient_released</code> and <code>retentions_input</code>, imported once each — they weren't found as files on this branch.</p></div>
+      <div class="callout info">
+        <p>These versions are reasonable defaults, not verified against your server. Run <code>pip freeze</code> inside
+          the working conda env (<code>retentions-aid</code> on the VPS) to lock exact versions, then diff against this
+          list. Also check <code>patient_released</code> and <code>retentions_input</code>, imported once each — they
+          weren't found as files on this branch.</p>
+      </div>
 
-<h3>(b) <code>README.md</code> (repo root)</h3>
-<script type="text/plain" class="code" data-lang="markdown"># Retentions-Aid
+      <h3>(b) <code>README.md</code> (repo root)</h3>
+      <script type="text/plain" class="code" data-lang="markdown"># Retentions-Aid
 
 ## Overview
 Patient-retention management for clinics: weekly/monthly reports, alerts, notes and user/clinic administration. Flask API + React UI, one PostgreSQL database per clinic, Firebase authentication.
@@ -1505,80 +1894,520 @@ Branch `feature/<name>` off `dev` -> PR into `dev` -> after review merge `dev` i
 - Dump not loaded — init scripts run only on an empty data dir: `docker compose -f docker-compose.db.yml down -v && rm -rf docker/db_data`.
 - UI calls production — set `REACT_APP_API_URL`.
 - Cached stale data — restart gunicorn or call `cache.clear()`.</script>
-</section>
+    </section>
 
-<!-- ═══════════ §9 ═══════════ -->
-<section id="s9">
-<h2>§9 · Quick reference / cheat sheet</h2>
-<h3>Rename branches</h3>
-<script type="text/plain" class="code" data-lang="bash">git branch -m contabo prod && git branch -m update_JAN_2025 dev
+    <!-- ═══════════ §9 ═══════════ -->
+    <section id="s9">
+      <h2>§9 · Quick reference / cheat sheet</h2>
+      <h3>Rename branches</h3>
+      <script type="text/plain" class="code" data-lang="bash">git branch -m contabo prod && git branch -m update_JAN_2025 dev
 git push -u origin prod dev   # then default=prod on GitHub, then:
 git push origin --delete contabo update_JAN_2025 main</script>
-<h3>Switch + reset</h3>
-<script type="text/plain" class="code" data-lang="bash">git fetch --prune && git checkout dev && git reset --hard origin/dev   # discards local changes!</script>
-<h3>Start local DB · Run API · Run UI</h3>
-<script type="text/plain" class="code" data-lang="bash">docker compose -f docker-compose.db.yml up -d
+      <h3>Switch + reset</h3>
+      <script type="text/plain" class="code"
+        data-lang="bash">git fetch --prune && git checkout dev && git reset --hard origin/dev   # discards local changes!</script>
+      <h3>Start local DB · Run API · Run UI</h3>
+      <script type="text/plain" class="code" data-lang="bash">docker compose -f docker-compose.db.yml up -d
 cd flask_app && python app.py                    # :8000
 cd react_app && npm start                        # :3000</script>
-<h3>Deploy · Cache bust</h3>
-<script type="text/plain" class="code" data-lang="bash">git checkout prod && git merge --no-ff dev && git push origin prod    # Actions deploys
+      <h3>Deploy · Cache bust</h3>
+      <script type="text/plain" class="code" data-lang="bash">git checkout prod && git merge --no-ff dev && git push origin prod    # Actions deploys
 # on VPS, if needed:  sudo bash flask_app/restart.sh     (restarting gunicorn clears SimpleCache)</script>
-<h3>Where to edit what</h3>
-<div class="tw"><table><thead><tr><th>Task</th><th>File</th></tr></thead><tbody>
-<tr><td>API routes</td><td><code>flask_app/app.py</code></td></tr>
-<tr><td>Reports / SQL (don't touch)</td><td><code>flask_app/reports.py</code>, <code>weekly_status.sql</code></td></tr>
-<tr><td>DB connections</td><td><code>flask_app/app_db.py</code>, <code>config.py</code></td></tr>
-<tr><td>Email</td><td><code>email_util.py</code>, <code>monthly_reports.py</code>, <code>weekly_report.py</code></td></tr>
-<tr><td>Cron jobs</td><td><code>flask_app/*_cron.sh</code>, <code>auto_alerts.sh</code></td></tr>
-<tr><td>Deploy</td><td><code>.github/workflows/main.yml</code>, <code>flask_app/restart.sh</code></td></tr>
-<tr><td>UI API base URL</td><td><code>react_app/src/contexts/ApiContext.js</code></td></tr>
-<tr><td>Spinner</td><td><code>react_app/src/pages/LoadingPage.js</code></td></tr>
-</tbody></table></div>
-</section>
-</main>
-<button id="top" aria-label="Back to top">↑</button>
+      <h3>Where to edit what</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>File</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>API routes</td>
+              <td><code>flask_app/app.py</code></td>
+            </tr>
+            <tr>
+              <td>Reports / SQL (don't touch)</td>
+              <td><code>flask_app/reports.py</code>, <code>weekly_status.sql</code></td>
+            </tr>
+            <tr>
+              <td>DB connections</td>
+              <td><code>flask_app/app_db.py</code>, <code>config.py</code></td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td><code>email_util.py</code>, <code>monthly_reports.py</code>, <code>weekly_report.py</code></td>
+            </tr>
+            <tr>
+              <td>Cron jobs</td>
+              <td><code>flask_app/*_cron.sh</code>, <code>auto_alerts.sh</code></td>
+            </tr>
+            <tr>
+              <td>Deploy</td>
+              <td><code>.github/workflows/main.yml</code>, <code>flask_app/restart.sh</code></td>
+            </tr>
+            <tr>
+              <td>UI API base URL</td>
+              <td><code>react_app/src/contexts/ApiContext.js</code></td>
+            </tr>
+            <tr>
+              <td>Spinner</td>
+              <td><code>react_app/src/pages/LoadingPage.js</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-<script>
-(function(){
- var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
- // code blocks
- $$('script.code').forEach(function(s){
-  var d=document.createElement('div');d.className='cb blk';
-  var h=document.createElement('header'),l=document.createElement('span');l.textContent=s.dataset.lang||'';
-  var b=document.createElement('button');b.textContent='Copy';
-  var p=document.createElement('pre'),c=document.createElement('code');c.textContent=s.textContent.replace(/^\n/,'');
-  b.onclick=function(){var t=c.textContent;var ok=function(){b.textContent='Copied ✓';b.classList.add('done');setTimeout(function(){b.textContent='Copy';b.classList.remove('done')},1400)};
-   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fb)}else fb();
-   function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){}a.remove()}};
-  h.appendChild(l);h.appendChild(b);p.appendChild(c);d.appendChild(h);d.appendChild(p);s.replaceWith(d);
- });
- // theme
- var root=document.documentElement;
- try{var th=localStorage.getItem('theme');if(th)root.dataset.theme=th}catch(e){}
- $('#theme').onclick=function(){var n=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=n;try{localStorage.setItem('theme',n)}catch(e){}};
- $('#burger').onclick=function(){$('#side').classList.toggle('open')};
- $$('#nav a').forEach(function(a){a.addEventListener('click',function(){$('#side').classList.remove('open')})});
- // accordions
- $('#expAll').onclick=function(){$$('details').forEach(function(d){d.open=true})};
- $('#colAll').onclick=function(){$$('details').forEach(function(d){d.open=false})};
- // checklist persistence
- $$('ul.chk input').forEach(function(i,n){var k='chk'+n;try{i.checked=localStorage.getItem(k)==='1'}catch(e){}i.onchange=function(){try{localStorage.setItem(k,i.checked?'1':'0')}catch(e){}}});
- // scroll spy
- var links={};$$('#nav a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a});
- var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){$$('#nav a').forEach(function(a){a.classList.remove('on')});links[e.target.id]&&links[e.target.id].classList.add('on')}})},{rootMargin:'-20% 0px -70% 0px'});
- $$('main section').forEach(function(s){io.observe(s)});
- // back to top
- var top=$('#top');addEventListener('scroll',function(){top.style.display=scrollY>500?'block':'none'});top.onclick=function(){scrollTo({top:0,behavior:'smooth'})};
- // search
- $('#q').addEventListener('input',function(){
-  var q=this.value.trim().toLowerCase();
-  $$('main section').forEach(function(s){
-   var hit=!q||s.textContent.toLowerCase().indexOf(q)>-1;
-   links[s.id]&&links[s.id].classList.toggle('nomatch',!hit);
-   $$('.blk',s).forEach(function(b){var m=!q||b.textContent.toLowerCase().indexOf(q)>-1;b.classList.toggle('hide',!m);if(q&&m&&b.tagName==='DETAILS')b.open=true});
+    <!-- ═══════════ §10 ═══════════ -->
+    <section id="s10">
+      <h2>§10 · Frontend code-level improvements (retentionsaid)</h2>
+      <p class="sub">Frontend-only, file-by-file before/after. Each change is self-contained — no backend or SQL impact.
+      </p>
+
+      <div class="callout info">
+        <p><b>ℹ️ Scope.</b> These are frontend-only changes to <code>react_app/src/</code>. Every snippet shows the
+          before file, the after file, and why each line changed. No API contract, no SQL, no backend touched.</p>
+      </div>
+
+      <!-- ─── 10.1 ────────────────────────────────────── -->
+      <h3>10.1 · src/contexts/ApiContext.js — remove hardcoded production URL</h3>
+      <p><b>❌ Before (the real file — production URL is hardcoded in both branches):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/contexts/ApiContext.js
+// 🚨 Production URL is hardcoded in both branches — dev hits prod:
+// const domain = process.env.NODE_ENV === "production" ? "https://retentionsaid.com" : "http://localhost:8000"
+const domain = process.env.NODE_ENV === "production" ? "https://retentionsaid.com" : "https://retentionsaid.com"
+
+export const DOMAIN = domain
+
+const API_URL = DOMAIN + "/api/"
+
+const axiosInstance = axios.create({ baseURL: API_URL })</script>
+
+      <p><b>✅ After (javascript):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/contexts/ApiContext.js
+import React, { createContext } from "react";
+import axios from "axios";
+
+const ApiContext = createContext();
+
+export const ApiProvider = ({ children }) =&gt; {
+  // ✅ Read from env, fall back to localhost for dev
+  const domain = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
+  const api = axios.create({
+    baseURL: `${domain}/api`,
+    timeout: 120000,          // ✅ 2 min — report queries can be slow
   });
- });
-})();
-</script>
+
+  return &lt;ApiContext.Provider value={api}&gt;{children}&lt;/ApiContext.Provider&gt;;
+};
+
+export default ApiContext;</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> Today the API URL is the same in dev and prod. Any local frontend work hits production and can
+          slow it down for real users.</li>
+        <li><b>What changed:</b> domain now reads from <code>process.env.REACT_APP_API_URL</code>, with a localhost
+          fallback.</li>
+        <li><b>Where the env value lives:</b> create <code>react_app/.env.development</code> with
+          <code>REACT_APP_API_URL=http://localhost:8000</code>, and set
+          <code>REACT_APP_API_URL=https://retentionsaid.com</code> in the production build.
+        </li>
+        <li><b>Impact:</b> Local dev now talks to the local Flask API only. No risk to production. Also added a 2-minute
+          timeout so slow reports fail gracefully instead of hanging.</li>
+      </ul>
+
+      <!-- ─── 10.2 ────────────────────────────────────── -->
+      <h3>10.2 · New files: .env.development and .env.production</h3>
+      <div class="callout info">
+        <p>ℹ️ This file does not exist in the current branch — created by this change.</p>
+      </div>
+      <p><b>❌ Before (text):</b></p>
+      <script type="text/plain" class="code" data-lang="text">(no .env files exist in react_app/)</script>
+
+      <p><b>✅ After (dotenv):</b></p>
+      <script type="text/plain" class="code" data-lang="dotenv"># react_app/.env.development   (committed)
+REACT_APP_API_URL=http://localhost:8000
+
+# react_app/.env.production    (committed)
+REACT_APP_API_URL=https://retentionsaid.com</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li>Create React App reads these automatically based on <code>NODE_ENV</code>.</li>
+        <li>Running <code>npm start</code> uses <code>.env.development</code>; running <code>npm run build</code> uses
+          <code>.env.production</code>.
+        </li>
+        <li>Neither file contains secrets — they only hold the API URL, so they're safe to commit.</li>
+      </ul>
+
+      <!-- ─── 10.3 ────────────────────────────────────── -->
+      <h3>10.3 · New file: src/hooks/useLoading.js — a reusable loading state</h3>
+      <div class="callout info">
+        <p>ℹ️ This file does not exist in the current branch — created by this change.</p>
+      </div>
+      <p><b>❌ Before (the real file — manual setLoading in multiple branches):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/pages/patients/Patients.js
+const [loading, setLoading] = useState(false)
+
+const getPatientsData = async () =&gt; {
+  const selectedClinicIds = selectedClinics.map((clinic) =&gt; clinic.value)
+    .filter((clinic) =&gt; ["All", "All Clinics", "", null, undefined].indexOf(clinic) === -1)
+
+  if (selectedClinicIds.length === 0) return
+
+  setLoading(true)
+
+  if (abortControllerRef.current !== undefined) {
+    abortControllerRef.current.abort()
+  }
+
+  abortControllerRef.current = new AbortController()
+
+  const { error, message, data } = await Api.getPatientsData({
+    postData: {
+      clinic_ids: selectedClinicIds,
+      ...JSON.parse(localStorage.getItem("selectedDateRange_HomePage")),
+    },
+    signal: abortControllerRef.current.signal,
+  })
+
+  if (error) {
+    showAlert(error, "danger")
+    setLoading(false)
+    return
+  }
+  // ...
+  setLoading(false)          // 😞 repeated in multiple error/success branches
+}</script>
+
+      <p><b>✅ After (javascript) — part 1, new file:</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/hooks/useLoading.js   (NEW FILE)
+import { useState, useCallback } from "react";
+
+export function useLoading() {
+  const [loading, setLoading] = useState(false);
+
+  const wrap = useCallback(async (fn) =&gt; {
+    setLoading(true);
+    try {
+      return await fn();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { loading, wrap };
+}</script>
+
+      <p><b>✅ After (javascript) — part 2, updated usage:</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/pages/patients/Patients.js  (updated usage)
+import { useLoading } from "../../hooks/useLoading";
+import LoadingPage from "../LoadingPage";
+
+const { loading, wrap } = useLoading();
+
+const fetchPatients = () =&gt;
+  wrap(async () =&gt; {
+    const res = await api.post("/get_patients_data", {});
+    setData(res.data);
+  });
+
+// in JSX:
+if (loading) return &lt;LoadingPage /&gt;;</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> Every page duplicates the same <code>setLoading(true/false)</code> boilerplate. Bugs happen when
+          one branch forgets <code>finally</code>.</li>
+        <li><b>What changed:</b> One small hook — <code>useLoading()</code> — wraps any async call and manages the
+          spinner for you.</li>
+        <li><b>Impact:</b> Any page becomes 3 lines shorter and impossible to leak a "stuck spinner".</li>
+        <li><b>Risk:</b> Low. Pure addition; nothing else changes.</li>
+      </ul>
+
+      <!-- ─── 10.4 ────────────────────────────────────── -->
+      <h3>10.4 · src/pages/homepage/VirtualTable.js — render 10k rows smoothly</h3>
+      <div class="callout ok">
+        <p><b>✅ Already applied in the current codebase — see commit &lt;none&gt;.</b> <code>VirtualTable.js</code>
+          already uses <code>react-window</code> (<code>FixedSizeList</code>) to virtualize rows smoothly.</p>
+      </div>
+
+      <!-- ─── 10.5 ────────────────────────────────────── -->
+      <h3>10.5 · src/pages/patients/PatientsTableComponentRenderer.js — extract shared DropdownCell, guard null values
+      </h3>
+
+      <p><b>❌ Before (the real file — the same SplitButton block is repeated 5×):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">export function VerifiedInsAndAttorneyRenderer({ rowData, onChange }) {
+    const selectedOption = yesNoMap[rowData.verified_ins_and_attorney]
+
+    return (
+        &lt;SplitButton title={selectedOption.text || ""} color={selectedOption.color}&gt;
+            {Object.entries(yesNoMap).map(([key, option]) =&gt; (
+                &lt;Dropdown.Item
+                    key={key}
+                    style={{ background: option.color, color: "rgba(0, 0, 0, 0.9)" }}
+                    onClick={() =&gt; onChange(key, rowData)}
+                &gt;
+                    {option.text}
+                &lt;/Dropdown.Item&gt;
+            ))}
+        &lt;/SplitButton&gt;
+    )
+}
+// …and the same body repeated in PatientReleaseCategoryRenderer,
+//   UploadedDocumentsRenderer, UnderProjectedRenderer, WeekdayStatusRenderer</script>
+
+      <p><b>✅ After (one shared component, used everywhere):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">function DropdownCell({ map, value, onChange, rowData }) {
+  const selected = map[value]
+  if (!selected) return null              // ✅ safe on null / unknown values
+
+  return (
+    &lt;SplitButton title={selected.text} color={selected.color}&gt;
+      {Object.entries(map).map(([key, option]) =&gt; (
+        &lt;Dropdown.Item
+          key={key}
+          style={{ background: option.color, color: "rgba(0, 0, 0, 0.9)" }}
+          onClick={() =&gt; onChange(key, rowData)}
+        &gt;
+          {option.text}
+        &lt;/Dropdown.Item&gt;
+      ))}
+    &lt;/SplitButton&gt;
+  )
+}
+
+export function VerifiedInsAndAttorneyRenderer(props) {
+  return &lt;DropdownCell map={yesNoMap} value={props.rowData.verified_ins_and_attorney} {...props} /&gt;
+}
+
+export function UploadedDocumentsRenderer(props) {
+  return &lt;DropdownCell map={yesNoMap} value={props.rowData.uploaded_documents} {...props} /&gt;
+}
+
+export function UnderProjectedRenderer(props) {
+  return &lt;DropdownCell map={yesNoMap} value={props.rowData.under_projected} {...props} /&gt;
+}
+
+export function PatientReleaseCategoryRenderer(props) {
+  return &lt;DropdownCell map={releaseCategoryMap} value={props.rowData.release_category} {...props} /&gt;
+}</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> five renderer functions in this file share 95% of their body — only the map and the field key
+          differ.</li>
+        <li><b>What changed:</b> one <code>DropdownCell</code> helper. Each renderer becomes a 2-line wrapper.</li>
+        <li><b>Bonus fix — null safety:</b> the original code does <code>selectedOption.text</code>, which throws if the
+          field is <code>null</code> or an unknown value. <code>DropdownCell</code> guards it and returns
+          <code>null</code> — the same behaviour <code>WeekdayStatusRenderer</code> already has.
+        </li>
+        <li><b>Impact:</b> ~200 lines → ~120 lines. Any styling change happens once. One malformed row no longer crashes
+          the whole table render.</li>
+        <li><b>Risk:</b> Low. Same DOM output. Only the source is restructured.</li>
+      </ul>
+
+      <!-- ─── 10.6 ────────────────────────────────────── -->
+      <h3>10.6 · NotesRenderer — remove global DOM query</h3>
+
+      <p><b>❌ Before (the real file — reaches into global DOM on every click):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">function onClick(e) {
+    window.document.querySelectorAll('.notes-textarea').forEach((el) =&gt; {
+        if (el !== e.target) {
+            el.style.zIndex = 0
+        } else {
+            el.style.zIndex = 1
+        }
+    })
+}</script>
+
+      <p><b>✅ After (React state):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">const [focused, setFocused] = useState(false)
+
+// on the &lt;textarea&gt;
+style={{ fontSize: '0.8rem', zIndex: focused ? 1 : 0 }}
+onFocus={() =&gt; setFocused(true)}
+onBlur={() =&gt; setFocused(false)}</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> <code>querySelectorAll('.notes-textarea')</code> mutates every notes box on the page
+          imperatively. Breaks with multiple notes, and after unmount.</li>
+        <li><b>Impact:</b> z-index is now a function of component state — correct with multiple notes, safe on unmount.
+        </li>
+        <li><b>Risk:</b> Low. Same visual behaviour.</li>
+      </ul>
+
+      <!-- ─── 10.7 ────────────────────────────────────── -->
+      <h3>10.7 · ProjectedVisitsRenderer — reject decimals &amp; junk silently</h3>
+
+      <p><b>❌ Before (the real file):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">const valueInt = parseInt(_value)
+if (Number.isInteger(valueInt)) { … }</script>
+
+      <p><b>✅ After:</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">if (!/^\d+$/.test(v)) return          // reject "3.7", "3abc"
+const n = Number(v)
+if (n &lt; 0 || n &gt; 6) return
+setValue(v)</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> <code>parseInt("3.7")</code> returns <code>3</code> — the input mutates under the user's
+          fingers. <code>parseInt("3abc")</code> also returns <code>3</code> — silent junk acceptance.</li>
+        <li><b>Impact:</b> only whole numbers 0–6 pass; no silent truncation.</li>
+        <li><b>Risk:</b> Low.</li>
+      </ul>
+
+      <!-- ─── 10.8 ────────────────────────────────────── -->
+      <h3>10.8 · src/pages/LoadingPage.js — accessible spinner</h3>
+      <p><b>❌ Before (javascript):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/pages/LoadingPage.js
+const LoadingPage = () =&gt; (
+  &lt;div className="loader"&gt;
+    &lt;div className="spinner" /&gt;
+  &lt;/div&gt;
+);</script>
+
+      <p><b>✅ After (javascript):</b></p>
+      <script type="text/plain" class="code" data-lang="javascript">// react_app/src/pages/LoadingPage.js
+const LoadingPage = ({ label = "Loading…" }) =&gt; (
+  &lt;div className="loader" role="status" aria-live="polite" aria-label={label}&gt;
+    &lt;div className="spinner" /&gt;
+    &lt;span className="sr-only"&gt;{label}&lt;/span&gt;
+  &lt;/div&gt;
+);</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> Screen readers don't announce an unlabeled spinner. Users with assistive tech see nothing.</li>
+        <li><b>What changed:</b> added <code>role="status"</code>, <code>aria-live="polite"</code>, and a
+          visually-hidden text label.</li>
+        <li><b>Impact:</b> WCAG 2.1 compliance for loading states. Also useful for QA automation (find by role).</li>
+        <li><b>Risk:</b> Low. Add <code>.sr-only</code> CSS if not present.</li>
+      </ul>
+
+      <!-- ─── 10.9 ────────────────────────────────────── -->
+      <h3>10.9 · Before/after summary</h3>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Change</th>
+              <th>Impact</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>contexts/ApiContext.js</code></td>
+              <td>Env-based API URL + timeout</td>
+              <td>Dev stops hitting prod</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+            <tr>
+              <td><code>.env.development</code> / <code>.env.production</code></td>
+              <td>New files</td>
+              <td>Per-env config</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+            <tr>
+              <td><code>hooks/useLoading.js</code></td>
+              <td>New hook</td>
+              <td>No stuck spinners</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+            <tr>
+              <td><code>pages/homepage/VirtualTable.js</code></td>
+              <td>react-window</td>
+              <td>10k rows render smoothly</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+            <tr>
+              <td><code>pages/patients/PatientsTableComponentRenderer.js</code></td>
+              <td>Extract shared DropdownCell, guard nulls</td>
+              <td>~200 → ~120 lines, crash-proof</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+            <tr>
+              <td><code>pages/patients/PatientsTableComponentRenderer.js (NotesRenderer)</code></td>
+              <td>Replace document.querySelectorAll with React state</td>
+              <td>Correct with multiple notes</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+            <tr>
+              <td><code>pages/patients/PatientsTableComponentRenderer.js (ProjectedVisitsRenderer)</code></td>
+              <td>Regex validation instead of parseInt</td>
+              <td>No silent truncation</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+            <tr>
+              <td><code>pages/LoadingPage.js</code></td>
+              <td>ARIA attributes</td>
+              <td>Accessible spinner</td>
+              <td><span class="pill low">Low</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout ok">
+        <p><b>✅ All frontend-only.</b> No API contract change, no SQL change, no backend redeploy required to ship
+          these.</p>
+      </div>
+    </section>
+  </main>
+  <button id="top" aria-label="Back to top">↑</button>
+
+  <script>
+    (function () {
+      var $ = function (s, r) { return (r || document).querySelector(s) }, $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)) };
+      // code blocks
+      $$('script.code').forEach(function (s) {
+        var d = document.createElement('div'); d.className = 'cb blk';
+        var h = document.createElement('header'), l = document.createElement('span'); l.textContent = s.dataset.lang || '';
+        var b = document.createElement('button'); b.textContent = 'Copy';
+        var p = document.createElement('pre'), c = document.createElement('code'); c.textContent = s.textContent.replace(/^\n/, '');
+        b.onclick = function () {
+          var t = c.textContent; var ok = function () { b.textContent = 'Copied ✓'; b.classList.add('done'); setTimeout(function () { b.textContent = 'Copy'; b.classList.remove('done') }, 1400) };
+          if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(ok, fb) } else fb();
+          function fb() { var a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); ok() } catch (e) { } a.remove() }
+        };
+        h.appendChild(l); h.appendChild(b); p.appendChild(c); d.appendChild(h); d.appendChild(p); s.replaceWith(d);
+      });
+      // theme
+      var root = document.documentElement;
+      try { var th = localStorage.getItem('theme'); if (th) root.dataset.theme = th } catch (e) { }
+      $('#theme').onclick = function () { var n = root.dataset.theme === 'dark' ? 'light' : 'dark'; root.dataset.theme = n; try { localStorage.setItem('theme', n) } catch (e) { } };
+      $('#burger').onclick = function () { $('#side').classList.toggle('open') };
+      $$('#nav a').forEach(function (a) { a.addEventListener('click', function () { $('#side').classList.remove('open') }) });
+      // accordions
+      $('#expAll').onclick = function () { $$('details').forEach(function (d) { d.open = true }) };
+      $('#colAll').onclick = function () { $$('details').forEach(function (d) { d.open = false }) };
+      // checklist persistence
+      $$('ul.chk input').forEach(function (i, n) { var k = 'chk' + n; try { i.checked = localStorage.getItem(k) === '1' } catch (e) { } i.onchange = function () { try { localStorage.setItem(k, i.checked ? '1' : '0') } catch (e) { } } });
+      // scroll spy
+      var links = {}; $$('#nav a').forEach(function (a) { links[a.getAttribute('href').slice(1)] = a });
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { $$('#nav a').forEach(function (a) { a.classList.remove('on') }); links[e.target.id] && links[e.target.id].classList.add('on') } }) }, { rootMargin: '-20% 0px -70% 0px' });
+      $$('main section').forEach(function (s) { io.observe(s) });
+      // back to top
+      var top = $('#top'); addEventListener('scroll', function () { top.style.display = scrollY > 500 ? 'block' : 'none' }); top.onclick = function () { scrollTo({ top: 0, behavior: 'smooth' }) };
+      // search
+      $('#q').addEventListener('input', function () {
+        var q = this.value.trim().toLowerCase();
+        $$('main section').forEach(function (s) {
+          var hit = !q || s.textContent.toLowerCase().indexOf(q) > -1;
+          links[s.id] && links[s.id].classList.toggle('nomatch', !hit);
+          $$('.blk', s).forEach(function (b) { var m = !q || b.textContent.toLowerCase().indexOf(q) > -1; b.classList.toggle('hide', !m); if (q && m && b.tagName === 'DETAILS') b.open = true });
+        });
+      });
+    })();
+  </script>
 </body>
+
 </html>
