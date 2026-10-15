@@ -560,6 +560,7 @@
       <a href="#s4">§4 Config module</a><a href="#s5">§5 Loaders</a><a href="#s6">§6 Backend optimization</a>
       <a href="#s7">§7 Local DB (Docker)</a><a href="#s8">§8 requirements + README</a><a href="#s9">§9 Cheat sheet</a>
       <a href="#s10">§10 Frontend code</a>
+      <a href="#s11">§11 Backend code</a>
     </nav>
   </aside>
   <main>
@@ -2359,6 +2360,410 @@ const LoadingPage = ({ label = "Loading…" }) =&gt; (
       <div class="callout ok">
         <p><b>✅ All frontend-only.</b> No API contract change, no SQL change, no backend redeploy required to ship
           these.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════ §11 ═══════════ -->
+    <section id="s11">
+      <h2>§11 · Backend code-level improvements (retentionsaid)</h2>
+      <p class="sub">Backend-only, file-by-file before/after. Every change wraps the query — no SQL string is modified anywhere.</p>
+
+      <div class="callout info">
+        <p><b>ℹ️ Scope.</b> Every change in §11 changes the Python around the query: caching, connection pooling, logging, error handling, module structure, secrets loading, CORS, gzip. Zero SQL strings were modified. Verify no SQL changed: <code>git diff -U0 | grep -iE '^[+-].*(select|insert|update|delete|from|join)'</code> → no output.</p>
+      </div>
+
+      <!-- ─── 11.1 ────────────────────────────────────── -->
+      <h3>11.1 · flask_app/app.py — move SECRET_KEY to environment</h3>
+      <p><b>❌ Before (the real file — literal secret and wildcard CORS):</b></p>
+      <script type="text/plain" class="code" data-lang="python">class Config:
+    DEBUG = False
+    TESTING = False
+    CSRF_ENABLED = True
+    JSONIFY_PRETTYPRINT_REGULAR = False
+    JSON_SORT_KEYS = False
+    MAX_CONTENT_LENGTH = 1.25e8
+    SECRET_KEY = "retentions_aid"     # 🚨 literal in source
+
+    # caching
+    CACHE_TYPE = "SimpleCache"
+    CACHE_DEFAULT_TIMEOUT = 60 * 5  # 5 minutes
+
+app = Flask(__name__, static_folder=react_build_folder)
+app.config.from_object(Config)
+CORS(app, resources={r"*": {"origins": "*"}})   # 🚨 wildcard</script>
+
+      <p><b>✅ After:</b></p>
+      <script type="text/plain" class="code" data-lang="python">import os
+
+class Config:
+    DEBUG = False
+    TESTING = False
+    CSRF_ENABLED = True
+    JSONIFY_PRETTYPRINT_REGULAR = False
+    JSON_SORT_KEYS = False
+    MAX_CONTENT_LENGTH = 1.25e8
+    SECRET_KEY = os.environ["FLASK_SECRET_KEY"]     # ✅ from env
+    UI_ORIGIN = os.environ.get("UI_ORIGIN", "http://localhost:3000")
+
+    # caching
+    CACHE_TYPE = "SimpleCache"
+    CACHE_DEFAULT_TIMEOUT = 60 * 5  # 5 minutes
+
+app = Flask(__name__, static_folder=react_build_folder)
+app.config.from_object(Config)
+CORS(app, resources={r"/api/*": {"origins": [Config.UI_ORIGIN, "https://retentionsaid.com"]}})</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> hardcoded SECRET_KEY leaks; wildcard CORS lets any site call the API.</li>
+        <li><b>What changed:</b> two config values. No routes touched. No SQL touched.</li>
+        <li><b>Impact:</b> secrets leave source; CORS only allows the real UI origin.</li>
+        <li><b>Risk:</b> Low. Rotate the old SECRET_KEY after deploy (sessions invalidate).</li>
+      </ul>
+
+      <!-- ─── 11.2 ────────────────────────────────────── -->
+      <h3>11.2 · flask_app/app.py — gzip responses (flask-compress)</h3>
+      <p><b>❌ Before (the real file — Compress is commented out, responses sent uncompressed):</b></p>
+      <script type="text/plain" class="code" data-lang="python"># from flask_compress import Compress
+app = Flask(__name__, static_folder=react_build_folder)
+# responses sent uncompressed; 10k-row JSON ~ 5–10 MB on the wire</script>
+
+      <p><b>✅ After:</b></p>
+      <script type="text/plain" class="code" data-lang="python">from flask_compress import Compress
+
+app = Flask(__name__, static_folder=react_build_folder)
+Compress(app)                     # ✅ gzip anything larger than ~500 bytes</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> the report routes return the full result set by design (no pagination).</li>
+        <li><b>What changed:</b> one import + one line. No routes, no SQL.</li>
+        <li><b>Impact:</b> 10k-row payload drops from ~5 MB to ~500 KB on the wire.</li>
+        <li><b>Risk:</b> Low. Transparent to clients.</li>
+        <li><b>Add to requirements.txt:</b> <code>Flask-Compress==1.15</code></li>
+      </ul>
+
+      <!-- ─── 11.3 ────────────────────────────────────── -->
+      <h3>11.3 · flask_app/app_db.py — tune the SQLAlchemy connection pool</h3>
+      <p><b>❌ Before (the real file — default pool without ping or recycle):</b></p>
+      <script type="text/plain" class="code" data-lang="python">    @retry_wrapper(retries=3)
+    def start_engine(self):
+        self.engine = create_engine(database_uri + self.db)
+        self.engine.autocommit = True</script>
+
+      <p><b>✅ After (only the create_engine call changes):</b></p>
+      <script type="text/plain" class="code" data-lang="python">    @retry_wrapper(retries=3)
+    def start_engine(self):
+        self.engine = create_engine(
+            database_uri + self.db,
+            pool_size=5,
+            max_overflow=10,
+            pool_pre_ping=True,     # ✅ drop dead connections transparently
+            pool_recycle=1800,      # ✅ recycle after 30 min
+        )
+        self.engine.autocommit = True</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> every request currently opens a fresh connection. Warm pooling removes TCP + auth overhead per call.</li>
+        <li><b>What changed:</b> keyword arguments on <code>create_engine</code>. No SQL. No query strings.</li>
+        <li><b>Impact:</b> report routes that fan out across clinic DBs stop paying connection cost.</li>
+        <li><b>Risk:</b> Low. <code>pool_size</code> should be ≥ the <code>ThreadPoolExecutor</code> worker count per clinic.</li>
+      </ul>
+
+      <!-- ─── 11.4 ────────────────────────────────────── -->
+      <h3>11.4 · flask_app/helper_classes.py — slow-query timer decorator</h3>
+      <p><b>❌ Before (the execute methods in app_db.py, no timing):</b></p>
+      <script type="text/plain" class="code" data-lang="python">    def execute_query(self, query, params=None):
+        with self.engine.connect() as connection:
+            connection.execute(text(query), params)
+            connection.commit()
+
+    def execute_using_pandas(self, query, params=None):
+        df = pd.read_sql(text(query), self.engine, params=params)
+        df = df.astype(object).where(pd.notnull(df), None)
+        return df</script>
+
+      <p><b>✅ After (add timer decorator, query strings unchanged):</b></p>
+      <script type="text/plain" class="code" data-lang="python">import time, logging
+from functools import wraps
+
+log = logging.getLogger("slowquery")
+
+def timed(threshold=1.0):
+    def deco(f):
+        @wraps(f)
+        def inner(self, *args, **kwargs):
+            t = time.perf_counter()
+            try:
+                return f(self, *args, **kwargs)
+            finally:
+                dt = time.perf_counter() - t
+                if dt &gt;= threshold:
+                    log.warning("slow %s db=%s %.2fs", f.__name__, getattr(self, "db", "unknown"), dt)
+        return inner
+    return deco
+
+@timed(1.0)
+def execute_query(self, query, params=None):
+    with self.engine.connect() as connection:
+        connection.execute(text(query), params)
+        connection.commit()
+
+@timed(1.0)
+def execute_using_pandas(self, query, params=None):
+    df = pd.read_sql(text(query), self.engine, params=params)
+    df = df.astype(object).where(pd.notnull(df), None)
+    return df</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> we need to know which clinic DB / report is slow before optimizing anything.</li>
+        <li><b>What changed:</b> one decorator, applied to query execution methods. The query argument is passed through verbatim — not inspected, not modified.</li>
+        <li><b>Impact:</b> gunicorn logs show <code>slow &lt;fn&gt; db=clinic_a 2.31s</code> lines.</li>
+        <li><b>Risk:</b> Low.</li>
+      </ul>
+
+      <!-- ─── 11.5 ────────────────────────────────────── -->
+      <h3>11.5 · flask_app/email_util.py — remove password from verification email</h3>
+      <p><b>❌ Before (the real file lines 9–20 — plain text password in email):</b></p>
+      <script type="text/plain" class="code" data-lang="python">def html_from_verification_link(verification_link, user_password):
+    return f"""
+    &lt;html&gt;
+        &lt;body&gt;
+            &lt;h1&gt;Verify your email address&lt;/h1&gt;
+            &lt;p&gt;Click the link below to verify your email address for your Retentions Aid account.&lt;/p&gt;
+            &lt;a target="_blank" href="{verification_link}"&gt;Verify Email&lt;/a&gt;
+            &lt;br&gt;
+            &lt;h4&gt;Login Password: {user_password}&lt;/h4&gt;        # 🚨 password in plain text
+        &lt;/body&gt;
+    &lt;/html&gt;
+    """</script>
+
+      <p><b>✅ After (password replaced with password reset link):</b></p>
+      <script type="text/plain" class="code" data-lang="python">def html_from_verification_link(verification_link, reset_link):
+    return f"""
+    &lt;html&gt;
+        &lt;body&gt;
+            &lt;h1&gt;Verify your email address&lt;/h1&gt;
+            &lt;p&gt;Click the link below to verify your email address for your Retentions Aid account.&lt;/p&gt;
+            &lt;a target="_blank" href="{verification_link}"&gt;Verify Email&lt;/a&gt;
+            &lt;p&gt;Then &lt;a href="{reset_link}"&gt;set your password&lt;/a&gt;.&lt;/p&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+    """</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> sending credentials over email is a security finding.</li>
+        <li><b>What changed:</b> the email body + the caller's argument. No SQL, no auth logic.</li>
+        <li><b>Caller change (firebase_user.py):</b>
+          <br><code>reset_link = auth.generate_password_reset_link(email)</code>
+          <br><code>send_email(html_from_verification_link(verify_link, reset_link))</code>
+        </li>
+        <li><b>Impact:</b> no credentials in inboxes.</li>
+        <li><b>Risk:</b> Low. Coordinate with whoever onboards users (UX change).</li>
+      </ul>
+
+      <!-- ─── 11.6 ────────────────────────────────────── -->
+      <h3>11.6 · flask_app/update_alerts.py and update_user_alerts.py — add load_dotenv()</h3>
+      <p><b>❌ Before (the real file top — config imported before load_dotenv):</b></p>
+      <script type="text/plain" class="code" data-lang="python">import config                 # 🚨 config reads os.environ → KeyError on fresh machine
+from app_db import DB_Connection</script>
+
+      <p><b>✅ After:</b></p>
+      <script type="text/plain" class="code" data-lang="python">from dotenv import load_dotenv
+load_dotenv()                 # ✅ BEFORE importing config
+
+import config                 # now finds POSTGRES_*, FLASK_SECRET_KEY
+from app_db import DB_Connection</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> <code>app.py</code> already calls <code>load_dotenv()</code>; these two cron scripts don't. On a fresh machine they crash with <code>KeyError: 'POSTGRES_USER'</code>.</li>
+        <li><b>What changed:</b> two lines at the top of each file.</li>
+        <li><b>Impact:</b> cron jobs and schema setup work on a fresh clone.</li>
+        <li><b>Risk:</b> Low.</li>
+      </ul>
+
+      <!-- ─── 11.7 ────────────────────────────────────── -->
+      <h3>11.7 · flask_app/load_schema.py — new file that passes the real clinic list</h3>
+      <p><b>❌ Before (the real file __main__ block in create_tables_and_triggers.py):</b></p>
+      <script type="text/plain" class="code" data-lang="python">if __name__ == "__main__":
+    databases = []                    # 🚨 empty list — does nothing
+    create_tables_and_triggers(databases)
+    print("Tables and triggers created successfully")</script>
+
+      <p><b>✅ After (new file flask_app/load_schema.py):</b></p>
+      <script type="text/plain" class="code" data-lang="python">from dotenv import load_dotenv
+load_dotenv()
+
+import config
+from create_tables_and_triggers import create_tables_and_triggers
+
+if __name__ == "__main__":
+    # NOTE: SQL uses CREATE FUNCTION/TABLE without IF NOT EXISTS.
+    # Run on empty databases only.
+    create_tables_and_triggers(config.databases)
+    print(f"Schema loaded into: {', '.join(config.databases)}")</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> the original script passes an empty list → the for-loop runs 0 times → nothing is created, and the "success" message is false. The SQL strings inside <code>create_tables_and_triggers.py</code> are untouched.</li>
+        <li><b>What changed:</b> a new wrapper that supplies the real list from <code>config.databases</code>.</li>
+        <li><b>Impact:</b> running <code>python load_schema.py</code> actually creates the tables.</li>
+        <li><b>Risk:</b> Low.</li>
+      </ul>
+
+      <!-- ─── 11.8 ────────────────────────────────────── -->
+      <h3>11.8 · flask_app/app.py — structured JSON logging with request IDs</h3>
+      <p><b>❌ Before (plain text gunicorn logs; print(e) inside retry_wrapper):</b></p>
+      <script type="text/plain" class="code" data-lang="python"># plain text gunicorn logs; print(e) inside retry_wrapper
+except Exception as e:
+    print(e)                     # 🚨 unstructured</script>
+
+      <p><b>✅ After (new flask_app/logging_setup.py + 2 hooks in app.py):</b></p>
+      <script type="text/plain" class="code" data-lang="python">import logging, uuid, orjson
+from flask import g, request
+
+class JsonFmt(logging.Formatter):
+    def format(self, r):
+        return orjson.dumps({
+            "t": self.formatTime(r),
+            "lvl": r.levelname,
+            "msg": r.getMessage(),
+            "rid": getattr(g, "rid", None),
+        }).decode()
+
+h = logging.StreamHandler()
+h.setFormatter(JsonFmt())
+logging.getLogger().addHandler(h)
+logging.getLogger().setLevel(logging.INFO)
+
+# in app.py
+@app.before_request
+def _rid():
+    g.rid = request.headers.get("X-Request-ID", uuid.uuid4().hex[:12])
+
+@app.after_request
+def _hdr(resp):
+    resp.headers["X-Request-ID"] = g.rid
+    return resp</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> plain logs can't be searched. A failing report can't be traced to one request.</li>
+        <li><b>What changed:</b> a new logging formatter + two Flask hooks. No SQL. No routes.</li>
+        <li><b>Impact:</b> every log line carries a request ID; <code>X-Request-ID</code> echoed in responses.</li>
+        <li><b>Risk:</b> Low.</li>
+      </ul>
+
+      <!-- ─── 11.9 ────────────────────────────────────── -->
+      <h3>11.9 · flask_app — blueprints to split app.py (structure only)</h3>
+      <p><b>❌ Before (app.py — 764 lines, ~30 routes in one file):</b></p>
+      <script type="text/plain" class="code" data-lang="python">@app.route("/api/get_alerts", methods=["GET"])
+def get_alerts(**kwargs): ...
+@app.route("/api/get_weekly_stats", methods=["POST"])
+def get_weekly_stats(**kwargs): ...
+# ... ~28 more routes in app.py ...</script>
+
+      <p><b>✅ After (routes split, bodies moved verbatim — no SQL edits):</b></p>
+      <script type="text/plain" class="code" data-lang="python"># routes/alerts.py
+from flask import Blueprint
+bp = Blueprint("alerts", __name__)          # NO url_prefix — paths stay identical
+
+@bp.route("/api/get_alerts", methods=["GET"])
+def get_alerts(**kwargs): ...               # body unchanged
+
+# app.py
+from routes.alerts import bp as alerts_bp
+app.register_blueprint(alerts_bp)</script>
+
+      <h4>🧠 Explanation</h4>
+      <ul>
+        <li><b>Why:</b> maintainability — 764 lines in one file is hard to review.</li>
+        <li><b>What changed:</b> handler bodies are moved character-for-character. No SQL edits.</li>
+        <li><b>Impact:</b> PRs that touch reports are separated from PRs that touch alerts.</li>
+        <li><b>Risk:</b> Low. Register the catch-all <code>/&lt;path&gt;</code> route last; verify URLs unchanged with: <code>flask routes</code> → compare before/after.</li>
+      </ul>
+
+      <!-- ─── 11.10 ────────────────────────────────────── -->
+      <h3>11.10 · Before/after summary table</h3>
+      <div class="tw"><table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Change</th>
+            <th>Impact</th>
+            <th>Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>flask_app/app.py</code></td>
+            <td>Env SECRET_KEY + restricted CORS</td>
+            <td>Secrets out of source; other origins blocked</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/app.py</code></td>
+            <td>Enable flask-compress (gzip)</td>
+            <td>10k rows: ~5 MB → ~500 KB on wire</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/app_db.py</code></td>
+            <td>Tune create_engine pool</td>
+            <td>Warm connections, no redial per request</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/helper_classes.py</code> / <code>app_db.py</code></td>
+            <td>Slow-query timing decorator</td>
+            <td>Identifies slow clinic DBs / reports</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/email_util.py</code></td>
+            <td>Remove password from email</td>
+            <td>No credentials over email</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/update_alerts.py</code></td>
+            <td>Add load_dotenv() at top</td>
+            <td>Cron works on fresh machine</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/update_user_alerts.py</code></td>
+            <td>Add load_dotenv() at top</td>
+            <td>Cron works on fresh machine</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/load_schema.py</code></td>
+            <td>New wrapper with real DB list</td>
+            <td>Schema setup actually creates tables</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/app.py + logging_setup.py</code></td>
+            <td>JSON logs + request IDs</td>
+            <td>Searchable gunicorn logs, per-request trace</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+          <tr>
+            <td><code>flask_app/routes/*.py</code></td>
+            <td>Split app.py into blueprints</td>
+            <td>Maintainability; URLs unchanged</td>
+            <td><span class="pill low">Low</span></td>
+          </tr>
+        </tbody>
+      </table></div>
+
+      <div class="callout ok">
+        <p><b>✅ All backend changes wrap the query. Zero SQL strings modified.</b> Verify with: <code>git diff -U0 | grep -iE '^[+-].*(select|insert|update|delete|from|join)'</code> → Expect: no output.</p>
       </div>
     </section>
   </main>
